@@ -1,9 +1,10 @@
 package easycheck.logicController;
 import java.util.ArrayList;
 
+import easycheck.commandParser.*;
 import easycheck.storage.*;
 
-public class logicController {
+public class LogicController {
 	private UserInterface userInterface;
 	private CommandParser commandParser;
 	private StorageManager storageManager;
