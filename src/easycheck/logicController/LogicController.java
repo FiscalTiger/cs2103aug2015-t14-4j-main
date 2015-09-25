@@ -17,10 +17,9 @@ public class LogicController {
 	 * @return returns a boolean if the command was executed successfully
 	 */	
 	public static boolean initialise(){
-		UserInterface userInterface = new UserInterface();
+		UserInterface userInterface = new UserInterface("JIM");
 		CommandParser commandParser = new CommandParser();
 		StorageManager storageManager = new StorageManager(easyCheckFile);
-		
 		return true;
 	}
 	
