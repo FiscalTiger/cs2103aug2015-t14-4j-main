@@ -1,5 +1,6 @@
 package easycheck.storage;
 
+import easycheck.commandParser.Command;
 import java.io.File;
 import java.util.ArrayList;
 
@@ -17,7 +18,7 @@ public class StorageManager {
 		easyCheckEvents = readDataFromEasyCheckFile();
 	}
 	
-	public ArrayList<EventInterface> execute(Command cmd) {
+	public String execute(Command cmd) {
 		return null;
 	}
 	

@@ -13,7 +13,7 @@ public class CommandParser {
     //TODO add EXPECTED MIN MAX PARAM for all commands
     //TODO add flexi command keywords
     
-    private Command parseCommand(String userCommand) {
+    public Command parseCommand(String userCommand) {
         String[] commandArray = splitCommand(userCommand);
         Command command = createCommand(commandArray[PARAM_POSITION_COMMAND_TYPE], commandArray[PARAM_POSITION_COMMAND_ARGUMENT]);
         return command;
