@@ -1,5 +1,7 @@
 package easycheck.commandParser;
 
+import java.io.IOException;
+
 /**
  * Command Parser for Easy Check application.
  * Takes in a user command and parses it into a Command type Object for use by Storage.
@@ -23,7 +25,7 @@ public class CommandParser {
         return userCommand.split(COMMAND_SPLITTER, COMMAND_ARRAY_LENGTH);
     }
     
-    private Command createCommand(String commandType, String commandArguments) {
+    private Command createCommand(String commandType, String commandArguments) throws IOException {
         String[] arguments = getArguments(commandType, commandArguments);
         Command command = new Command(commandType, arguments);
         return null;
