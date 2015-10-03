@@ -7,6 +7,13 @@ import java.io.IOException;
 
 import org.junit.Test;
 
+/*
+ * This is the JUNIT Test for ExecuteCommand Method in Command.java
+ * V0.1 : Testing Add,Edit,Display and Delete for now.
+ * @author thiennguyen
+ * 
+ */
+
 public class CommandTest {
 
 	@Test
