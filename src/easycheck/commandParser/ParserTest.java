@@ -3,6 +3,11 @@ package easycheck.commandParser;
 import static org.junit.Assert.*;
 import org.junit.Test;
 
+/**
+ * Simple JUnti Test for CommandParser,
+ * @@author A0124206W
+ *
+ */
 public class ParserTest {
     
     @Test
