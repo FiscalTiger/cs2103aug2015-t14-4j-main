@@ -19,15 +19,19 @@ public class Command {
 	private static final String MESSAGE_UNRECOGNIZE = "Unrecognized command input!";
 	
 	static ArrayList<String> cachedFile = new ArrayList<String>();
-
-	public Command(String commandType, String[] arguments) throws IOException {
-		System.out.println(executeCommand(commandType,arguments));
-	}
+    public COMMAND_TYPE commandType;
+    public String[] arguments;
+    
+    public Command(String commandType, String[] arguments){
+        this.commandType = determineCommandType(commandType);
+        this.arguments = arguments;
+    }
 
 	enum COMMAND_TYPE {
 		ADD, ADD_EVENT,DISPLAY,UPDATE, DELETE, UNDO, SEARCH, REVIEW, SAVE_AT, INVALID
 	};
 	
+	//TODO magic strings??
 	private static COMMAND_TYPE determineCommandType(String commandType) {
 		if (commandType == null) {
 			throw new Error(MESSAGE_COMMAND_NULL);
@@ -54,31 +58,33 @@ public class Command {
 			return COMMAND_TYPE.INVALID;
 		}
 	}
-	public static String executeCommand(String commandType,String[] arguments) throws IOException {
-		COMMAND_TYPE command = determineCommandType(commandType);
-		switch (command) {
-		case ADD:
-			return add(arguments);
-		case ADD_EVENT:
-			return addEvent(arguments);
-		case DISPLAY:
-			return display(arguments);
-		case UPDATE:
-			return update(arguments);
-		case DELETE:
-			return delete(arguments);
-		case UNDO:
-			return undo(arguments);
-		case SEARCH:
-			return search(arguments);
-		case REVIEW:
-			return review(arguments);
-		case SAVE_AT:
-			return saveAt(arguments);
-		default:
-			throw new Error(MESSAGE_UNRECOGNIZE);
-		}
-}
+	// TODO for JUNIT TESTING - execute should be handled in commandExecutor
+    public static String executeCommand(String commandType, String[] arguments)
+            throws IOException {
+        COMMAND_TYPE command = determineCommandType(commandType);
+        switch (command) {
+        case ADD:
+            return add(arguments);
+        case ADD_EVENT:
+            return addEvent(arguments);
+        case DISPLAY:
+            return display(arguments);
+        case UPDATE:
+            return update(arguments);
+        case DELETE:
+            return delete(arguments);
+        case UNDO:
+            return undo(arguments);
+        case SEARCH:
+            return search(arguments);
+        case REVIEW:
+            return review(arguments);
+        case SAVE_AT:
+            return saveAt(arguments);
+        default:
+            throw new Error(MESSAGE_UNRECOGNIZE);
+        }
+    }
 	
 	/* Add requires arguments to be of Events + Deadline
 	 * if deadline is empty string, means its is a floating task
@@ -102,7 +108,7 @@ public class Command {
 	 * 
 	 */
 	public static String display(String[] arguments){
-		for (int i = 0; i<cachedFile.size(); i++){
+		for (int i = 0; i < cachedFile.size(); i++){
 			System.out.println(cachedFile.get(i));
 		}
 		return "Display";
@@ -146,6 +152,7 @@ public class Command {
 	public static String saveAt(String[] arguments) {
 		return "Successfully Saved";
 	}
+
 	public static void checkCached(){
 		System.out.println(cachedFile);
 	}

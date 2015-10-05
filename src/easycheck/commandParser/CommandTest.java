@@ -55,7 +55,7 @@ public class CommandTest {
 		testOneCommand("Display","display",input1);
 		Command.checkCached();
 	}
-	
+	// TODO this should be tested by command executor
 	private void testOneCommand(String expected, String command, String[] arguments) throws IOException {
 		assertEquals(expected,Command.executeCommand(command,arguments));
 	}
