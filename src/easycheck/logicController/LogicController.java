@@ -5,7 +5,8 @@ import easycheck.commandParser.CommandParser;
 import easycheck.storage.StorageManager;
 
 public class LogicController {
-	private CommandParser commandParser;
+    private CommandParser commandParser;
+    private CommandExecutor commandExecutor;
 	private StorageManager storageManager;
 	
 	/**
@@ -15,6 +16,7 @@ public class LogicController {
 	 */	
 	public LogicController(String easyCheckFile){
 		commandParser = new CommandParser();
+		commandExecutor = new CommandExecutor();
 		storageManager = new StorageManager(easyCheckFile);
 	}
 	
@@ -27,7 +29,7 @@ public class LogicController {
 	 */	
 	public String executeCommand(String userInput){
 		Command command = commandParser.parseCommand(userInput);
-		return storageManager.execute(command);
+		return commandExecutor.executeCommand(command);
 	}
 	
 	
