@@ -14,17 +14,20 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
 public class CalendarEvent extends Event {
+	/* implementation using JSONArray
 	private static final int EVENT_INDEX_ARRAY_INDEX = 1;
 	private static final int EVENT_NAME_ARRAY_INDEX = 2;
 	private static final int EVENT_START_DATE_ARRAY_INDEX = 3;
 	private static final int EVENT_END_DATE_ARRAY_INDEX = 4;
-	
+	*/
+
 	private static final String DATE_AND_TIME_OUTPUT_FORMAT = "E dd.mm.yyyy 'at' hh:mm:ss a";
 	private static final String DATE_AND_TIME_INPUT_FORMAT = "dd.MMM.yyyy HH:mm:ss";
-	private static final String MESSAGE_JSON_INPUT_ERROR = "Error parsing date string from File at event: ";
+	private static final String MESSAGE_JSON_INPUT_ERROR = "Error parsing JSON Object from File at event: ";
 	private static final String MESSAGE_INVALID_DATE_STRING = "Error invalid date format";
 	private static final String MESSAGE_END_DATE_INPUT_ERROR = "Error while parsing new end date and time";
 	private static final String MESSAGE_START_DATE_INPUT_ERROR = "Error while parsing new start date and time";
@@ -57,6 +60,18 @@ public class CalendarEvent extends Event {
 		SimpleDateFormat ft = 
 			      new SimpleDateFormat (DATE_AND_TIME_INPUT_FORMAT);
 		Object obj = JSONValue.parse(jSonString);
+		JSONObject jsonObj = (JSONObject) obj;
+		try {
+		Integer eventIndex = (Integer) jsonObj.get(JSON_EVENT_INDEX);
+		String eventName = (String) jsonObj.get(JSON_EVENT_NAME);
+		startDateAndTime = ft.parse((String)jsonObj.get(JSON_START_DATE));
+		endDateAndTime = ft.parse((String)jsonObj.get(JSON_END_DATE));
+		this.setEventIndex(eventIndex.intValue());
+		this.setEventName(eventName);
+		} catch(ParseException e) {
+			System.out.println(MESSAGE_JSON_INPUT_ERROR + jSonString);
+		}
+		/*
 		JSONArray array=(JSONArray)obj;
 		Integer eventIndex = (Integer) array.get(EVENT_INDEX_ARRAY_INDEX);
 		String eventName = (String) array.get(EVENT_NAME_ARRAY_INDEX);
@@ -69,6 +84,7 @@ public class CalendarEvent extends Event {
 		
 		this.setEventIndex(eventIndex.intValue());
 		this.setEventName(eventName);
+		*/
 	}
 	
 	/**

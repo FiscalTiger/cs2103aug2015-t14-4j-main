@@ -4,6 +4,7 @@ import easycheck.commandParser.Command;
 import easycheck.commandParser.CommandParser;
 import easycheck.storage.StorageManager;
 
+
 public class LogicController {
     private CommandParser commandParser;
     private CommandExecutor commandExecutor;
