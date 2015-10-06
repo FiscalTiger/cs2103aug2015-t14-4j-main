@@ -17,6 +17,7 @@ public class ToDoEvent extends Event {
 	private static final int EVENT_DUE_DATE_ARRAY_INDEX = 3;
 	
 	private static final String DATE_AND_TIME_FORMAT = "E MM.dd.yyyy 'at' hh:mm:ss a zzz";
+	private static final String MESSAGE_INVALID_DATE_STRING = "Error invalid date format";
 	private static final String MESSAGE_JSON_INPUT_ERROR = "Error parsing date string from File at event: ";
 	private static final String MESSAGE_DUE_DATE_INPUT_ERROR = "Error while parsing new due date and time";
 	private static final String MESSAGE_JSON_STRING_ERROR = "Error in toJsonString method, most likely coding error";
@@ -30,7 +31,15 @@ public class ToDoEvent extends Event {
 	private Date dueDateAndTime;
 	
 	public ToDoEvent(int eventIndex, String eventName, String dueDateAndTimeString) {
-		
+		SimpleDateFormat ft =
+				new SimpleDateFormat(DATE_AND_TIME_FORMAT);
+		this.setEventIndex(eventIndex);
+		this.setEventName(eventName);
+		try {
+			dueDateAndTime = ft.parse(dueDateAndTimeString);
+		} catch(ParseException e) {
+			System.out.println(MESSAGE_INVALID_DATE_STRING);
+		}
 	}
 	
 	public ToDoEvent(String jSonString) {
