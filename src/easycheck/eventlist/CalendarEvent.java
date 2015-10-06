@@ -22,7 +22,8 @@ public class CalendarEvent extends Event {
 	private static final int EVENT_START_DATE_ARRAY_INDEX = 3;
 	private static final int EVENT_END_DATE_ARRAY_INDEX = 4;
 	
-	private static final String DATE_AND_TIME_FORMAT = "E MM.dd.yyyy 'at' hh:mm:ss a zzz";
+	private static final String DATE_AND_TIME_OUTPUT_FORMAT = "E dd.mm.yyyy 'at' hh:mm:ss a";
+	private static final String DATE_AND_TIME_INPUT_FORMAT = "dd.MMM.yyyy HH:mm:ss";
 	private static final String MESSAGE_JSON_INPUT_ERROR = "Error parsing date string from File at event: ";
 	private static final String MESSAGE_INVALID_DATE_STRING = "Error invalid date format";
 	private static final String MESSAGE_END_DATE_INPUT_ERROR = "Error while parsing new end date and time";
@@ -41,7 +42,7 @@ public class CalendarEvent extends Event {
 	
 	public CalendarEvent(int eventIndex, String eventName, String startDateAndTimeString, String endDateAndTimeString) {
 		SimpleDateFormat ft =
-				new SimpleDateFormat(DATE_AND_TIME_FORMAT);
+				new SimpleDateFormat(DATE_AND_TIME_INPUT_FORMAT);
 		this.setEventIndex(eventIndex);
 		this.setEventName(eventName);
 		try {
@@ -54,7 +55,7 @@ public class CalendarEvent extends Event {
 	
 	public CalendarEvent(String jSonString) {
 		SimpleDateFormat ft = 
-			      new SimpleDateFormat (DATE_AND_TIME_FORMAT);
+			      new SimpleDateFormat (DATE_AND_TIME_INPUT_FORMAT);
 		Object obj = JSONValue.parse(jSonString);
 		JSONArray array=(JSONArray)obj;
 		Integer eventIndex = (Integer) array.get(EVENT_INDEX_ARRAY_INDEX);
@@ -93,7 +94,7 @@ public class CalendarEvent extends Event {
 	 */
 	public void setStartDateAndTime(String newDateString) {
 		SimpleDateFormat ft = 
-			      new SimpleDateFormat (DATE_AND_TIME_FORMAT);
+			      new SimpleDateFormat (DATE_AND_TIME_INPUT_FORMAT);
 		try {
 			startDateAndTime = ft.parse(newDateString);
 		} catch(ParseException e) {
@@ -108,7 +109,7 @@ public class CalendarEvent extends Event {
 	 */
 	public void setEndDateAndTime(String newDateString) {
 		SimpleDateFormat ft = 
-			      new SimpleDateFormat (DATE_AND_TIME_FORMAT);
+			      new SimpleDateFormat (DATE_AND_TIME_INPUT_FORMAT);
 		try {
 			endDateAndTime = ft.parse(newDateString);
 		} catch(ParseException e) {
@@ -121,7 +122,7 @@ public class CalendarEvent extends Event {
 	 */
 	public String toString() {
 		SimpleDateFormat ft = 
-			      new SimpleDateFormat(DATE_AND_TIME_FORMAT);
+			      new SimpleDateFormat(DATE_AND_TIME_OUTPUT_FORMAT);
 		return String.format(
 				MESSAGE_TO_STRING_TEMPLATE, this.getEventName(), ft.format(startDateAndTime), ft.format(endDateAndTime));
 	}
@@ -132,7 +133,7 @@ public class CalendarEvent extends Event {
 	 */
 	public String toJsonString() {
 		SimpleDateFormat ft = 
-			      new SimpleDateFormat(DATE_AND_TIME_FORMAT);
+			      new SimpleDateFormat(DATE_AND_TIME_INPUT_FORMAT);
 		Map obj=new LinkedHashMap();
 		obj.put(JSON_TYPE, "calendar");
 		obj.put(JSON_EVENT_INDEX, new Integer(this.getEventIndex()));

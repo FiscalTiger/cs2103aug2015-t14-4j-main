@@ -16,7 +16,8 @@ public class ToDoEvent extends Event {
 	private static final int EVENT_NAME_ARRAY_INDEX = 2;
 	private static final int EVENT_DUE_DATE_ARRAY_INDEX = 3;
 	
-	private static final String DATE_AND_TIME_FORMAT = "E MM.dd.yyyy 'at' hh:mm:ss a zzz";
+	private static final String DATE_AND_TIME_OUTPUT_FORMAT = "E dd.mm.yyyy 'at' hh:mm:ss a";
+	private static final String DATE_AND_TIME_INPUT_FORMAT = "dd.MMM.yyyy HH:mm:ss";
 	private static final String MESSAGE_INVALID_DATE_STRING = "Error invalid date format";
 	private static final String MESSAGE_JSON_INPUT_ERROR = "Error parsing date string from File at event: ";
 	private static final String MESSAGE_DUE_DATE_INPUT_ERROR = "Error while parsing new due date and time";
@@ -32,7 +33,7 @@ public class ToDoEvent extends Event {
 	
 	public ToDoEvent(int eventIndex, String eventName, String dueDateAndTimeString) {
 		SimpleDateFormat ft =
-				new SimpleDateFormat(DATE_AND_TIME_FORMAT);
+				new SimpleDateFormat(DATE_AND_TIME_INPUT_FORMAT);
 		this.setEventIndex(eventIndex);
 		this.setEventName(eventName);
 		try {
@@ -44,7 +45,7 @@ public class ToDoEvent extends Event {
 	
 	public ToDoEvent(String jSonString) {
 		SimpleDateFormat ft = 
-			      new SimpleDateFormat (DATE_AND_TIME_FORMAT);
+			      new SimpleDateFormat (DATE_AND_TIME_INPUT_FORMAT);
 		Object obj = JSONValue.parse(jSonString);
 		JSONArray array=(JSONArray)obj;
 		Integer eventIndex = (Integer) array.get(EVENT_INDEX_ARRAY_INDEX);
@@ -74,7 +75,7 @@ public class ToDoEvent extends Event {
 	 */
 	public void setDueDateAndTime(String newDateString) {
 		SimpleDateFormat ft = 
-			      new SimpleDateFormat (DATE_AND_TIME_FORMAT);
+			      new SimpleDateFormat (DATE_AND_TIME_INPUT_FORMAT);
 		try {
 			dueDateAndTime = ft.parse(newDateString);
 		} catch(ParseException e) {
@@ -87,7 +88,7 @@ public class ToDoEvent extends Event {
 	 */
 	public String toString() {
 		SimpleDateFormat ft = 
-			      new SimpleDateFormat(DATE_AND_TIME_FORMAT);
+			      new SimpleDateFormat(DATE_AND_TIME_OUTPUT_FORMAT);
 		return String.format(
 				MESSAGE_TO_STRING_TEMPLATE, this.getEventName(), ft.format(dueDateAndTime));
 	}
@@ -98,7 +99,7 @@ public class ToDoEvent extends Event {
 	 */
 	public String toJsonString() {
 		SimpleDateFormat ft = 
-			      new SimpleDateFormat(DATE_AND_TIME_FORMAT);
+			      new SimpleDateFormat(DATE_AND_TIME_INPUT_FORMAT);
 		Map obj=new LinkedHashMap();
 		obj.put(JSON_TYPE, "calendar");
 		obj.put(JSON_EVENT_INDEX, new Integer(this.getEventIndex()));
