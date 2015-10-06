@@ -24,6 +24,7 @@ public class CalendarEvent extends Event {
 	
 	private static final String DATE_AND_TIME_FORMAT = "E MM.dd.yyyy 'at' hh:mm:ss a zzz";
 	private static final String MESSAGE_JSON_INPUT_ERROR = "Error parsing date string from File at event: ";
+	private static final String MESSAGE_INVALID_DATE_STRING = "Error invalid date format";
 	private static final String MESSAGE_END_DATE_INPUT_ERROR = "Error while parsing new end date and time";
 	private static final String MESSAGE_START_DATE_INPUT_ERROR = "Error while parsing new start date and time";
 	private static final String MESSAGE_JSON_STRING_ERROR = "Error in toJsonString method, most likely coding error";
@@ -39,7 +40,16 @@ public class CalendarEvent extends Event {
 	private Date endDateAndTime;
 	
 	public CalendarEvent(int eventIndex, String eventName, String startDateAndTimeString, String endDateAndTimeString) {
-		
+		SimpleDateFormat ft =
+				new SimpleDateFormat(DATE_AND_TIME_FORMAT);
+		this.setEventIndex(eventIndex);
+		this.setEventName(eventName);
+		try {
+			startDateAndTime = ft.parse(startDateAndTimeString);
+			endDateAndTime = ft.parse(endDateAndTimeString);
+		} catch(ParseException e) {
+			System.out.println(MESSAGE_INVALID_DATE_STRING);
+		}
 	}
 	
 	public CalendarEvent(String jSonString) {
@@ -110,7 +120,10 @@ public class CalendarEvent extends Event {
 	 * Returns the string form of this calendar event
 	 */
 	public String toString() {
-		return String.format(MESSAGE_TO_STRING_TEMPLATE, this.getEventName(), startDateAndTime, endDateAndTime);
+		SimpleDateFormat ft = 
+			      new SimpleDateFormat(DATE_AND_TIME_FORMAT);
+		return String.format(
+				MESSAGE_TO_STRING_TEMPLATE, this.getEventName(), ft.format(startDateAndTime), ft.format(endDateAndTime));
 	}
 	
 	/**
