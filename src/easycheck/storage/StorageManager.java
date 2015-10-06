@@ -2,6 +2,7 @@ package easycheck.storage;
 
 import easycheck.commandParser.Command;
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 
 /*
@@ -14,10 +15,31 @@ public class StorageManager {
 	private ArrayList<EventInterface> easyCheckEvents;
 	
 	public StorageManager(String easyCheckFileName) {
+		if (!checkFileExists(easyCheckFileName)){
+			createFile(easyCheckFileName);
+		}
 		easyCheckFile = new File(easyCheckFileName);
 		easyCheckEvents = readDataFromEasyCheckFile();
 	}
 	
+	private boolean checkFileExists(String easyCheckFileName) {
+		File newEasyCheckFile = new File(easyCheckFileName);
+		if (newEasyCheckFile.exists()){
+			return true;
+		}
+		return false;
+	}
+
+	private void createFile(String easyCheckFileName) {
+		File newEasyCheckFile = new File(easyCheckFileName);
+		try {
+			newEasyCheckFile.createNewFile();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+	}
+
 	public String execute(Command cmd) {
 		return null;
 	}
