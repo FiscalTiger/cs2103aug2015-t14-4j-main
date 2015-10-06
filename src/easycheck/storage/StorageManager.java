@@ -4,6 +4,7 @@ import easycheck.commandParser.Command;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import org.json.simple.JSONObject;
 
 /*
  * Storage manager for Easy Check application.
@@ -18,14 +19,14 @@ public class StorageManager {
 		if (!checkFileExists(easyCheckFileName)){
 			createFile(easyCheckFileName);
 		}
-		easyCheckFile = new File(easyCheckFileName);
+		this.easyCheckFile = new File(easyCheckFileName);
 		easyCheckEvents = readDataFromEasyCheckFile();
 	}
 	
 	private boolean checkFileExists(String easyCheckFileName) {
 		File newEasyCheckFile = new File(easyCheckFileName);
 		if (newEasyCheckFile.exists()){
-			return true;
+			return true; 
 		}
 		return false;
 	}
