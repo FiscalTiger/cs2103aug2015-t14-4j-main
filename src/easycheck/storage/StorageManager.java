@@ -13,7 +13,7 @@ import org.json.simple.JSONObject;
  */
 public class StorageManager {
 	private File easyCheckFile;
-	private ArrayList<EventInterface> easyCheckEvents;
+	private ArrayList<Event> easyCheckEvents;
 	
 	public StorageManager(String easyCheckFileName) {
 		if (!checkFileExists(easyCheckFileName)){
@@ -45,7 +45,7 @@ public class StorageManager {
 		return null;
 	}
 	
-	private ArrayList<EventInterface> readDataFromEasyCheckFile() {
+	private ArrayList<Event> readDataFromEasyCheckFile() {
 		return null;
 	}
 	
