@@ -1,6 +1,7 @@
 package easycheck.storage;
 
 import easycheck.commandParser.Command;
+import easycheck.eventlist.Event;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;

@@ -1,7 +1,5 @@
 package easycheck.eventlist;
 
-import org.json.simple.JSONObject;
-
 /*
  * Class abstraction for events stored by the EasyCheck application
  * @author Andrew Pouleson
@@ -58,10 +56,12 @@ public class Event implements Comparable<Event> {
 	 * (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
+	@Override
 	public String toString() {
 		return eventIndex + ". " + eventName + "\n";
 	}
 	
+	@Override
 	public boolean equals(Object obj) {
 		if (!(obj instanceof Event)) {
 			return false;
@@ -71,6 +71,7 @@ public class Event implements Comparable<Event> {
 		}
 	}
 	
+	@Override
 	public int compareTo(Event e) {
 		return eventName.compareTo(e.getEventName());
 	}
