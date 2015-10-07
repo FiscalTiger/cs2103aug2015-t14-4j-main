@@ -17,8 +17,8 @@ public class LogicController {
 	 */	
 	public LogicController(String easyCheckFile){
 		commandParser = new CommandParser();
-		commandExecutor = new CommandExecutor();
 		storageManager = new StorageManager(easyCheckFile);
+		commandExecutor = new CommandExecutor(storageManager.readDataFromEasyCheckFile());
 	}
 	
 	/**

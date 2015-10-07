@@ -19,15 +19,23 @@ public class Command {
 	private static final String MESSAGE_UNRECOGNIZE = "Unrecognized command input!";
 	
 	static ArrayList<String> cachedFile = new ArrayList<String>();
-    public COMMAND_TYPE commandType;
-    public String[] arguments;
+    private COMMAND_TYPE commandType;
+    private String[] arguments;
     
     public Command(String commandType, String[] arguments){
         this.commandType = determineCommandType(commandType);
         this.arguments = arguments;
     }
+    
+    public COMMAND_TYPE getCommandType() {
+    	return commandType;
+    }
+    
+    public String[] getCommandArguments() {
+    	return arguments;
+    }
 
-	enum COMMAND_TYPE {
+	public enum COMMAND_TYPE {
 		ADD, ADD_EVENT,DISPLAY,UPDATE, DELETE, UNDO, SEARCH, REVIEW, SAVE_AT, INVALID
 	};
 	

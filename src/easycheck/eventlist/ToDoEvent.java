@@ -12,13 +12,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
-public class ToDoEvent extends Event {
-	/* JSONArray Implementation
-	private static final int EVENT_INDEX_ARRAY_INDEX = 1;
-	private static final int EVENT_NAME_ARRAY_INDEX = 2;
-	private static final int EVENT_DUE_DATE_ARRAY_INDEX = 3;
-	*/
-	
+public class ToDoEvent extends Event {	
 	private static final String DATE_AND_TIME_OUTPUT_FORMAT = "E dd.mm.yyyy 'at' hh:mm:ss a";
 	private static final String DATE_AND_TIME_INPUT_FORMAT = "dd.MMM.yyyy HH:mm:ss";
 	private static final String MESSAGE_INVALID_DATE_STRING = "Error invalid date format";
@@ -60,21 +54,6 @@ public class ToDoEvent extends Event {
 		} catch(ParseException e) {
 			System.out.println(MESSAGE_JSON_INPUT_ERROR + jSonString);
 		}
-		
-		
-		/*
-		JSONArray array=(JSONArray)obj;
-		Integer eventIndex = (Integer) array.get(EVENT_INDEX_ARRAY_INDEX);
-		String eventName = (String) array.get(EVENT_NAME_ARRAY_INDEX);
-		try {
-			dueDateAndTime = ft.parse((String)array.get(EVENT_DUE_DATE_ARRAY_INDEX));
-		} catch(ParseException e) {
-			System.out.println(MESSAGE_JSON_INPUT_ERROR + eventIndex);
-		}
-		
-		this.setEventIndex(eventIndex.intValue());
-		this.setEventName(eventName);
-		*/
 	}
 	
 	/**

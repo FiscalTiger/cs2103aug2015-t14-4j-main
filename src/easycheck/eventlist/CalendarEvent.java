@@ -18,15 +18,8 @@ import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
 public class CalendarEvent extends Event {
-	/* implementation using JSONArray
-	private static final int EVENT_INDEX_ARRAY_INDEX = 1;
-	private static final int EVENT_NAME_ARRAY_INDEX = 2;
-	private static final int EVENT_START_DATE_ARRAY_INDEX = 3;
-	private static final int EVENT_END_DATE_ARRAY_INDEX = 4;
-	*/
-
-	private static final String DATE_AND_TIME_OUTPUT_FORMAT = "E dd.mm.yyyy 'at' hh:mm:ss a";
-	private static final String DATE_AND_TIME_INPUT_FORMAT = "dd.MMM.yyyy HH:mm:ss";
+	private static final String DATE_AND_TIME_OUTPUT_FORMAT = "E dd.mm.yyyy 'at' hh:mm a";
+	private static final String DATE_AND_TIME_INPUT_FORMAT = "dd.MMM.yyyy HH:mm";
 	private static final String MESSAGE_JSON_INPUT_ERROR = "Error parsing JSON Object from File at event: ";
 	private static final String MESSAGE_INVALID_DATE_STRING = "Error invalid date format";
 	private static final String MESSAGE_END_DATE_INPUT_ERROR = "Error while parsing new end date and time";
@@ -71,20 +64,6 @@ public class CalendarEvent extends Event {
 		} catch(ParseException e) {
 			System.out.println(MESSAGE_JSON_INPUT_ERROR + jSonString);
 		}
-		/*
-		JSONArray array=(JSONArray)obj;
-		Integer eventIndex = (Integer) array.get(EVENT_INDEX_ARRAY_INDEX);
-		String eventName = (String) array.get(EVENT_NAME_ARRAY_INDEX);
-		try {
-			startDateAndTime = ft.parse((String)array.get(EVENT_START_DATE_ARRAY_INDEX));
-			endDateAndTime = ft.parse((String)array.get(EVENT_END_DATE_ARRAY_INDEX));
-		} catch(ParseException e) {
-			System.out.println(MESSAGE_JSON_INPUT_ERROR + eventIndex);
-		}
-		
-		this.setEventIndex(eventIndex.intValue());
-		this.setEventName(eventName);
-		*/
 	}
 	
 	/**
