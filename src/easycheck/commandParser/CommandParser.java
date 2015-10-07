@@ -79,8 +79,14 @@ public class CommandParser {
 
     private Command createCommand(String commandType) {
         String[] arguments = null;
+        if (commandType.equalsIgnoreCase(COMMAND_TYPE_DISPLAY)) {
+        } else if (commandType.equalsIgnoreCase(COMMAND_TYPE_EXIT)) {
+        } else {
+            System.err.println(MESSAGE_UNRECOGNIZE);
+        }
         Command command = new Command(commandType, arguments);
         return command;
+        
     }
 
     private String[] splitCommand(String userCommand) {
