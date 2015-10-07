@@ -28,7 +28,7 @@ public class CommandParser {
     // private final String COMMAND_TYPE_LABEL = "label";
     // private final String COMMAND_TYPE_REMIND = "remind";
     // private final String COMMAND_TYPE_SEARCH = "search";
-    // private final String COMMAND_TYPE_DISPLAY = "display";
+    private final String COMMAND_TYPE_DISPLAY = "display";
     // private final String COMMAND_TYPE_ARCHIVE = "archive";
     // private final String COMMAND_TYPE_ARCHIVE_DONE = "archiveDone";
     // private final String COMMAND_TYPE_DELETE_DONE = "deleteDone";
@@ -37,7 +37,7 @@ public class CommandParser {
     // private final String COMMAND_TYPE_STORE_LOCATION = "storeLocation";
     // private final String COMMAND_TYPE_NEXT = "next";
     // private final String COMMAND_TYPE_UNDO = "undo";
-    // private final String COMMAND_TYPE_EXIT = "exit";
+    private final String COMMAND_TYPE_EXIT = "exit";
 
     // expected number of parameters for all commands
     private final int[] ARGUMENT_NUM_MIN_MAX_ADD = { 1, 2 };
@@ -53,14 +53,14 @@ public class CommandParser {
     // private final int[] ARGUMENT_NUM_MIN_MAX_ARCHIVE = { 1, 1 };
     // private final int[] ARGUMENT_NUM_MIN_MAX_STORE_LOCATION = { 1, 1 };
     
-    // private final int[] ARGUMENT_NUM_MIN_MAX_DISPLAY = { 0, 0 };
+    private final int[] ARGUMENT_NUM_MIN_MAX_DISPLAY = { 0, 0 };
     // private final int[] ARGUMENT_NUM_MIN_MAX_ARCHIVE_DONE = { 0, 0 };
     // private final int[] ARGUMENT_NUM_MIN_MAX_DELETE_DONE = { 0, 0 };
     // private final int[] ARGUMENT_NUM_MIN_MAX_OVERDUE = { 0, 0 };
     // private final int[] ARGUMENT_NUM_MIN_MAX_DELETE_TODAY = { 0, 0 };
     // private final int[] ARGUMENT_NUM_MIN_MAX_NEXT = { 0, 0 };
     // private final int[] ARGUMENT_NUM_MIN_MAX_UNDO = { 0, 0 };
-    // private final int[] ARGUMENT_NUM_MIN_MAX_EXIT = { 0, 0 };
+    private final int[] ARGUMENT_NUM_MIN_MAX_EXIT = { 0, 0 };
 
     // flexi command keywords
     private final String[] FLEXI_KEYWORDS = {" by ", " to ", " until ", " for "};
@@ -77,9 +77,10 @@ public class CommandParser {
         }
     }
 
-    private Command createCommand(String string) {
-        // TODO not needed yet
-        return null;
+    private Command createCommand(String commandType) {
+        String[] arguments = null;
+        Command command = new Command(commandType, arguments);
+        return command;
     }
 
     private String[] splitCommand(String userCommand) {
