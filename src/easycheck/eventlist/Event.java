@@ -6,6 +6,7 @@ import java.text.SimpleDateFormat;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
 /*
@@ -31,6 +32,13 @@ public class Event implements Comparable<Event> {
 	public Event(int eventIndex, String eventName) {
 		this.eventIndex = eventIndex;
 		this.eventName = eventName;
+	}
+	
+	public Event(JSONObject jsonObj){
+		Integer eventIndex = (Integer) jsonObj.get(JSON_EVENT_INDEX);
+		String eventName = (String) jsonObj.get(JSON_EVENT_NAME);
+		this.setEventIndex(eventIndex.intValue());
+		this.setEventName(eventName);
 	}
 	
 	/**

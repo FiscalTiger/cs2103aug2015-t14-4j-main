@@ -2,6 +2,7 @@ package easycheck.storage;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Scanner;
@@ -22,7 +23,9 @@ import easycheck.eventlist.ToDoEvent;
 public class StorageManager {
 	private static final String EVENT_TYPE_CALENDAR_KEY = "calendar";
 	private static final String EVENT_TYPE_TODO_KEY = "todo";
+	private static final String EVENT_TYPE_BASE_KEY = "base";
 	private static final String JSON_TYPE = "type";
+	
 	
 	private File easyCheckFile;
 	
@@ -66,6 +69,8 @@ public class StorageManager {
 					easyCheckEvents.add(new CalendarEvent(jsonObj));
 				} else if (jsonObjType == EVENT_TYPE_TODO_KEY){
 					easyCheckEvents.add(new ToDoEvent(jsonObj));
+				} else if (jsonObjType == EVENT_TYPE_BASE_KEY){
+					easyCheckEvents.add(new Event(jsonObj));
 				}
 				// TODO handle if type is unrecognised
 			}
@@ -82,9 +87,11 @@ public class StorageManager {
 		return easyCheckEvents;
 	}
 	
-	public void writeDataToEasyCheckFile(ArrayList<Event> eventList){
+	public void writeDataToEasyCheckFile(ArrayList<Event> eventList) throws IOException{
+		FileWriter writer = new FileWriter(easyCheckFile);
 		for (Event event: eventList){
-			System.out.println(event.toJsonString());
+			writer.write(event.toJsonString() + "%n");
 		}
+		writer.close();
 	}
 }
