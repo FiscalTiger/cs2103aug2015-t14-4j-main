@@ -56,20 +56,19 @@ public class CalendarEvent extends Event {
 		}
 	}
 	
-	public CalendarEvent(String jSonString) {
+	public CalendarEvent(JSONObject jsonObj) {
 		SimpleDateFormat ft = 
 			      new SimpleDateFormat (DATE_AND_TIME_INPUT_FORMAT);
-		Object obj = JSONValue.parse(jSonString);
-		JSONObject jsonObj = (JSONObject) obj;
-		try {
 		Integer eventIndex = (Integer) jsonObj.get(JSON_EVENT_INDEX);
 		String eventName = (String) jsonObj.get(JSON_EVENT_NAME);
+		try {
+		
 		startDateAndTime = ft.parse((String)jsonObj.get(JSON_START_DATE));
 		endDateAndTime = ft.parse((String)jsonObj.get(JSON_END_DATE));
 		this.setEventIndex(eventIndex.intValue());
 		this.setEventName(eventName);
 		} catch(ParseException e) {
-			System.out.println(MESSAGE_JSON_INPUT_ERROR + jSonString);
+			System.out.println(MESSAGE_JSON_INPUT_ERROR + eventName);
 		}
 		/*
 		JSONArray array=(JSONArray)obj;

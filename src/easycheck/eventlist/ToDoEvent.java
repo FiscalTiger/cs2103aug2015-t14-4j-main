@@ -46,19 +46,18 @@ public class ToDoEvent extends Event {
 		}
 	}
 	
-	public ToDoEvent(String jSonString) {
+	public ToDoEvent(JSONObject jsonObj) {
 		SimpleDateFormat ft = 
 			      new SimpleDateFormat (DATE_AND_TIME_INPUT_FORMAT);
-		Object obj = JSONValue.parse(jSonString);
-		JSONObject jsonObj=(JSONObject)obj;
-		try {
 		Integer eventIndex = (Integer) jsonObj.get(JSON_EVENT_INDEX);
 		String eventName = (String) jsonObj.get(JSON_EVENT_NAME);
+		try {
+		
 		dueDateAndTime = ft.parse((String)jsonObj.get(JSON_DUE_DATE));
 		this.setEventIndex(eventIndex.intValue());
 		this.setEventName(eventName);
 		} catch(ParseException e) {
-			System.out.println(MESSAGE_JSON_INPUT_ERROR + jSonString);
+			System.out.println(MESSAGE_JSON_INPUT_ERROR + eventName);
 		}
 		
 		
@@ -118,7 +117,7 @@ public class ToDoEvent extends Event {
 		SimpleDateFormat ft = 
 			      new SimpleDateFormat(DATE_AND_TIME_INPUT_FORMAT);
 		Map obj=new LinkedHashMap();
-		obj.put(JSON_TYPE, "calendar");
+		obj.put(JSON_TYPE, "todo");
 		obj.put(JSON_EVENT_INDEX, new Integer(this.getEventIndex()));
 		obj.put(JSON_EVENT_NAME, this.getEventName());
 		obj.put(JSON_DUE_DATE, ft.format(dueDateAndTime));

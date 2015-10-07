@@ -21,6 +21,7 @@ public class LogicController {
 		storageManager = new StorageManager(easyCheckFile);
 	}
 	
+	
 	/**
 	 * This operation is called by UserInterface to execute a command
 	 * 
