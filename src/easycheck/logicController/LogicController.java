@@ -21,6 +21,7 @@ public class LogicController {
 		commandExecutor = new CommandExecutor(storageManager.readDataFromEasyCheckFile());
 	}
 	
+	
 	/**
 	 * This operation is called by UserInterface to execute a command
 	 * 
