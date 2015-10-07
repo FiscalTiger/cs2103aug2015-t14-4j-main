@@ -31,7 +31,8 @@ public class LogicController {
 	 */	
 	public String executeCommand(String userInput){
 		Command command = commandParser.parseCommand(userInput);
-		return commandExecutor.executeCommand(command);
+		String responseString = commandExecutor.executeCommand(command);
+		storageManager.writeDataToEasyCheckFile(commandExecutor.getEventList());
 	}
 	
 	

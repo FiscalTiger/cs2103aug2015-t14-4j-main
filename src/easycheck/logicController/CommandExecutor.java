@@ -28,8 +28,7 @@ public class CommandExecutor {
 	 * @return responseString
 	 */
     
-    public String executeCommand(Command command)
-            throws IOException {
+    public String executeCommand(Command command) {
         switch (command.getCommandType()) {
         case ADD:
             return add(command.getCommandArguments());
@@ -50,7 +49,7 @@ public class CommandExecutor {
         case SAVE_AT:
             return saveAt(command.getCommandArguments());
         default:
-            throw new Error(MESSAGE_UNRECOGNIZE);
+            return MESSAGE_INVALID_COMMAND;
         }
     }
 	
@@ -70,11 +69,11 @@ public class CommandExecutor {
 	 * 
 	 */
 	private String display(String[] arguments){
-		
+		String responseTxt = "Your events:\n";
 		for (int i = 0; i < eventList.size(); i++){
-			System.out.println(eventList.get(i));
+			responseTxt += eventList.get(i);
 		}
-		return "Display";
+		return responseTxt;
 	}
 	
 	/* UPDATE requires arguments to be of "Event name" + "Updated Event" 
@@ -83,8 +82,7 @@ public class CommandExecutor {
 	private String update(String[] arguments) {
 		for (int i = 0; i<eventList.size(); i++){
 			if (eventList.get(i).getEventName().contains(arguments[0])){
-				eventList.remove(i);
-				eventList.add(i,arguments[1]);
+				eventList.get(i);
 			}
 		}
 		return "Updated Successfully";
@@ -118,7 +116,7 @@ public class CommandExecutor {
 		return "Successfully Saved";
 	}
 	
-	public ArrayList<Event> getCachedFile(){
+	public ArrayList<Event> getEventList(){
 		return eventList;
 	}
 

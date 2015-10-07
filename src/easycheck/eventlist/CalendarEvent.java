@@ -25,7 +25,7 @@ public class CalendarEvent extends Event {
 	private static final String MESSAGE_END_DATE_INPUT_ERROR = "Error while parsing new end date and time";
 	private static final String MESSAGE_START_DATE_INPUT_ERROR = "Error while parsing new start date and time";
 	private static final String MESSAGE_JSON_STRING_ERROR = "Error in toJsonString method, most likely coding error";
-	private static final String MESSAGE_TO_STRING_TEMPLATE = "%S from %s to %s";
+	private static final String MESSAGE_TO_STRING_TEMPLATE = "%S from %s to %s\n";
 	
 	private static final String JSON_TYPE = "type";
 	private static final String JSON_EVENT_INDEX = "index";
@@ -104,8 +104,11 @@ public class CalendarEvent extends Event {
 	public void setEndDateAndTime(String newDateString) {
 		SimpleDateFormat ft = 
 			      new SimpleDateFormat (DATE_AND_TIME_INPUT_FORMAT);
+		Date temp;
 		try {
-			endDateAndTime = ft.parse(newDateString);
+			temp = ft.parse(newDateString);
+			assert(startDateAndTime.before(temp));
+			endDateAndTime = temp;
 		} catch(ParseException e) {
 			System.out.println(MESSAGE_END_DATE_INPUT_ERROR);
 		}

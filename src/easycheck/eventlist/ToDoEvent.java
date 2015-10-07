@@ -19,7 +19,7 @@ public class ToDoEvent extends Event {
 	private static final String MESSAGE_JSON_INPUT_ERROR = "Error parsing JSON Object from File at event: ";
 	private static final String MESSAGE_DUE_DATE_INPUT_ERROR = "Error while parsing new due date and time";
 	private static final String MESSAGE_JSON_STRING_ERROR = "Error in toJsonString method, most likely coding error";
-	private static final String MESSAGE_TO_STRING_TEMPLATE = "%s due on %s";
+	private static final String MESSAGE_TO_STRING_TEMPLATE = "%s due on %s\n";
 	
 	private static final String JSON_TYPE = "type";
 	private static final String JSON_EVENT_INDEX = "index";
