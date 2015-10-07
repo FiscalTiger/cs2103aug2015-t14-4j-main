@@ -1,5 +1,7 @@
 package easycheck.logicController;
 
+import java.io.IOException;
+
 import easycheck.commandParser.Command;
 import easycheck.commandParser.CommandParser;
 import easycheck.storage.StorageManager;
@@ -32,7 +34,12 @@ public class LogicController {
 	public String executeCommand(String userInput){
 		Command command = commandParser.parseCommand(userInput);
 		String responseString = commandExecutor.executeCommand(command);
-		storageManager.writeDataToEasyCheckFile(commandExecutor.getEventList());
+		try {
+			storageManager.writeDataToEasyCheckFile(commandExecutor.getEventList());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		return responseString;
 	}
 	
