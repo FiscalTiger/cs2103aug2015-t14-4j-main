@@ -1,13 +1,26 @@
 package easycheck.eventlist;
 
+import java.io.IOException;
+import java.io.StringWriter;
+import java.text.SimpleDateFormat;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
+import org.json.simple.JSONValue;
+
 /*
  * Class abstraction for events stored by the EasyCheck application
  * @author Andrew Pouleson
  */
 public class Event implements Comparable<Event> {
+	private static final String JSON_TYPE = "type";
+	private static final String JSON_EVENT_INDEX = "index";
+	private static final String JSON_EVENT_NAME = "name";
+	private static final String MESSAGE_JSON_STRING_ERROR = "Error in toJsonString method, most likely coding error";
+	
 	private int eventIndex;
 	private String eventName;
-	private String eventType;
+	
 	public Event() {}
 	
 	/**
@@ -78,7 +91,17 @@ public class Event implements Comparable<Event> {
 	
 	
 	public String toJsonString() {
-		return "";
-	
+		Map obj=new LinkedHashMap();
+		obj.put(JSON_TYPE, "base");
+		obj.put(JSON_EVENT_INDEX, new Integer(this.getEventIndex()));
+		obj.put(JSON_EVENT_NAME, this.getEventName());
+		
+		StringWriter out = new StringWriter();
+	    try {
+			JSONValue.writeJSONString(obj, out);
+		} catch (IOException e) {
+			System.out.println(MESSAGE_JSON_STRING_ERROR);
+		}
+	    return out.toString();
 	}
 }
