@@ -8,16 +8,15 @@ import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
-import org.json.simple.JSONArray;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
 public class ToDoEvent extends Event {	
-	private static final String DATE_AND_TIME_OUTPUT_FORMAT = "E dd.mm.yyyy 'at' hh:mm:ss a";
-	private static final String DATE_AND_TIME_INPUT_FORMAT = "dd.MMM.yyyy HH:mm:ss";
-	private static final String MESSAGE_INVALID_DATE_STRING = "Error invalid date format";
-	private static final String MESSAGE_JSON_INPUT_ERROR = "Error parsing JSON Object from File at event: ";
-	private static final String MESSAGE_DUE_DATE_INPUT_ERROR = "Error while parsing new due date and time";
+	private static final String DATE_AND_TIME_OUTPUT_FORMAT = "%s %d %s %d at %d:%02d";
+	private static final String DATE_AND_TIME_INPUT_FORMAT = "dd.MM.yyyy HH:mm";
 	private static final String MESSAGE_JSON_STRING_ERROR = "Error in toJsonString method, most likely coding error";
 	private static final String MESSAGE_TO_STRING_TEMPLATE = "%s due on %s\n";
 	
@@ -26,41 +25,29 @@ public class ToDoEvent extends Event {
 	private static final String JSON_EVENT_NAME = "name";
 	private static final String JSON_DUE_DATE = "due";
 	
-	private Date dueDateAndTime;
+	private static DateTimeFormatter fmt = DateTimeFormat.forPattern(DATE_AND_TIME_INPUT_FORMAT);
+	private DateTime deadline;
 	
 	public ToDoEvent(int eventIndex, String eventName, String dueDateAndTimeString) {
-		SimpleDateFormat ft =
-				new SimpleDateFormat(DATE_AND_TIME_INPUT_FORMAT);
 		this.setEventIndex(eventIndex);
 		this.setEventName(eventName);
-		try {
-			dueDateAndTime = ft.parse(dueDateAndTimeString);
-		} catch(ParseException e) {
-			System.out.println(MESSAGE_INVALID_DATE_STRING);
-		}
+		deadline = fmt.parseDateTime(dueDateAndTimeString);
 	}
 	
 	public ToDoEvent(JSONObject jsonObj) {
-		SimpleDateFormat ft = 
-			      new SimpleDateFormat (DATE_AND_TIME_INPUT_FORMAT);
 		Integer eventIndex = (Integer) jsonObj.get(JSON_EVENT_INDEX);
 		String eventName = (String) jsonObj.get(JSON_EVENT_NAME);
-		try {
-		
-		dueDateAndTime = ft.parse((String)jsonObj.get(JSON_DUE_DATE));
+		deadline = fmt.parseDateTime((String)jsonObj.get(JSON_DUE_DATE));
 		this.setEventIndex(eventIndex.intValue());
 		this.setEventName(eventName);
-		} catch(ParseException e) {
-			System.out.println(MESSAGE_JSON_INPUT_ERROR + eventName);
-		}
 	}
 	
 	/**
 	 * Returns the due date and time of this event
-	 * @return Date dueDateAndTime
+	 * @return DateTime deadline
 	 */
-	public Date getDueDateAndTime() {
-		return dueDateAndTime;
+	public DateTime getDeadline() {
+		return deadline;
 	}
 	
 	/**
@@ -69,23 +56,21 @@ public class ToDoEvent extends Event {
 	 * See Documentation for java.text.SimpleDateFormat
 	 */
 	public void setDueDateAndTime(String newDateString) {
-		SimpleDateFormat ft = 
-			      new SimpleDateFormat (DATE_AND_TIME_INPUT_FORMAT);
-		try {
-			dueDateAndTime = ft.parse(newDateString);
-		} catch(ParseException e) {
-			System.out.println(MESSAGE_DUE_DATE_INPUT_ERROR);
-		}
+		deadline = fmt.parseDateTime(newDateString);
 	}
 	
 	/**
 	 * Returns the string form of this calendar event
 	 */
 	public String toString() {
-		SimpleDateFormat ft = 
-			      new SimpleDateFormat(DATE_AND_TIME_OUTPUT_FORMAT);
+		DateTime.Property pDayOfTheWeek = deadline.dayOfWeek();
+		DateTime.Property pMonthOfYear = deadline.monthOfYear();
+		String deadlineString = String.format(DATE_AND_TIME_OUTPUT_FORMAT, pDayOfTheWeek.getAsShortText(),
+				deadline.getDayOfMonth(), pMonthOfYear.getAsShortText(), deadline.getYear(),
+				deadline.getHourOfDay(), deadline.getMinuteOfHour());
+		
 		return String.format(
-				MESSAGE_TO_STRING_TEMPLATE, this.getEventName(), ft.format(dueDateAndTime));
+				MESSAGE_TO_STRING_TEMPLATE, this.getEventName(), deadlineString);
 	}
 	
 	/**
@@ -93,13 +78,11 @@ public class ToDoEvent extends Event {
 	 * @return jsonString
 	 */
 	public String toJsonString() {
-		SimpleDateFormat ft = 
-			      new SimpleDateFormat(DATE_AND_TIME_INPUT_FORMAT);
 		Map obj=new LinkedHashMap();
 		obj.put(JSON_TYPE, "todo");
 		obj.put(JSON_EVENT_INDEX, new Integer(this.getEventIndex()));
 		obj.put(JSON_EVENT_NAME, this.getEventName());
-		obj.put(JSON_DUE_DATE, ft.format(dueDateAndTime));
+		obj.put(JSON_DUE_DATE, fmt.print(deadline));
 		
 		StringWriter out = new StringWriter();
 	    try {
