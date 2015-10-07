@@ -50,7 +50,7 @@ public class Command {
 			return COMMAND_TYPE.ADD_EVENT;
 		} else if (commandType.equalsIgnoreCase("display")) {
 			return COMMAND_TYPE.DISPLAY;
-		} else if (commandType.equalsIgnoreCase("edit")) {
+		} else if (commandType.equalsIgnoreCase("update")) {
 			return COMMAND_TYPE.UPDATE;
 		} else if (commandType.equalsIgnoreCase("delete")) {
 			return COMMAND_TYPE.DELETE;

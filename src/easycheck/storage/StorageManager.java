@@ -1,9 +1,5 @@
 package easycheck.storage;
 
-import easycheck.commandParser.Command;
-import easycheck.eventlist.Event;
-import easycheck.eventlist.CalendarEvent;
-import easycheck.eventlist.ToDoEvent;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -13,6 +9,10 @@ import java.util.Scanner;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
+
+import easycheck.eventlist.CalendarEvent;
+import easycheck.eventlist.Event;
+import easycheck.eventlist.ToDoEvent;
 
 /*
  * Storage manager for Easy Check application.
@@ -25,14 +25,12 @@ public class StorageManager {
 	private static final String JSON_TYPE = "type";
 	
 	private File easyCheckFile;
-	private ArrayList<Event> easyCheckEvents;
 	
 	public StorageManager(String easyCheckFileName) {
 		if (!checkFileExists(easyCheckFileName)){
 			createFile(easyCheckFileName);
 		}
 		this.easyCheckFile = new File(easyCheckFileName);
-		easyCheckEvents = readDataFromEasyCheckFile();
 	}
 	
 	private boolean checkFileExists(String easyCheckFileName) {
@@ -56,6 +54,7 @@ public class StorageManager {
 	
 	public ArrayList<Event> readDataFromEasyCheckFile() {
 		Scanner scanner;
+		ArrayList<Event> easyCheckEvents = new ArrayList<Event>();
 		JSONParser parser = new JSONParser();
 		try {
 			scanner = new Scanner(this.easyCheckFile);
@@ -70,6 +69,7 @@ public class StorageManager {
 				}
 				// TODO handle if type is unrecognised
 			}
+			scanner.close();
 		} catch (FileNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -77,9 +77,9 @@ public class StorageManager {
 			// TODO Auto-generated catch block
 			// for parsing obj to jsonObj
 			e.printStackTrace();
-		}
+		} 
 		
-		return null;
+		return easyCheckEvents;
 	}
 	
 	public void writeDataToEasyCheckFile(ArrayList<Event> eventList){

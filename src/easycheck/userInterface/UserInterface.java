@@ -29,7 +29,7 @@ public class UserInterface {
 		while(true) {
 			ui.display(MESSAGE_ENTER_COMMAND);
 			userInput = ui.getInput();
-			ui.executeCommand(userInput);
+			commandResponse = ui.executeCommand(userInput);
 			ui.display(commandResponse);
 		}
 	}
