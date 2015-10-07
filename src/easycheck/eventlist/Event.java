@@ -7,7 +7,7 @@ package easycheck.eventlist;
 public class Event implements Comparable<Event> {
 	private int eventIndex;
 	private String eventName;
-	
+	private String eventType;
 	public Event() {}
 	
 	/**
@@ -74,5 +74,11 @@ public class Event implements Comparable<Event> {
 	@Override
 	public int compareTo(Event e) {
 		return eventName.compareTo(e.getEventName());
+	}
+	
+	
+	public String toJsonString() {
+		return "";
+	
 	}
 }

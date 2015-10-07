@@ -82,4 +82,9 @@ public class StorageManager {
 		return null;
 	}
 	
+	public void writeDataToEasyCheckFile(ArrayList<Event> eventList){
+		for (Event event: eventList){
+			System.out.println(event.toJsonString());
+		}
+	}
 }
