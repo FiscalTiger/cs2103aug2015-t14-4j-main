@@ -49,6 +49,8 @@ public class CommandExecutor {
 	            return review(command.getCommandArguments());
 	        case SAVE_AT:
 	            return saveAt(command.getCommandArguments());
+	        case EXIT:
+	        	return exit(command.getCommandArguments());
 	        default:
 	            return MESSAGE_INVALID_COMMAND;
 	        }
@@ -117,6 +119,14 @@ public class CommandExecutor {
 
 	private String saveAt(String[] arguments) {
 		return "Successfully Saved";
+	}
+	
+	/* DISPLAY requires arguments to be of ""
+	 * 
+	 */
+	private String exit(String[] arguments){
+		System.exit(1);
+		return "";
 	}
 	
 	public ArrayList<Event> getEventList(){
