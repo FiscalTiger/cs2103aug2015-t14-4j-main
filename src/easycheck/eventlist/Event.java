@@ -35,7 +35,7 @@ public class Event implements Comparable<Event> {
 	}
 	
 	public Event(JSONObject jsonObj){
-		Integer eventIndex = (Integer) jsonObj.get(JSON_EVENT_INDEX);
+		Long eventIndex = (Long) jsonObj.get(JSON_EVENT_INDEX);
 		String eventName = (String) jsonObj.get(JSON_EVENT_NAME);
 		this.setEventIndex(eventIndex.intValue());
 		this.setEventName(eventName);

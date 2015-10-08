@@ -36,7 +36,7 @@ public class Command {
     }
 
 	public enum COMMAND_TYPE {
-		ADD, ADD_EVENT,DISPLAY,UPDATE, DELETE, UNDO, SEARCH, REVIEW, SAVE_AT, INVALID
+		ADD, ADD_EVENT,DISPLAY,UPDATE, DELETE, UNDO, SEARCH, REVIEW, SAVE_AT, INVALID, EXIT
 	};
 	
 	//TODO magic strings??
@@ -62,7 +62,10 @@ public class Command {
 			return COMMAND_TYPE.REVIEW;
 		} else if (commandType.equalsIgnoreCase("save_at")){
 			return COMMAND_TYPE.SAVE_AT; 
+		} else if (commandType.equalsIgnoreCase("exit")){
+			return COMMAND_TYPE.EXIT;
 		} else {
+		
 			return COMMAND_TYPE.INVALID;
 		}
 	}

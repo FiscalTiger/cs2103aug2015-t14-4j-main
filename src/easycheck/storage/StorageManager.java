@@ -33,7 +33,7 @@ public class StorageManager {
 		if (!checkFileExists(easyCheckFileName)){
 			createFile(easyCheckFileName);
 		}
-		this.easyCheckFile = new File(easyCheckFileName);
+		easyCheckFile = new File(easyCheckFileName);
 	}
 	
 	private boolean checkFileExists(String easyCheckFileName) {
@@ -60,17 +60,18 @@ public class StorageManager {
 		ArrayList<Event> easyCheckEvents = new ArrayList<Event>();
 		JSONParser parser = new JSONParser();
 		try {
-			scanner = new Scanner(this.easyCheckFile);
+			scanner = new Scanner(easyCheckFile);
 			while (scanner.hasNextLine()){
 				Object obj = parser.parse(scanner.nextLine());
 				JSONObject jsonObj = (JSONObject)obj;
 				String jsonObjType = (String) jsonObj.get(JSON_TYPE);
-				if (jsonObjType == EVENT_TYPE_CALENDAR_KEY){
+				if (jsonObjType.equals(EVENT_TYPE_CALENDAR_KEY)){
 					easyCheckEvents.add(new CalendarEvent(jsonObj));
-				} else if (jsonObjType == EVENT_TYPE_TODO_KEY){
+				} else if (jsonObjType.equals(EVENT_TYPE_TODO_KEY)){
 					easyCheckEvents.add(new ToDoEvent(jsonObj));
-				} else if (jsonObjType == EVENT_TYPE_BASE_KEY){
+				} else if (jsonObjType.equals(EVENT_TYPE_BASE_KEY)){
 					easyCheckEvents.add(new Event(jsonObj));
+					
 				}
 				// TODO handle if type is unrecognised
 			}
@@ -90,7 +91,8 @@ public class StorageManager {
 	public void writeDataToEasyCheckFile(ArrayList<Event> eventList) throws IOException{
 		FileWriter writer = new FileWriter(easyCheckFile);
 		for (Event event: eventList){
-			writer.write(event.toJsonString() + "%n");
+			writer.write(event.toJsonString() +"\n");
+			
 		}
 		writer.close();
 	}
