@@ -15,7 +15,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
 public class ToDoEvent extends Event {	
-	private static final String DATE_AND_TIME_OUTPUT_FORMAT = "%s %d %s %d at %d:%02d";
+	private static final String DATE_AND_TIME_OUTPUT_FORMAT = "%s %d %s %d at %02d:%02d";
 	private static final String DATE_AND_TIME_INPUT_FORMAT = "dd.MM.yyyy HH:mm";
 	private static final String MESSAGE_JSON_STRING_ERROR = "Error in toJsonString method, most likely coding error";
 	private static final String MESSAGE_TO_STRING_TEMPLATE = "%s due on %s\n";

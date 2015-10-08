@@ -20,7 +20,7 @@ import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
 public class CalendarEvent extends Event {
-	private static final String DATE_AND_TIME_OUTPUT_FORMAT = "%s %d %s %d at %d:%02d";
+	private static final String DATE_AND_TIME_OUTPUT_FORMAT = "%s %d %s %d at %02d:%02d";
 	private static final String DATE_AND_TIME_INPUT_FORMAT = "dd.MM.yyyy HH:mm";
 	private static final String MESSAGE_JSON_INPUT_ERROR = "Error parsing JSON Object from File at event: ";
 	private static final String MESSAGE_INVALID_DATE_STRING = "Error invalid date format";
