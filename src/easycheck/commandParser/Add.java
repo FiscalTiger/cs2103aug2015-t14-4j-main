@@ -1,5 +1,15 @@
 package easycheck.commandParser;
 
+/**
+ * ADD Command Type represents a parsed command for Easy Check application.
+ * To be called:
+ * getTaskName()
+ * getStart()
+ * getEnd() 
+ * 
+ * @author A0126989H
+ */
+
 public class Add extends Command {
 	private String TaskName; 
 	private String Start;

@@ -1,5 +1,14 @@
 package easycheck.commandParser;
 
+/**
+ * Edit Command Type represents a parsed command for Easy Check application.
+ * To be called:
+ * 
+ * getTaskName()
+ * getNewEvent()
+ * 
+ * @author A0126989H
+ */
 public class Edit extends Command {
 	private String task;
 	private String newEvent;
