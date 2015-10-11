@@ -1,5 +1,4 @@
 package easycheck.commandParser;
-
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -16,14 +15,15 @@ import java.util.*;
  */
 public class Command {
 	private static final String MESSAGE_COMMAND_NULL = "Error in reading command";
-	private static final String MESSAGE_UNRECOGNIZE = "Unrecognized command input!";
+
+
 	
 	static ArrayList<String> cachedFile = new ArrayList<String>();
     private COMMAND_TYPE commandType;
     private String[] arguments;
     
     public Command(String commandType, String[] arguments){
-        this.commandType = determineCommandType(commandType);
+    	this.commandType = determineCommandType(commandType);
         this.arguments = arguments;
     }
     
@@ -38,6 +38,31 @@ public class Command {
 	public enum COMMAND_TYPE {
 		ADD, ADD_EVENT,DISPLAY,UPDATE, DELETE, UNDO, SEARCH, REVIEW, SAVE_AT, INVALID, EXIT
 	};
+	
+	public static Command createObject(String commandType, String[] arguments) {
+        switch (determineCommandType(commandType)) {
+	        case ADD:
+	            return new Add(commandType,arguments);
+	        case ADD_EVENT:
+	        	return new AddEvent(commandType,arguments);
+	        case DISPLAY:
+	        	return new Display(commandType,arguments);
+	        case UPDATE:
+	            return new Edit(commandType,arguments);
+	        case DELETE:
+	            return new Delete(commandType,arguments);
+	        case UNDO:
+	            return new Undo(commandType,arguments);
+	        case SEARCH:
+	            return new Search(commandType,arguments);
+	        case REVIEW:
+	            return new Review(commandType,arguments);
+	        case SAVE_AT:
+	            return new SaveAt(commandType,arguments);
+	        default:
+	        	return new Exit(commandType,arguments);
+	        }
+    }
 	
 	//TODO magic strings??
 	private static COMMAND_TYPE determineCommandType(String commandType) {

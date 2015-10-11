@@ -84,7 +84,7 @@ public class CommandParser {
         } else {
             System.err.println(MESSAGE_UNRECOGNIZE);
         }
-        Command command = new Command(commandType, arguments);
+        Command command = Command.createObject(commandType,arguments);
         return command;
         
     }
@@ -110,7 +110,7 @@ public class CommandParser {
             System.err.println(MESSAGE_UNRECOGNIZE);
         }
         assert (arguments != null);
-        Command command = new Command(commandType, arguments);
+        Command command = Command.createObject(commandType,arguments);
         return command;
     }
 
