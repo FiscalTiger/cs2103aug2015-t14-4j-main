@@ -1,5 +1,5 @@
-package easycheck.commandParser;
-
+package easycheck.commandParser.CommandTypes;
+import easycheck.commandParser.Command;
 /**
  * DELETE Command Type represents a parsed command for Easy Check application.
  * To be called:

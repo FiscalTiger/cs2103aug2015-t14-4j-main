@@ -1,4 +1,5 @@
-package easycheck.commandParser;
+package easycheck.commandParser.CommandTypes;
+import easycheck.commandParser.Command;
 
 import static org.junit.Assert.*;
 import org.junit.Test;

@@ -1,4 +1,5 @@
-package easycheck.commandParser;
+package easycheck.commandParser.CommandTypes;
+import easycheck.commandParser.Command;
 
 /**
  * ADD Command Type represents a parsed command for Easy Check application.

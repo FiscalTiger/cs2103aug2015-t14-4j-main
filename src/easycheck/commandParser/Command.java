@@ -1,9 +1,8 @@
 package easycheck.commandParser;
-import java.io.BufferedWriter;
-import java.io.FileWriter;
-import java.io.IOException;
+import easycheck.commandParser.CommandTypes.*;
+
 import java.util.ArrayList;
-import java.util.*;
+
 
 /**
  * Command Type represents a parsed command for Easy Check application.
