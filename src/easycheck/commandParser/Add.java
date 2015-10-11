@@ -15,13 +15,17 @@ public class Add extends Command {
 	private String Start;
 	private String End;
 
-	public Add(String commandType, String[] arguments) {
-		super(commandType, arguments);
+	public Add(String command, String[] arguments) {
+		super(command, arguments);
 		TaskName = arguments[0];
-		if (arguments.length==2)
+		if (arguments.length==2){
 			Start = arguments[1];
-		if (arguments.length==3)
+			End = "";
+		}
+		if (arguments.length==3){
+			Start = arguments[1];
 			End = arguments[2];
+		}
 	}
 	public String getTaskName(){
 		return TaskName;
