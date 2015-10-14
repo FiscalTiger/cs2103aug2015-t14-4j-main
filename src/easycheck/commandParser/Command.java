@@ -23,6 +23,7 @@ public class Command {
     
     public Command(String commandType, String[] arguments){
     	this.commandType = determineCommandType(commandType);
+    	assert(arguments!=null);
         this.arguments = arguments;
     }
     
