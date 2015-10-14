@@ -81,13 +81,14 @@ public class CommandExecutor {
 		return responseTxt;
 	}
 	
-	/* UPDATE requires arguments to be of "Event name" + "Updated Event" 
+	/* UPDATE requires arguments to be of "Event name"+ "to" + "Updated Event" 
 	 * 
 	 */
 	private String update(String[] arguments) {
 		for (int i = 0; i<eventList.size(); i++){
 			if (eventList.get(i).getEventName().contains(arguments[0])){
 				eventList.get(i).setEventName(arguments[1]);
+				break;
 			}
 		}
 		return String.format(MESSAGE_UPDATE_CMD_RESPONSE, arguments[0], arguments[1]);
@@ -100,6 +101,7 @@ public class CommandExecutor {
 		for (int i = 0; i<eventList.size(); i++){
 			if (eventList.get(i).getEventName().contains(arguments[0])){
 				eventList.remove(i);
+				break;
 			}
 		}
 		return String.format(MESSAGE_DELETE_CMD_RESPONSE, arguments[0]);
