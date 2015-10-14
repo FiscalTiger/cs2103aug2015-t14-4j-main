@@ -13,7 +13,7 @@ public class Delete extends Command{
 	
 	public Delete(String commandType, String[] arguments) {
 		super(commandType, arguments);
-		task=arguments[0];
+
 		// TODO Auto-generated constructor stub
 	}
 	public String getTaskName(){

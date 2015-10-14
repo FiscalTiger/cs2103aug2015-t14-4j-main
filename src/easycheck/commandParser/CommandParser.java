@@ -44,7 +44,7 @@ public class CommandParser {
     private final int[] ARGUMENT_NUM_MIN_MAX_ADD_EVENT = { 2, 3 };
     private final int[] ARGUMENT_NUM_MIN_MAX_UPDATE = { 2, 3 };
     private final int[] ARGUMENT_NUM_MIN_MAX_DELETE = { 1, 1 };
-
+    
     // private final int[] ARGUMENT_NUM_MIN_MAX_ADD_REPEAT = { 1, 2 };
     // private final int[] ARGUMENT_NUM_MIN_MAX_COMPLETE = { 1, 1 };
     // private final int[] ARGUMENT_NUM_MIN_MAX_LABEL = { 2, 2 };

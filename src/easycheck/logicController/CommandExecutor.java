@@ -98,10 +98,14 @@ public class CommandExecutor {
 	 * 
 	 */
 	private String delete(String[] arguments) {
-		for (int i = 0; i<eventList.size(); i++){
-			if (eventList.get(i).getEventName().contains(arguments[0])){
-				eventList.remove(i);
-				break;
+		if (arguments == null) {
+			return String.format(MESSAGE_DELETE_CMD_RESPONSE,eventList.remove(0).getEventName());
+		} else {
+			for (int i = 0; i < eventList.size(); i++) {
+				if (eventList.get(i).getEventName().contains(arguments[0])) {
+					eventList.remove(i);
+					break;
+				}
 			}
 		}
 		return String.format(MESSAGE_DELETE_CMD_RESPONSE, arguments[0]);
