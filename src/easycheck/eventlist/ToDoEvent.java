@@ -55,8 +55,9 @@ public class ToDoEvent extends Event {
 	 * @param newDateString in format of "E MM.dd.yyyy 'at' hh:mm:ss a zzz"
 	 * See Documentation for java.text.SimpleDateFormat
 	 */
-	public void setDueDateAndTime(String newDateString) {
-		deadline = fmt.parseDateTime(newDateString);
+	public void setDueDateAndTime(DateTime newDate) {
+		assert(newDate.isAfterNow());
+		deadline = newDate;
 	}
 	
 	/**

@@ -76,8 +76,9 @@ public class CalendarEvent extends Event {
 	 * @param newDateString in format of "E MM.dd.yyyy 'at' hh:mm:ss a zzz"
 	 * See Documentation for java.text.SimpleDateFormat
 	 */
-	public void setStartDateAndTime(String newDateString) {
-		startDateAndTime = fmt.parseDateTime(newDateString);
+	public void setStartDateAndTime(DateTime newDate) {
+		assert(newDate.isBefore(endDateAndTime));
+		startDateAndTime = newDate;
 	}
 	
 	/**
@@ -85,11 +86,9 @@ public class CalendarEvent extends Event {
 	 * @param newDateString in format of "E MM.dd.yyyy 'at' hh:mm:ss a zzz"
 	 * See Documentation for java.text.SimpleDateFormat
 	 */
-	public void setEndDateAndTime(String newDateString) {
-		DateTime temp;
-		temp = fmt.parseDateTime(newDateString);
-		assert(startDateAndTime.isBefore(temp));
-		endDateAndTime = temp;
+	public void setEndDateAndTime(DateTime newDate) {
+		assert(startDateAndTime.isBefore(newDate));
+		endDateAndTime = newDate;
 	}
 	
 	/**
