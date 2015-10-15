@@ -58,7 +58,7 @@ public class CommandExecutor {
 	
 	/* Add requires arguments to be of Events + Deadline
 	 * if deadline is empty string, means its is a floating task
-	 * 
+	 * @author A0126989H 
 	 */
     private String add(String[] arguments) {
     	int eventIndex = eventList.size();
@@ -71,7 +71,7 @@ public class CommandExecutor {
 	}
 	
 	/* DISPLAY requires arguments to be of ""
-	 * 
+	 * @author A0126989H
 	 */
 	private String display(String[] arguments){
 		String responseTxt = "Your events:\n";
@@ -82,13 +82,13 @@ public class CommandExecutor {
 	}
 	
 	/* UPDATE requires arguments to be of "Event name"+ "to" + "Updated Event" 
-	 * 
+	 * @author A0126989H
 	 */
 	private String update(String[] arguments) {
 		for (int i = 0; i<eventList.size(); i++){
 			if (eventList.get(i).getEventName().contains(arguments[0])){
 				eventList.get(i).setEventName(arguments[1]);
-				break;
+				break; //* @author A0126989H
 			}
 		}
 		return String.format(MESSAGE_UPDATE_CMD_RESPONSE, arguments[0], arguments[1]);
