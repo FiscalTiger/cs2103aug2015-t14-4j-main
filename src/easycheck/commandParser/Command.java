@@ -90,7 +90,6 @@ public class Command {
 		} else if (commandType.equalsIgnoreCase("exit")){
 			return COMMAND_TYPE.EXIT;
 		} else {
-		
 			return COMMAND_TYPE.INVALID;
 		}
 	}
