@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Stack;
 
 import easycheck.commandParser.Command;
+import easycheck.commandParser.CommandTypes.*;
 import easycheck.eventlist.Event;
 
 public class CommandExecutor {
@@ -30,61 +31,54 @@ public class CommandExecutor {
 	 */
     
     public String executeCommand(Command command) {
-        switch (command.getCommandType()) {
-	        case ADD:
-	            return add(command.getCommandArguments());
-	        case ADD_EVENT:
-	            return addEvent(command.getCommandArguments());
-	        case DISPLAY:
-	            return display(command.getCommandArguments());
-	        case UPDATE:
-	            return update(command.getCommandArguments());
-	        case DELETE:
-	            return delete(command.getCommandArguments());
-	        case UNDO:
-	            return undo(command.getCommandArguments());
-	        case SEARCH:
-	            return search(command.getCommandArguments());
-	        case REVIEW:
-	            return review(command.getCommandArguments());
-	        case SAVE_AT:
-	            return saveAt(command.getCommandArguments());
-	        case EXIT:
-	        	return exit(command.getCommandArguments());
-	        default:
-	            return MESSAGE_INVALID_COMMAND;
-	        }
+        if (command instanceof Add) {
+	        return add((Add)command);
+        } else if(command instanceof AddEvent) {
+	        return addEvent((AddEvent)command);
+        } else if(command instanceof Display) {
+        	return display((Display)command);
+        } else if(command instanceof Edit) {
+	        return update((Edit)command);
+        } else if(command instanceof Delete) {
+	        return delete((Delete)command);
+        } else if(command instanceof Undo) {
+	        return undo((Undo)command);
+        } else if(command instanceof Search) {
+	        return search((Search)command);
+        } else if(command instanceof Review) {
+	        return review((Review)command);
+        } else if(command instanceof SaveAt) {
+	        return saveAt((SaveAt)command);
+        } else if(command instanceof Exit) {
+	        return exit((Exit)command);
+        } else {
+        	return MESSAGE_INVALID_COMMAND;
+	    }
     }
 	
 	/* Add requires arguments to be of Events + Deadline
 	 * if deadline is empty string, means its is a floating task
 	 * @author A0126989H 
 	 */
-    private String add(String[] arguments) {
-    	int eventIndex = eventList.size();
-		eventList.add(new Event(eventIndex, arguments[0]));
-    	return String.format(MESSAGE_ADD_CMD_RESPONSE, arguments[0]);
+    private String add(Add cmd) {
+    	return null;
 	}
 
-	private String addEvent(String[] arguments) {
+	private String addEvent(AddEvent cmd) {
 		return null;
 	}
 	
 	/* DISPLAY requires arguments to be of ""
 	 * @author A0126989H
 	 */
-	private String display(String[] arguments){
-		String responseTxt = "Your events:\n";
-		for (int i = 0; i < eventList.size(); i++){
-			responseTxt += eventList.get(i);
-		}
-		return responseTxt;
+	private String display(Display cmd){
+		return "";
 	}
 	
 	/* UPDATE requires arguments to be of "Event name"+ "to" + "Updated Event" 
 	 * @author A0126989H
 	 */
-	private String update(String[] arguments) {
+	private String update(Edit cmd) {
 		for (int i = 0; i<eventList.size(); i++){
 			if (eventList.get(i).getEventName().contains(arguments[0])){
 				eventList.get(i).setEventName(arguments[1]);
@@ -97,7 +91,7 @@ public class CommandExecutor {
 	/* DELETE requires arguments to be of "Event name" or "part of event name"
 	 * 
 	 */
-	private String delete(String[] arguments) {
+	private String delete(Delete cmd) {
 		if (arguments == null) {
 			return String.format(MESSAGE_DELETE_CMD_RESPONSE,eventList.remove(0).getEventName());
 		} else {
@@ -111,26 +105,26 @@ public class CommandExecutor {
 		return String.format(MESSAGE_DELETE_CMD_RESPONSE, arguments[0]);
 	}
 
-	private String undo(String[] arguments) {
+	private String undo(Undo cmd) {
 		return "";
 	}
 
-	private String search(String[] arguments) {
+	private String search(Search cmd) {
 		return "";
 	}
 
-	private String review(String[] arguments) {
+	private String review(Review cmd) {
 		return "";
 	}
 
-	private String saveAt(String[] arguments) {
+	private String saveAt(SaveAt cmd) {
 		return "Successfully Saved";
 	}
 	
 	/* DISPLAY requires arguments to be of ""
 	 * 
 	 */
-	private String exit(String[] arguments){
+	private String exit(Exit cmd){
 		System.exit(1);
 		return "";
 	}
