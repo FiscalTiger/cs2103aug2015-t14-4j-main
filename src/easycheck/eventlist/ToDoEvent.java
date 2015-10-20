@@ -28,10 +28,10 @@ public class ToDoEvent extends Event {
 	private static DateTimeFormatter fmt = DateTimeFormat.forPattern(DATE_AND_TIME_INPUT_FORMAT);
 	private DateTime deadline;
 	
-	public ToDoEvent(int eventIndex, String eventName, String dueDateAndTimeString) {
+	public ToDoEvent(int eventIndex, String eventName, DateTime dueDateAndTime) {
 		this.setEventIndex(eventIndex);
 		this.setEventName(eventName);
-		deadline = fmt.parseDateTime(dueDateAndTimeString);
+		deadline = dueDateAndTime;
 	}
 	
 	public ToDoEvent(JSONObject jsonObj) {
@@ -102,5 +102,9 @@ public class ToDoEvent extends Event {
 	// TODO override compareTo method
 	public int compareTo(Event e) {
 		return 0;
+	}
+	
+	public static boolean isValidDeadline(DateTime deadline) {
+		return deadline.isAfterNow();
 	}
 }

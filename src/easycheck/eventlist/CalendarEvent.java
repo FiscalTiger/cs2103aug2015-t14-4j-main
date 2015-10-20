@@ -39,11 +39,11 @@ public class CalendarEvent extends Event {
 	private DateTime startDateAndTime;
 	private DateTime endDateAndTime;
 	
-	public CalendarEvent(int eventIndex, String eventName, String startDateAndTimeString, String endDateAndTimeString) {
+	public CalendarEvent(int eventIndex, String eventName, DateTime startDateAndTime, DateTime endDateAndTime) {
 		this.setEventIndex(eventIndex);
 		this.setEventName(eventName);
-		startDateAndTime = fmt.parseDateTime(startDateAndTimeString);
-		endDateAndTime = fmt.parseDateTime(endDateAndTimeString);
+		this.startDateAndTime = startDateAndTime;
+		this.endDateAndTime = endDateAndTime;
 	}
 	
 	public CalendarEvent(JSONObject jsonObj) {
@@ -148,8 +148,7 @@ public class CalendarEvent extends Event {
 		return 0;
 	}
 	
-	public static void main(String[] args) {
-		CalendarEvent se = new CalendarEvent(1, "Banging Head Against Wall", "7.10.2015 12:00", "8.10.2015 00:00");
-		System.out.println(se);
+	public static boolean areValidDates(DateTime start, DateTime end) {
+		return (start.isBefore(end) && start.isAfterNow());
 	}
 }

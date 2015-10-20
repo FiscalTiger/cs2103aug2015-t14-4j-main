@@ -5,13 +5,17 @@ import java.util.Stack;
 
 import easycheck.commandParser.Command;
 import easycheck.commandParser.CommandTypes.*;
+import easycheck.eventlist.CalendarEvent;
 import easycheck.eventlist.Event;
+import easycheck.eventlist.ToDoEvent;
 
 public class CommandExecutor {
 	private static final String MESSAGE_INVALID_COMMAND = "Invalid command.\n";
 	private static final String MESSAGE_ADD_CMD_RESPONSE = "Added %s\n";
 	private static final String MESSAGE_DELETE_CMD_RESPONSE = "Deleted %s Successfully\n";
 	private static final String MESSAGE_UPDATE_CMD_RESPONSE = "Updated %s to %s successfully\n";
+	private static final String MESSAGE_INVALID_CALENDAR_DATES = "The start date must be before the end date and after the current date and time.\n";
+	private static final String MESSAGE_INVALID_TODO_DEADLINE = "The deadline must be after the current date and time.\n";
 	
 	private ArrayList<Event> eventList;
 	private Stack<ArrayList<Event>> undoStack;
@@ -33,8 +37,6 @@ public class CommandExecutor {
     public String executeCommand(Command command) {
         if (command instanceof Add) {
 	        return add((Add)command);
-        } else if(command instanceof AddEvent) {
-	        return addEvent((AddEvent)command);
         } else if(command instanceof Display) {
         	return display((Display)command);
         } else if(command instanceof Edit) {
@@ -56,16 +58,46 @@ public class CommandExecutor {
 	    }
     }
 	
-	/* Add requires arguments to be of Events + Deadline
-	 * if deadline is empty string, means its is a floating task
-	 * @author A0126989H 
+	/**
+	 * Creates the correct type of event
+	 * and adds it to eventList
+	 * @author A0145668R
 	 */
     private String add(Add cmd) {
-    	return null;
-	}
-
-	private String addEvent(AddEvent cmd) {
-		return null;
+    	String response = "";
+    	Event newEvent;
+    	// has arguments for a calendar event
+    	if (cmd.hasStart() && cmd.hasEnd()) {
+    		// arguments are valid
+    		if (CalendarEvent.areValidDates(cmd.getStart(), cmd.getEnd())) {
+    			int eventIndex = eventList.size();
+    			newEvent = new CalendarEvent(eventIndex, cmd.getTaskName(), cmd.getStart(), cmd.getEnd());
+    			response = String.format(MESSAGE_ADD_CMD_RESPONSE, newEvent);
+    			undoStack.push(eventList);
+    			eventList.add(newEvent);
+    		} else {
+    			response = MESSAGE_INVALID_CALENDAR_DATES;
+    		}
+    	} else if (!cmd.hasStart() && cmd.hasEnd()) {
+    		if (ToDoEvent.isValidDeadline(cmd.getEnd())) {
+    			int eventIndex = eventList.size();
+    			newEvent = new ToDoEvent(eventIndex, cmd.getTaskName(), cmd.getEnd());
+    			response = String.format(MESSAGE_ADD_CMD_RESPONSE, newEvent);
+    			undoStack.push(eventList);
+    			eventList.add(newEvent);
+    		} else {
+    			response = MESSAGE_INVALID_TODO_DEADLINE;
+    		}
+    	} else if (!cmd.hasStart() && !cmd.hasEnd()) {
+    		int eventIndex = eventList.size();
+			newEvent = new Event(eventIndex, cmd.getTaskName());
+			response = String.format(MESSAGE_ADD_CMD_RESPONSE, newEvent);
+			undoStack.push(eventList);
+			eventList.add(newEvent);
+    	}
+    	// response should have a response by this point
+    	assert(!response.equals(""));
+    	return response;
 	}
 	
 	/* DISPLAY requires arguments to be of ""
@@ -79,30 +111,15 @@ public class CommandExecutor {
 	 * @author A0126989H
 	 */
 	private String update(Edit cmd) {
-		for (int i = 0; i<eventList.size(); i++){
-			if (eventList.get(i).getEventName().contains(arguments[0])){
-				eventList.get(i).setEventName(arguments[1]);
-				break; //* @author A0126989H
-			}
-		}
-		return String.format(MESSAGE_UPDATE_CMD_RESPONSE, arguments[0], arguments[1]);
+		
+		return null;
 	}
 	
 	/* DELETE requires arguments to be of "Event name" or "part of event name"
 	 * 
 	 */
 	private String delete(Delete cmd) {
-		if (arguments == null) {
-			return String.format(MESSAGE_DELETE_CMD_RESPONSE,eventList.remove(0).getEventName());
-		} else {
-			for (int i = 0; i < eventList.size(); i++) {
-				if (eventList.get(i).getEventName().contains(arguments[0])) {
-					eventList.remove(i);
-					break;
-				}
-			}
-		}
-		return String.format(MESSAGE_DELETE_CMD_RESPONSE, arguments[0]);
+		return null;
 	}
 
 	private String undo(Undo cmd) {

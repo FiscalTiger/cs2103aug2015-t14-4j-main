@@ -1,4 +1,8 @@
 package easycheck.commandParser.CommandTypes;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+
 import easycheck.commandParser.Command;
 
 /**
@@ -12,33 +16,61 @@ import easycheck.commandParser.Command;
  */
 
 public class Add extends Command {
-	private String taskName; 
-	private String start;
-	private String end;
+	//@author A0145668R
+	private static final String DATE_AND_TIME_INPUT_FORMAT = "dd.MM.yyyy HH:mm";
 
+	private String taskName; 
+	private static DateTimeFormatter fmt = DateTimeFormat.forPattern(DATE_AND_TIME_INPUT_FORMAT);
+	private DateTime start;
+	private DateTime end;
+	//end @author A0145668R
+	
 	public Add(String command, String[] arguments) {
 		super(command, arguments);
 		taskName = arguments[0];
+		//@author A0145668R
 		if (arguments.length == 1) {
-			start = "";
-			end = "";
-		}
-		if (arguments.length==2){
-			start = arguments[1];
-			end = "";
-		}
-		if (arguments.length==3){
-			start = arguments[1];
-			end = arguments[2];
+			start = null;
+			end = null;
+			//end @author A0145668R
+		} else if (arguments.length==2){
+			start = fmt.parseDateTime(arguments[1]);
+			end = null;
+		} else if (arguments.length==3){
+			start = fmt.parseDateTime(arguments[1]);
+			end = fmt.parseDateTime(arguments[2]);
 		}
 	}
+	
 	public String getTaskName(){
 		return taskName;
 	}
-	public String getStart(){
+	
+	/**
+	 * Returns whether or not the add command contains
+	 * a start date
+	 * @return true if start exists
+	 * @author A0145668R
+	 */
+	public boolean hasStart() {
+		return !start.equals(null);
+	}
+	
+	public DateTime getStart(){
 		return start;
 	}
-	public String getEnd(){
+	
+	/**
+	 * Returns whether or not the add command contains
+	 * an end date
+	 * @return true if end exists
+	 * @author A0145668R
+	 */
+	public boolean hasEnd() {
+		return !end.equals(null);
+	}
+	
+	public DateTime getEnd(){
 		return end;
 	}
 }
