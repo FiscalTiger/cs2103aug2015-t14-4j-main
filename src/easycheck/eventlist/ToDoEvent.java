@@ -45,6 +45,7 @@ public class ToDoEvent extends Event {
 		Integer eventIndex = (Integer) jsonObj.get(JSON_EVENT_INDEX);
 		String eventName = (String) jsonObj.get(JSON_EVENT_NAME);
 		deadline = fmt.parseDateTime((String)jsonObj.get(JSON_DUE_DATE));
+		complete = ((Boolean)jsonObj.get(JSON_COMPLETE)).booleanValue();
 		this.setEventIndex(eventIndex.intValue());
 		this.setEventName(eventName);
 	}
