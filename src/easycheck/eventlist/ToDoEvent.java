@@ -21,20 +21,24 @@ public class ToDoEvent extends Event {
 	private static final String DATE_AND_TIME_OUTPUT_FORMAT = "%s %d %s %d at %02d:%02d";
 	private static final String DATE_AND_TIME_INPUT_FORMAT = "dd.MM.yyyy HH:mm";
 	private static final String MESSAGE_JSON_STRING_ERROR = "Error in toJsonString method, most likely coding error";
-	private static final String MESSAGE_TO_STRING_TEMPLATE = "%s due on %s\n";
+	private static final String MESSAGE_TO_STRING_TEMPLATE_IS_NOT_COMPLETE = "%s due on %s\n";
+	private static final String MESSAGE_TO_STRING_TEMPLATE_IS_COMPLETE = "%s due on %s is complete\n";
 	
 	private static final String JSON_TYPE = "type";
 	private static final String JSON_EVENT_INDEX = "index";
 	private static final String JSON_EVENT_NAME = "name";
 	private static final String JSON_DUE_DATE = "due";
+	private static final String JSON_COMPLETE = "completed";
 	
 	private static DateTimeFormatter fmt = DateTimeFormat.forPattern(DATE_AND_TIME_INPUT_FORMAT);
 	private DateTime deadline;
+	private boolean complete;
 	
 	public ToDoEvent(int eventIndex, String eventName, DateTime dueDateAndTime) {
 		this.setEventIndex(eventIndex);
 		this.setEventName(eventName);
 		deadline = dueDateAndTime;
+		complete = false;
 	}
 	
 	public ToDoEvent(JSONObject jsonObj) {
@@ -55,12 +59,23 @@ public class ToDoEvent extends Event {
 	
 	/**
 	 * Sets a new due date and time
-	 * @param newDateString in format of "E MM.dd.yyyy 'at' hh:mm:ss a zzz"
-	 * See Documentation for java.text.SimpleDateFormat
+	 * @param newDate
 	 */
 	public void setDueDateAndTime(DateTime newDate) {
 		assert(newDate.isAfterNow());
 		deadline = newDate;
+	}
+	
+	public void markComplete() {
+		complete = true;
+	}
+	
+	public void unMarkComplete() {
+		complete = false;
+	}
+	
+	public boolean isComplete() {
+		return complete;
 	}
 	
 	/**
@@ -72,9 +87,13 @@ public class ToDoEvent extends Event {
 		String deadlineString = String.format(DATE_AND_TIME_OUTPUT_FORMAT, pDayOfTheWeek.getAsShortText(),
 				deadline.getDayOfMonth(), pMonthOfYear.getAsShortText(), deadline.getYear(),
 				deadline.getHourOfDay(), deadline.getMinuteOfHour());
-		
-		return String.format(
-				MESSAGE_TO_STRING_TEMPLATE, this.getEventName(), deadlineString);
+		if(complete) {
+			return String.format(
+					MESSAGE_TO_STRING_TEMPLATE_IS_COMPLETE, this.getEventName(), deadlineString);
+		} else {
+			return String.format(
+					MESSAGE_TO_STRING_TEMPLATE_IS_NOT_COMPLETE, this.getEventName(), deadlineString);
+		}
 	}
 	
 	/**
@@ -87,6 +106,7 @@ public class ToDoEvent extends Event {
 		obj.put(JSON_EVENT_INDEX, new Integer(this.getEventIndex()));
 		obj.put(JSON_EVENT_NAME, this.getEventName());
 		obj.put(JSON_DUE_DATE, fmt.print(deadline));
+		obj.put(JSON_COMPLETE, new Boolean(complete));
 		
 		StringWriter out = new StringWriter();
 	    try {

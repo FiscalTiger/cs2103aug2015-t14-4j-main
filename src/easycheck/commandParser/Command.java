@@ -36,15 +36,13 @@ public class Command {
     }
 
 	public enum COMMAND_TYPE {
-		ADD, ADD_EVENT,DISPLAY,UPDATE, DELETE, UNDO, SEARCH, REVIEW, SAVE_AT, INVALID, EXIT
+		ADD, DISPLAY,UPDATE, DELETE, UNDO, SEARCH, REVIEW, SAVE_AT, INVALID, EXIT
 	};
 	
 	public static Command createObject(String commandType, String[] arguments) {
         switch (determineCommandType(commandType)) {
 	        case ADD:
 	            return new Add(commandType,arguments);
-	        case ADD_EVENT:
-	        	return new AddEvent(commandType,arguments);
 	        case DISPLAY:
 	        	return new Display(commandType,arguments);
 	        case UPDATE:
@@ -71,8 +69,6 @@ public class Command {
 		}
 		if (commandType.equalsIgnoreCase("add")) {
 			return COMMAND_TYPE.ADD;
-		} else if (commandType.equalsIgnoreCase("add_event")){
-			return COMMAND_TYPE.ADD_EVENT;
 		} else if (commandType.equalsIgnoreCase("display")) {
 			return COMMAND_TYPE.DISPLAY;
 		} else if (commandType.equalsIgnoreCase("update")) {
