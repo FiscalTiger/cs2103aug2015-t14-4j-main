@@ -117,27 +117,17 @@ public class CommandParser {
         Command command = Command.createObject(commandType, arguments);
         return command;
     }
-
+    // get arguments for add type - supports flexi commands
     private String[] getArgumentsAdd(String commandArguments) {
         String[] arguments = checkFlexi(commandArguments);
-        try {
-            System.out.println(arguments[0]);
-        System.out.println(arguments[1]);
-        System.out.println(arguments[2]);
-        } catch (Exception e) {
-            System.out.println("not enough");
-        }
         return arguments;
     }
-
+    
     private String[] getArguments(String commandArguments, int expectedArguments) throws Exception {
-
-        String[] arguments = checkFlexi(commandArguments);
+        String[] arguments = commandArguments.split(ARGUMENT_SPLITTER);
         if (arguments.length < expectedArguments
                 || arguments.length > expectedArguments) {
             throw new Exception();
-        } else {
-
         }
         return arguments;
     }
