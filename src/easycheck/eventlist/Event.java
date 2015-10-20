@@ -10,9 +10,11 @@ import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
 /*
- * Class abstraction for events stored by the EasyCheck application
- * @author Andrew Pouleson
+ * Class abstraction for floating events stored by the EasyCheck application.
+ * Floating events do not have a start or end time.
+ * @author A0145668R
  */
+
 public class Event implements Comparable<Event> {
 	private static final String JSON_TYPE = "type";
 	private static final String JSON_EVENT_INDEX = "index";

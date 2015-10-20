@@ -1,10 +1,13 @@
 package easycheck.eventlist;
 
+/*
+ * This is a subclass of Event that deals with to do events.
+ * To do events are events with a specific deadline
+ * @author A0145668R
+ */
+
 import java.io.IOException;
 import java.io.StringWriter;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
 

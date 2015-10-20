@@ -3,6 +3,7 @@ package easycheck.eventlist;
 /*
  * This is a subclass of Event that deals with Calendar Events.
  * Calendar events are events with specific start and end times
+ * @author A0145668R
  */
 
 import java.io.IOException;
@@ -22,10 +23,6 @@ import org.json.simple.JSONValue;
 public class CalendarEvent extends Event {
 	private static final String DATE_AND_TIME_OUTPUT_FORMAT = "%s %d %s %d at %02d:%02d";
 	private static final String DATE_AND_TIME_INPUT_FORMAT = "dd.MM.yyyy HH:mm";
-	private static final String MESSAGE_JSON_INPUT_ERROR = "Error parsing JSON Object from File at event: ";
-	private static final String MESSAGE_INVALID_DATE_STRING = "Error invalid date format";
-	private static final String MESSAGE_END_DATE_INPUT_ERROR = "Error while parsing new end date and time";
-	private static final String MESSAGE_START_DATE_INPUT_ERROR = "Error while parsing new start date and time";
 	private static final String MESSAGE_JSON_STRING_ERROR = "Error in toJsonString method, most likely coding error";
 	private static final String MESSAGE_TO_STRING_TEMPLATE = "%s from %s to %s\n";
 	

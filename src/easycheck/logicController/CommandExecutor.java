@@ -12,6 +12,7 @@ import easycheck.eventlist.ToDoEvent;
 public class CommandExecutor {
 	private static final String MESSAGE_INVALID_COMMAND = "Invalid command.\n";
 	private static final String MESSAGE_ADD_CMD_RESPONSE = "Added %s\n";
+	private static final String MESSAGE_DISPLAY_CMD_EMPTY = "There aren't any events to display!\n";
 	private static final String MESSAGE_DELETE_CMD_RESPONSE = "Deleted %s Successfully\n";
 	private static final String MESSAGE_UPDATE_CMD_RESPONSE = "Updated %s to %s successfully\n";
 	private static final String MESSAGE_INVALID_CALENDAR_DATES = "The start date must be before the end date and after the current date and time.\n";
@@ -32,6 +33,7 @@ public class CommandExecutor {
 	 * produces the response string to be printed to the user
 	 * @param command
 	 * @return responseString
+	 * @author A0145668R
 	 */
     
     public String executeCommand(Command command) {
@@ -68,7 +70,6 @@ public class CommandExecutor {
     	Event newEvent;
     	// has arguments for a calendar event
     	if (cmd.hasStart() && cmd.hasEnd()) {
-    		// arguments are valid
     		if (CalendarEvent.areValidDates(cmd.getStart(), cmd.getEnd())) {
     			int eventIndex = eventList.size();
     			newEvent = new CalendarEvent(eventIndex, cmd.getTaskName(), cmd.getStart(), cmd.getEnd());
@@ -78,6 +79,7 @@ public class CommandExecutor {
     		} else {
     			response = MESSAGE_INVALID_CALENDAR_DATES;
     		}
+    	  // has arguments for a to do event
     	} else if (!cmd.hasStart() && cmd.hasEnd()) {
     		if (ToDoEvent.isValidDeadline(cmd.getEnd())) {
     			int eventIndex = eventList.size();
@@ -88,6 +90,7 @@ public class CommandExecutor {
     		} else {
     			response = MESSAGE_INVALID_TODO_DEADLINE;
     		}
+    	  // doesn't have time limits so it creates a floating task
     	} else if (!cmd.hasStart() && !cmd.hasEnd()) {
     		int eventIndex = eventList.size();
 			newEvent = new Event(eventIndex, cmd.getTaskName());
@@ -101,10 +104,20 @@ public class CommandExecutor {
 	}
 	
 	/* DISPLAY requires arguments to be of ""
-	 * @author A0126989H
+	 * @author A0145668R
 	 */
 	private String display(Display cmd){
-		return "";
+		String response = "";
+		if(eventList.isEmpty()) {
+			response = MESSAGE_DISPLAY_CMD_EMPTY;
+		} else {
+			for(Event e: eventList) {
+				response += e;
+			}
+		}
+		//Response should not be empty
+		assert(!response.equals(""));
+		return response;
 	}
 	
 	/* UPDATE requires arguments to be of "Event name"+ "to" + "Updated Event" 
@@ -141,7 +154,7 @@ public class CommandExecutor {
 	/* DISPLAY requires arguments to be of ""
 	 * 
 	 */
-	private String exit(Exit cmd){
+	private String exit(Exit cmd) {
 		System.exit(1);
 		return "";
 	}

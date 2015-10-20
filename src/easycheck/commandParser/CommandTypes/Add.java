@@ -34,8 +34,8 @@ public class Add extends Command {
 			end = null;
 			//end @author A0145668R
 		} else if (arguments.length==2){
-			start = fmt.parseDateTime(arguments[1]);
-			end = null;
+			start = null;
+			end = fmt.parseDateTime(arguments[1]);;
 		} else if (arguments.length==3){
 			start = fmt.parseDateTime(arguments[1]);
 			end = fmt.parseDateTime(arguments[2]);
@@ -53,7 +53,7 @@ public class Add extends Command {
 	 * @author A0145668R
 	 */
 	public boolean hasStart() {
-		return !start.equals(null);
+		return !(start == null);
 	}
 	
 	public DateTime getStart(){
@@ -67,7 +67,7 @@ public class Add extends Command {
 	 * @author A0145668R
 	 */
 	public boolean hasEnd() {
-		return !end.equals(null);
+		return !(end == null);
 	}
 	
 	public DateTime getEnd(){
