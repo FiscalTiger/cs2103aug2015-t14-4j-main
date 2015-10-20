@@ -86,6 +86,7 @@ public class CommandParser {
         return userCommand.split(COMMAND_SPLITTER, COMMAND_ARRAY_LENGTH);
     }
 
+    // creates Command for commands with no arguments.
     private Command createCommand(String commandType) {
         String[] arguments = null;
         if (commandType.equalsIgnoreCase(COMMAND_TYPE_DISPLAY)) {
@@ -98,6 +99,7 @@ public class CommandParser {
 
     }
 
+    // creates Command for commands with >0 arguments.
     private Command createCommand(String commandType, String commandArguments) {
         String[] arguments = null;
         if (commandType.equalsIgnoreCase(COMMAND_TYPE_ADD)) {
@@ -121,7 +123,7 @@ public class CommandParser {
                 || arguments.length > expectedArguments) {
             throw new Error(MESSAGE_INVALID_ARGUMENTS);
         } else {
-            
+
         }
         return arguments;
     }
