@@ -21,8 +21,8 @@ public class ToDoEvent extends Event {
 	private static final String DATE_AND_TIME_OUTPUT_FORMAT = "%s %d %s %d at %02d:%02d";
 	private static final String DATE_AND_TIME_INPUT_FORMAT = "dd.MM.yyyy HH:mm";
 	private static final String MESSAGE_JSON_STRING_ERROR = "Error in toJsonString method, most likely coding error";
-	private static final String MESSAGE_TO_STRING_TEMPLATE_IS_NOT_COMPLETE = "%s due on %s\n";
-	private static final String MESSAGE_TO_STRING_TEMPLATE_IS_COMPLETE = "%s due on %s is complete\n";
+	private static final String MESSAGE_TO_STRING_TEMPLATE_IS_NOT_COMPLETE = "%d. %s due on %s\n";
+	private static final String MESSAGE_TO_STRING_TEMPLATE_IS_COMPLETE = "%d. %s due on %s is complete\n";
 	
 	private static final String JSON_TYPE = "type";
 	private static final String JSON_EVENT_INDEX = "index";
@@ -90,10 +90,10 @@ public class ToDoEvent extends Event {
 				deadline.getHourOfDay(), deadline.getMinuteOfHour());
 		if(complete) {
 			return String.format(
-					MESSAGE_TO_STRING_TEMPLATE_IS_COMPLETE, this.getEventName(), deadlineString);
+					MESSAGE_TO_STRING_TEMPLATE_IS_COMPLETE, this.getEventIndex(), this.getEventName(), deadlineString);
 		} else {
 			return String.format(
-					MESSAGE_TO_STRING_TEMPLATE_IS_NOT_COMPLETE, this.getEventName(), deadlineString);
+					MESSAGE_TO_STRING_TEMPLATE_IS_NOT_COMPLETE, this.getEventIndex(), this.getEventName(), deadlineString);
 		}
 	}
 	

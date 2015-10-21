@@ -66,12 +66,14 @@ public class CommandExecutor {
 	 * @author A0145668R
 	 */
     private String add(Add cmd) {
+    	assert(cmd.getTaskName() != null);
+    	
     	String response = "";
     	Event newEvent;
     	// has arguments for a calendar event
     	if (cmd.hasStart() && cmd.hasEnd()) {
     		if (CalendarEvent.areValidDates(cmd.getStart(), cmd.getEnd())) {
-    			int eventIndex = eventList.size();
+    			int eventIndex = eventList.size() + 1;
     			newEvent = new CalendarEvent(eventIndex, cmd.getTaskName(), cmd.getStart(), cmd.getEnd());
     			response = String.format(MESSAGE_ADD_CMD_RESPONSE, newEvent);
     			undoStack.push(eventList);
@@ -82,7 +84,7 @@ public class CommandExecutor {
     	  // has arguments for a to do event
     	} else if (!cmd.hasStart() && cmd.hasEnd()) {
     		if (ToDoEvent.isValidDeadline(cmd.getEnd())) {
-    			int eventIndex = eventList.size();
+    			int eventIndex = eventList.size() + 1;
     			newEvent = new ToDoEvent(eventIndex, cmd.getTaskName(), cmd.getEnd());
     			response = String.format(MESSAGE_ADD_CMD_RESPONSE, newEvent);
     			undoStack.push(eventList);
@@ -92,7 +94,7 @@ public class CommandExecutor {
     		}
     	  // doesn't have time limits so it creates a floating task
     	} else if (!cmd.hasStart() && !cmd.hasEnd()) {
-    		int eventIndex = eventList.size();
+    		int eventIndex = eventList.size() + 1;
 			newEvent = new Event(eventIndex, cmd.getTaskName());
 			response = String.format(MESSAGE_ADD_CMD_RESPONSE, newEvent);
 			undoStack.push(eventList);
@@ -103,7 +105,8 @@ public class CommandExecutor {
     	return response;
 	}
 	
-	/* DISPLAY requires arguments to be of ""
+	/**
+	 * Displays all events
 	 * @author A0145668R
 	 */
 	private String display(Display cmd){
@@ -120,7 +123,7 @@ public class CommandExecutor {
 		return response;
 	}
 	
-	/* UPDATE requires arguments to be of "Event name"+ "to" + "Updated Event" 
+	/* UPDATE requires arguments to be of "Event name" + "to" + "Updated Event" 
 	 * @author A0126989H
 	 */
 	private String update(Edit cmd) {

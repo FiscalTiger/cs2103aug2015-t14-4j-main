@@ -24,7 +24,7 @@ public class CalendarEvent extends Event {
 	private static final String DATE_AND_TIME_OUTPUT_FORMAT = "%s %d %s %d at %02d:%02d";
 	private static final String DATE_AND_TIME_INPUT_FORMAT = "dd.MM.yyyy HH:mm";
 	private static final String MESSAGE_JSON_STRING_ERROR = "Error in toJsonString method, most likely coding error";
-	private static final String MESSAGE_TO_STRING_TEMPLATE = "%s from %s to %s\n";
+	private static final String MESSAGE_TO_STRING_TEMPLATE = "%d. %s from %s to %s\n";
 	
 	private static final String JSON_TYPE = "type";
 	private static final String JSON_EVENT_INDEX = "index";
@@ -95,7 +95,7 @@ public class CalendarEvent extends Event {
 		String startDateString = getFormattedStartDateString();
 		String endDateString = getFormattedEndDateString();
 		return String.format(
-				MESSAGE_TO_STRING_TEMPLATE, this.getEventName(), startDateString, endDateString);
+				MESSAGE_TO_STRING_TEMPLATE, this.getEventIndex(), this.getEventName(), startDateString, endDateString);
 	}
 
 	private String getFormattedStartDateString() {

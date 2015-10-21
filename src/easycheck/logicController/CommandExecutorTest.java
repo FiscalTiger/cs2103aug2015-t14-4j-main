@@ -82,7 +82,7 @@ public class CommandExecutorTest {
 		
 		// Good To Do Event
 		String[] goodToDoCommandArgs = {"Good To Do Event", GOOD_END_DATE};
-		ToDoEvent goodToDo = new ToDoEvent(1, "Good To Do Event", goodEnd);
+		ToDoEvent goodToDo = new ToDoEvent(2, "Good To Do Event", goodEnd);
 		cmd = new Add("add", goodToDoCommandArgs);
 		desc = "Creates good to do event";
 		expected = "Added " + goodToDo + "\n";
@@ -93,6 +93,14 @@ public class CommandExecutorTest {
 		cmd = new Add("add", oldToDoCommandArgs);
 		desc = "Tries to make a to do event where the due date already past";
 		expected = MESSAGE_INVALID_TODO_DEADLINE;
+		testOneCommand(desc, expected, cmd);
+		
+		// Good Floating task
+		String[] goodFloatingCommandArgs = {"Good floating task"};
+		Event goodFloating = new Event(3, "Good floating task");
+		cmd = new Add("add", goodFloatingCommandArgs);
+		desc = "Creates good floating task";
+		expected = "Added " + goodFloating + "\n";
 		testOneCommand(desc, expected, cmd);
 	}
 	
