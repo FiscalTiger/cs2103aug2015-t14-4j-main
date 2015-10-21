@@ -128,8 +128,13 @@ public class CommandExecutor {
 	 * @author A0126989H
 	 */
 	private String update(Edit cmd) {
-		
-		return null;
+        for (int i = 0; i < eventList.size(); i++){
+            if (eventList.get(i).getEventName().contains(cmd.getTaskName())){
+                eventList.get(i).setEventName(cmd.getNewEvent());
+            }
+        }
+        return String.format(MESSAGE_UPDATE_CMD_RESPONSE, cmd.getTaskName(), cmd.getNewEvent());
+
 	}
 	
 	/* DELETE requires arguments to be of "Event name" or "part of event name"
