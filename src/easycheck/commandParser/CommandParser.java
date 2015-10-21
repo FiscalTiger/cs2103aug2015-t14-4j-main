@@ -86,6 +86,8 @@ public class CommandParser {
             command = Command.createObject(commandType, arguments);
         } else if (commandType.equalsIgnoreCase(COMMAND_TYPE_EXIT)) {
             command = Command.createObject(commandType, arguments);
+        } else if (commandType.equalsIgnoreCase(COMMAND_TYPE_DELETE)) {
+            command = Command.createObject(commandType, arguments);
         } else {
             command = Command.createObject(COMMAND_TYPE_INVALID, arguments);
         }
