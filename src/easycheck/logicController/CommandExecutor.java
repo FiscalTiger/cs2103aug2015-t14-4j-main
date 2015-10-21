@@ -13,6 +13,7 @@ public class CommandExecutor {
 	private static final String MESSAGE_INVALID_COMMAND = "Invalid command.\n";
 	private static final String MESSAGE_ADD_CMD_RESPONSE = "Added %s\n";
 	private static final String MESSAGE_DISPLAY_CMD_EMPTY = "There aren't any events to display!\n";
+	private static final String MESSAGE_DELETE_CMD_EMPTY = "There aren't any events!\n";
 	private static final String MESSAGE_DELETE_CMD_RESPONSE = "Deleted %s Successfully\n";
 	private static final String MESSAGE_UPDATE_CMD_RESPONSE = "Updated %s to %s successfully\n";
 	private static final String MESSAGE_INVALID_CALENDAR_DATES = "The start date must be before the end date and after the current date and time.\n";
@@ -134,9 +135,26 @@ public class CommandExecutor {
 	/* DELETE requires arguments to be of "Event name" or "part of event name"
 	 * 
 	 */
-	private String delete(Delete cmd) {
-		return null;
-	}
+    private String delete(Delete cmd) {
+	    String arguments = cmd.getTaskName();
+        if (arguments == null) {
+            if (eventList.size() != 0) {
+                return String.format(MESSAGE_DELETE_CMD_RESPONSE,
+                        eventList.remove(0).getEventName());
+            } else {
+                return MESSAGE_DELETE_CMD_EMPTY;
+            }
+            
+        } else {
+            for (int i = 0; i < eventList.size(); i++) {
+                if (eventList.get(i).getEventName().contains(arguments)) {
+                    eventList.remove(i);
+                    break;
+                }
+            }
+        }
+        return String.format(MESSAGE_DELETE_CMD_RESPONSE, arguments);
+    }
 
 	private String undo(Undo cmd) {
 		return "";
