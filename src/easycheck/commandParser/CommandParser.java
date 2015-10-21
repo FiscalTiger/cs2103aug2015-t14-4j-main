@@ -121,12 +121,14 @@ public class CommandParser {
     }
     // get arguments for add type - supports flexi commands
     private String[] getArgumentsAdd(String commandArguments) {
-        String[] arguments = checkFlexi(commandArguments);
+        //check arguments for flexi commands, then trim them.
+        String[] arguments = trimArguments(checkFlexi(commandArguments));
         return arguments;
     }
     
     private String[] getArguments(String commandArguments, int expectedArguments) throws Exception {
-        String[] arguments = commandArguments.split(ARGUMENT_SPLITTER);
+        //split arguments and then trim them.
+        String[] arguments = trimArguments(commandArguments.split(ARGUMENT_SPLITTER));
         if (arguments.length < expectedArguments
                 || arguments.length > expectedArguments) {
             throw new Exception();
@@ -134,9 +136,9 @@ public class CommandParser {
         return arguments;
     }
 
-    private String[] trimArguments(String[] arguments, int expectedArguments) {
-        String[] trimmedArguments = new String[expectedArguments];
-        for (int i = 0; i < expectedArguments; i++) {
+    private String[] trimArguments(String[] arguments) {
+        String[] trimmedArguments = new String[arguments.length];
+        for (int i = 0; i < arguments.length; i++) {
             trimmedArguments[i] = arguments[i].trim();
         }
         return trimmedArguments;
