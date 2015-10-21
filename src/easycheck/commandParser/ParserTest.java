@@ -1,7 +1,6 @@
 package easycheck.commandParser;
-import easycheck.commandParser.Command;
+import static org.junit.Assert.assertEquals;
 
-import static org.junit.Assert.*;
 import org.junit.Test;
 
 /**
@@ -26,16 +25,30 @@ public class ParserTest {
     @Test
     public void addTaskWithDeadline() {
         CommandParser parser = new CommandParser();
-        Command add = parser.parseCommand("add task name, due date");
+        Command add = parser.parseCommand("add task name, 11.12.2015 13:30");
         assertEquals("task name", add.getCommandArguments()[0]);
-        assertEquals("due date", add.getCommandArguments()[1]);
+        assertEquals("11.12.2015 13:30", add.getCommandArguments()[1]);
     }
     
     @Test
     public void addTaskWithFlexiWords() {
         CommandParser parser = new CommandParser();
-        Command add = parser.parseCommand("add task name by due date");
+        Command add = parser.parseCommand("add task name by 11.12.2015 13:30");
         assertEquals("task name", add.getCommandArguments()[0]);
-        assertEquals("due date", add.getCommandArguments()[1]);
+        assertEquals("11.12.2015 13:30", add.getCommandArguments()[1]);
+    }
+    
+    //13th month is a boundary value for month
+    @Test (expected = org.joda.time.IllegalFieldValueException.class)
+    public void addBadTaskThirteenthMonth() {
+        CommandParser parser = new CommandParser();
+        Command add = parser.parseCommand("add task name by 11.13.2015 13:30");
+    }
+    
+    //0th month is a boundary value for month
+    @Test (expected = org.joda.time.IllegalFieldValueException.class)
+    public void addBadTaskZeroMonth() {
+        CommandParser parser = new CommandParser();
+        Command add = parser.parseCommand("add task name by 11.0.2015 13:30");
     }
 }
