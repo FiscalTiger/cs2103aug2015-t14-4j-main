@@ -57,6 +57,8 @@ public class Command {
 	            return new Review(commandType,arguments);
 	        case SAVE_AT:
 	            return new SaveAt(commandType,arguments);
+	        case INVALID: 
+	        	return new Invalid(commandType, arguments);
 	        default:
 	        	return new Exit(commandType,arguments);
 	        }
