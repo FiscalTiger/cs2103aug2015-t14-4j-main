@@ -19,6 +19,7 @@ import easycheck.eventlist.ToDoEvent;
  * Storage manager for Easy Check application.
  * Handles the storage of application's file storage and cached data
  * @author Andrew Pouleson
+ * 
  */
 public class StorageManager {
 	private static final String EVENT_TYPE_CALENDAR_KEY = "calendar";
