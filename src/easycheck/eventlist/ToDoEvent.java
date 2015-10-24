@@ -118,12 +118,14 @@ public class ToDoEvent extends Event {
 	    return out.toString();
 	}
 	
-	//@author A0126989 override equals method
+	//@author A0126989 
+	//override equals method
 	public boolean equals(Object obj) {
 		return false;
 	}
 	
-	//@author A0126989 override compareTo method
+	//@author A0126989 
+	//override compareTo method
 	public int compareTo(Event e) {
 		return 0;
 	}

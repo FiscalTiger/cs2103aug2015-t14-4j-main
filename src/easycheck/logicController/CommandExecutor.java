@@ -136,29 +136,69 @@ public class CommandExecutor {
         return String.format(MESSAGE_UPDATE_CMD_RESPONSE, cmd.getTaskName(), cmd.getNewEvent());
 
 	}
-	
+	//@ author A0126989H
 	/* DELETE requires arguments to be of "Event name" or "part of event name"
 	 * 
 	 */
-    private String delete(Delete cmd) {
-	    String arguments = cmd.getTaskName();
-        if (arguments == null) {
-            if (eventList.size() != 0) {
-                return String.format(MESSAGE_DELETE_CMD_RESPONSE,
-                        eventList.remove(0).getEventName());
-            } else {
-                return MESSAGE_DELETE_CMD_EMPTY;
-            }
-            
-        } else {
-            for (int i = 0; i < eventList.size(); i++) {
-                if (eventList.get(i).getEventName().contains(arguments)) {
-                    eventList.remove(i);
-                    break;
-                }
-            }
-        }
-        return String.format(MESSAGE_DELETE_CMD_RESPONSE, arguments);
+	private String delete(Delete cmd) {
+		String arguments = cmd.getTaskName();
+		
+		if (arguments == null) {
+			if (eventList.size() != 0) {
+				String removeEvent = eventList.remove(0).getEventName();
+				reIndex();
+				return String.format(MESSAGE_DELETE_CMD_RESPONSE, removeEvent );
+			} else {
+				reIndex();
+				return MESSAGE_DELETE_CMD_EMPTY;
+			}
+		}else if (isNumeric(arguments)){
+			if (eventList.size() != 0) {
+				String removeEvent = eventList.remove(Integer.parseInt(arguments)-1).getEventName();
+				reIndex();
+				return String.format(MESSAGE_DELETE_CMD_RESPONSE, removeEvent );
+			} else {
+				reIndex();
+				return MESSAGE_DELETE_CMD_EMPTY;
+			}
+		} else {
+			for (int i = 0; i < eventList.size(); i++) {
+				if (eventList.get(i).getEventName().contains(arguments)) {
+					eventList.remove(i);
+					reIndex();
+					break;
+				}
+			}
+		}
+		return String.format(MESSAGE_DELETE_CMD_RESPONSE, arguments);
+	}
+	// @author A0126989H
+	// Reindexing all the event in the EventList
+	public void reIndex(){
+		int eventIndex = 1;
+		int size = eventList.size();
+		ArrayList<Event> temp= new ArrayList<Event>();
+		System.out.println("eventList: " + eventList);
+		for (int i = 0; i<size;i++){
+			temp.add(new Event(eventIndex,eventList.remove(0).getEventName()));
+			eventIndex++;
+		}
+		System.out.println("eventList: " + temp);
+		eventList = temp;
+	}
+    // @author A0126989H
+    // Checking if the delete argument is Index number
+    public static boolean isNumeric(String str)  
+    {  
+      try  
+      {  
+        double d = Double.parseDouble(str);  
+      }  
+      catch(NumberFormatException nfe)  
+      {  
+        return false;  
+      }  
+      return true;  
     }
 
 	private String undo(Undo cmd) {

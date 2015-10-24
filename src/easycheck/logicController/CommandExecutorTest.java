@@ -1,6 +1,6 @@
 package easycheck.logicController;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.*;
 
 import java.util.ArrayList;
 
@@ -51,6 +51,12 @@ public class CommandExecutorTest {
 	@Test
 	public void testExecuteCommand() {
 		testAddCommand();
+		testDeleteCommand();
+	}
+	//@author A0126989H
+	public void testDeleteCommand(){
+		String[] temp = {"1"};
+		assertTrue("this is true",CommandExecutor.isNumeric("1"));
 	}
 	
 	public void testAddCommand() {
@@ -107,4 +113,5 @@ public class CommandExecutorTest {
 	private void testOneCommand(String description, String expected, Command command) {
 		assertEquals(description, expected, cmdExe.executeCommand(command)); 
 	}
+
 }
