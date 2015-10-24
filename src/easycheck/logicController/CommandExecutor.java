@@ -142,48 +142,52 @@ public class CommandExecutor {
 	 */
 	private String delete(Delete cmd) {
 		String arguments = cmd.getTaskName();
-		
+		String removeEvent = "";
+		// Case 1: When the command is "delete"
 		if (arguments == null) {
 			if (eventList.size() != 0) {
-				String removeEvent = eventList.remove(0).getEventName();
+				removeEvent = eventList.remove(0).getEventName();
 				reIndex();
 				return String.format(MESSAGE_DELETE_CMD_RESPONSE, removeEvent );
 			} else {
 				reIndex();
 				return MESSAGE_DELETE_CMD_EMPTY;
 			}
+		// Case 2: When the command is "delete + index"
 		}else if (isNumeric(arguments)){
 			if (eventList.size() != 0) {
-				String removeEvent = eventList.remove(Integer.parseInt(arguments)-1).getEventName();
+				removeEvent = eventList.remove(Integer.parseInt(arguments)-1).getEventName();
 				reIndex();
 				return String.format(MESSAGE_DELETE_CMD_RESPONSE, removeEvent );
 			} else {
 				reIndex();
 				return MESSAGE_DELETE_CMD_EMPTY;
 			}
+		// Case 3: When the command is "delete + EventName"
 		} else {
 			for (int i = 0; i < eventList.size(); i++) {
-				if (eventList.get(i).getEventName().contains(arguments)) {
-					eventList.remove(i);
+				if (eventList.get(i).getEventName().contains(arguments.toLowerCase())) {
+					removeEvent = eventList.remove(i).getEventName();
 					reIndex();
 					break;
 				}
 			}
 		}
-		return String.format(MESSAGE_DELETE_CMD_RESPONSE, arguments);
+		return String.format(MESSAGE_DELETE_CMD_RESPONSE, removeEvent);
 	}
 	// @author A0126989H
-	// Reindexing all the event in the EventList
+	// ReIndexing all the event in the EventList
 	public void reIndex(){
+		
 		int eventIndex = 1;
 		int size = eventList.size();
 		ArrayList<Event> temp= new ArrayList<Event>();
-		System.out.println("eventList: " + eventList);
+		
 		for (int i = 0; i<size;i++){
 			temp.add(new Event(eventIndex,eventList.remove(0).getEventName()));
 			eventIndex++;
 		}
-		System.out.println("eventList: " + temp);
+		
 		eventList = temp;
 	}
     // @author A0126989H
