@@ -21,6 +21,7 @@ public class CommandExecutor {
 	
 	//@author A0126989H
 	private static final String MESSAGE_SEARCH_CMD_EMPTY = "There aren't any events to search!\n";
+	private static final String MESSAGE_SEARCH_CMD_NOTFOUND = "There are no such events!\n";
 	
 	
 	private ArrayList<Event> eventList;
@@ -225,6 +226,10 @@ public class CommandExecutor {
 				if (e.getEventName().toLowerCase().contains(cmd.getArgument()[0].toLowerCase()))
 					response += e;
 			}
+		}
+		
+		if (response.equals("")){
+			response = MESSAGE_SEARCH_CMD_NOTFOUND ;
 		}
 		//Response should not be empty
 		assert(!response.equals(""));
