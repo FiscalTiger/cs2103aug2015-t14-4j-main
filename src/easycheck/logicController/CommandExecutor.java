@@ -19,6 +19,11 @@ public class CommandExecutor {
 	private static final String MESSAGE_INVALID_CALENDAR_DATES = "The start date must be before the end date and after the current date and time.\n";
 	private static final String MESSAGE_INVALID_TODO_DEADLINE = "The deadline must be after the current date and time.\n";
 	
+	//@author A0126989H
+	private static final String MESSAGE_SEARCH_CMD_EMPTY = "There aren't any events to search!\n";
+	private static final String MESSAGE_SEARCH_CMD_NOTFOUND = "There are no such events!\n";
+	
+	
 	private ArrayList<Event> eventList;
 	private Stack<ArrayList<Event>> undoStack;
 	private Stack<ArrayList<Event>> redoStack;
@@ -204,13 +209,31 @@ public class CommandExecutor {
       }  
       return true;  
     }
+    
+    
 
 	private String undo(Undo cmd) {
 		return "";
 	}
-
+	
+	//@author A0126989H
 	private String search(Search cmd) {
-		return "";
+		String response = "";
+		if(eventList.isEmpty()) {
+			response = MESSAGE_SEARCH_CMD_EMPTY;
+		} else {
+			for(Event e: eventList) {
+				if (e.getEventName().toLowerCase().contains(cmd.getArgument()[0].toLowerCase()))
+					response += e;
+			}
+		}
+		
+		if (response.equals("")){
+			response = MESSAGE_SEARCH_CMD_NOTFOUND ;
+		}
+		//Response should not be empty
+		assert(!response.equals(""));
+		return response;
 	}
 
 	private String review(Review cmd) {
