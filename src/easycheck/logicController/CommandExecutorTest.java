@@ -56,7 +56,7 @@ public class CommandExecutorTest {
 		testAddCommandGoodToDo();
 		testAddCommandOldToDo();
 		testAddCommandGoodFloating();
-//		testDeleteCommand();
+		testDeleteCommand();
 	}
 	//@author A0126989H
 	public void testDeleteCommand(){
