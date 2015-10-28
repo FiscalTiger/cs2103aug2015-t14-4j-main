@@ -62,8 +62,8 @@ public class CommandExecutor {
 	        return add((Add)command);
         } else if(command instanceof Display) {
         	return display((Display)command);
-        } else if(command instanceof Edit) {
-	        return update((Edit)command);
+        } else if(command instanceof Update) {
+	        return update((Update)command);
         } else if(command instanceof Delete) {
 	        return delete((Delete)command);
         } else if(command instanceof Undo) {
@@ -78,12 +78,18 @@ public class CommandExecutor {
 	        return saveAt((SaveAt)command);
         } else if(command instanceof Exit) {
 	        return exit((Exit)command);
+        } else if(command instanceof Invalid) {
+            return Invalid((Invalid)command);
         } else {
         	return command.toString();
 	    }
     }
 	
-	/**
+	private String Invalid(Invalid command) {
+        return command.getInvalidMessage();
+    }
+
+    /**
 	 * Creates the correct type of event
 	 * and adds it to eventList
 	 * @author A0145668R
@@ -163,7 +169,7 @@ public class CommandExecutor {
 	/* UPDATE requires arguments to be of "Event name" + "to" + "Updated Event" 
 	 * @author A0126989H
 	 */
-	private String update(Edit cmd) {
+	private String update(Update cmd) {
         for (int i = 0; i < eventList.size(); i++){
             if (eventList.get(i).getEventName().contains(cmd.getTaskName())){
                 eventList.get(i).setEventName(cmd.getNewEvent());

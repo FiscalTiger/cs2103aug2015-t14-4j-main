@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import easycheck.commandParser.CommandTypes.Add;
 import easycheck.commandParser.CommandTypes.Delete;
 import easycheck.commandParser.CommandTypes.Display;
-import easycheck.commandParser.CommandTypes.Edit;
+import easycheck.commandParser.CommandTypes.Update;
 import easycheck.commandParser.CommandTypes.Exit;
 import easycheck.commandParser.CommandTypes.Invalid;
 import easycheck.commandParser.CommandTypes.Review;
@@ -46,7 +46,7 @@ public class Command {
     }
 
 	public enum COMMAND_TYPE {
-		ADD, DISPLAY,UPDATE, DELETE, UNDO, SEARCH, REVIEW, SAVE_AT, INVALID, EXIT
+		ADD, DISPLAY, UPDATE, DELETE, UNDO, SEARCH, REVIEW, SAVE_AT, INVALID, EXIT
 	};
 	
 	public static Command createObject(String commandType, String[] arguments) {
@@ -56,7 +56,7 @@ public class Command {
 	        case DISPLAY:
 //	        	return new Display(commandType,arguments);
 	        case UPDATE:
-	            return new Edit(commandType,arguments);
+	            return new Update(commandType,arguments);
 	        case DELETE:
 	            return new Delete(arguments);
 	        case UNDO:
