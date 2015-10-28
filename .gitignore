@@ -1,16 +1,17 @@
--*.class		
--*.classpath		
+-*.class
+-*.classpath
 -		
 -# Mobile Tools for Java (J2ME)		
--.mtj.tmp/		
+-.mtj.tmp/
 -		
 -# Package Files #		
--*.jar		
--*.war		
+-*.jar
+-*.war
 -*.ear		
--		
+-
 -# virtual machine crash logs, see http://www.java.com/en/download/help/error_hotspot.xml		
--hs_err_pid*		
--/bin/		
+-hs_err_pid*
+-/bin/
 -myeasycheck.txt
 /bin/
+.classpath
