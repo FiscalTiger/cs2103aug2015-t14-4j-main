@@ -15,3 +15,5 @@
 -myeasycheck.txt
 /bin/
 .classpath
+bin/
+.class
