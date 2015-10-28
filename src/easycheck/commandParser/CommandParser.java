@@ -17,6 +17,7 @@ import com.joestelmach.natty.DateGroup;
 import com.joestelmach.natty.Parser;
 
 import easycheck.commandParser.CommandTypes.Add;
+import easycheck.commandParser.CommandTypes.Delete;
 import easycheck.commandParser.CommandTypes.Display;
 import easycheck.commandParser.CommandTypes.Invalid;
 
@@ -48,7 +49,7 @@ public class CommandParser {
 	private static final String MESSAGE_INVALID_DISPLAY_ARGS = "Display: Invalid flag \"%s\"\n";
 	private static final String MESSAGE_INVALID_DISPLAY_DATE = "Display: Couldn't parse the date \"%s\"\n";
 	private static final String MESSAGE_INVALID_DISPLAY_INDEX = "Display: Invalid index \"%s\"\n";
-	private static final String MESSAGE_INVALID_DISPLAY_NUM_OF_ARGS = "Display: too many arugments\n";
+	private static final String MESSAGE_INVALID_DISPLAY_NUM_OF_ARGS = "Display: too many arguments\n";
 	
 	private static final String MESSAGE_INVALID_ADD_DATE = "Add: Couldn't parse the date \"%s\"s\n";
 	private static final String MESSAGE_INVALID_ADD_NUM_OF_ARGS = "Add: too many arugments\n";
@@ -97,6 +98,7 @@ public class CommandParser {
 	private DateTimeFormatter timeFormatter = DateTimeFormat
             .forPattern(DATE_AND_TIME_INPUT_FORMAT);
 
+	// parses the arguments and calls the appropriate create command.
 	public Command parseCommand(String userCommand) {
 		String[] commandArray = splitCommand(userCommand);
 		if (commandArray.length == 1) {
@@ -120,12 +122,16 @@ public class CommandParser {
 		if (commandType.equalsIgnoreCase(COMMAND_TYPE_DISPLAY)) {
 			command = createDisplayCommand(arguments);
 		} else if (commandType.equalsIgnoreCase(COMMAND_TYPE_EXIT)) {
+		    //TODO
 			command = Command.createObject(commandType, arguments);
 		} else if (commandType.equalsIgnoreCase(COMMAND_TYPE_DELETE)) {
-			command = Command.createObject(commandType, arguments);
+		  //TODO
+			command = createDeleteCommand(arguments);
 		} else if (commandType.equalsIgnoreCase(COMMAND_TYPE_SEARCH)) {
+		  //TODO
 			command = Command.createObject(commandType, arguments);
 		} else {
+		  //TODO
 			command = Command.createObject(COMMAND_TYPE_INVALID, arguments);
 		}
 		return command;
@@ -139,15 +145,19 @@ public class CommandParser {
 				arguments = getArgumentsAdd(commandArguments);
 				return createAddCommand(arguments);
 			} else if (commandType.equalsIgnoreCase(COMMAND_TYPE_DELETE)) {
+			    //TODO
 				arguments = getArguments(commandArguments, NUM_ARGUMENTS_DELETE);
 			} else if (commandType.equalsIgnoreCase(COMMAND_TYPE_UPDATE)) {
+			    //TODO
 				arguments = getArguments(commandArguments, NUM_ARGUMENTS_UPDATE);
 			} else if (commandType.equalsIgnoreCase(COMMAND_TYPE_SEARCH)) {
+			    //TODO
 				arguments = getArguments(commandArguments, NUM_ARGUMENTS_SEARCH);
 			} else if (commandType.equalsIgnoreCase(COMMAND_TYPE_DISPLAY)) {
 				arguments = getDisplayArguments(commandArguments);
 				return createDisplayCommand(arguments);
 			} else {
+			    //TODO
 				Command command = Command.createObject(COMMAND_TYPE_INVALID, arguments);
 				return command;
 			}
@@ -161,14 +171,14 @@ public class CommandParser {
 		return command;
 	}
 	
-	//@author A0145668R
-	private String[] getDisplayArguments(String commandArguments) {
-		// split arguments and then trim them.
-		String[] arguments = trimArguments(commandArguments.split(ARGUMENT_SPLITTER));
-		return arguments;
-	}
-	
-	//@author A0145668R
+	// get arguments for add type - supports flexi commands
+    private String[] getArgumentsAdd(String commandArguments) {
+    	// check arguments for flexi commands, then trim them.
+    	String[] arguments = trimArguments(checkFlexi(commandArguments));
+    	return arguments;
+    }
+
+    //@author A0145668R
 	private Command createAddCommand(String[] arguments) {
 		Command cmd = null;
 		String taskName = arguments[0];
@@ -206,6 +216,13 @@ public class CommandParser {
 	}
 	
 	//@author A0145668R
+    private String[] getDisplayArguments(String commandArguments) {
+    	// split arguments and then trim them.
+    	String[] arguments = trimArguments(commandArguments.split(ARGUMENT_SPLITTER));
+    	return arguments;
+    }
+
+    //@author A0145668R
 	private Command createDisplayCommand(String[] arguments) {
 		Display disp = new Display();
 		if(arguments == null) {
@@ -247,7 +264,11 @@ public class CommandParser {
 		return disp;
 	}
 	
-	//@author A0145668R
+	private Command createDeleteCommand(String[] arguments) {
+        return new Delete(arguments);
+    }
+
+    //@author A0145668R
 	public DateTime parseDateText(String dateString) {
 		Parser dateParser = new Parser();
 		List<DateGroup> dateGroups = dateParser.parse(dateString);
@@ -260,13 +281,6 @@ public class CommandParser {
 		  }
 		  return new DateTime(dateGroup.getDates().get(0));
 		}
-	}
-
-	// get arguments for add type - supports flexi commands
-	private String[] getArgumentsAdd(String commandArguments) {
-		// check arguments for flexi commands, then trim them.
-		String[] arguments = trimArguments(checkFlexi(commandArguments));
-		return arguments;
 	}
 
 	private String[] getArguments(String commandArguments, int expectedArguments) throws Exception {

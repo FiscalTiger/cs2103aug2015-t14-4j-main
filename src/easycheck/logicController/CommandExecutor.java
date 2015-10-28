@@ -10,11 +10,13 @@ import easycheck.eventlist.Event;
 import easycheck.eventlist.ToDoEvent;
 
 public class CommandExecutor {
+    private static int ZERO_OFFSET = 1;
+    
 	private static final String MESSAGE_INVALID_COMMAND = "Invalid command.\n";
 	private static final String MESSAGE_ADD_CMD_RESPONSE = "Added %s\n";
 	private static final String MESSAGE_DISPLAY_CMD_EMPTY = "There aren't any events to display!\n";
 	private static final String MESSAGE_DELETE_CMD_EMPTY = "There aren't any events!\n";
-	private static final String MESSAGE_DELETE_CMD_RESPONSE = "Deleted %s Successfully\n";
+	private static final String MESSAGE_DELETE_CMD_RESPONSE = "Deleted \"%s\" Successfully\n";
 	private static final String MESSAGE_UPDATE_CMD_RESPONSE = "Updated %s to %s successfully\n";
 	private static final String MESSAGE_INVALID_CALENDAR_DATES = "The start date must be before the end date and after the current date and time.\n";
 	private static final String MESSAGE_INVALID_TODO_DEADLINE = "The deadline must be after the current date and time.\n";
@@ -160,12 +162,15 @@ public class CommandExecutor {
 			}
 		// Case 2: When the command is "delete + index"
 		}else if (isNumeric(arguments)){
-			if (eventList.size() != 0) {
-				removeEvent = eventList.remove(Integer.parseInt(arguments)-1).getEventName();
-				reIndex();
-				return String.format(MESSAGE_DELETE_CMD_RESPONSE, removeEvent );
-			} else {
-				reIndex();
+		    int index = Integer.parseInt(arguments);
+            if (eventList.size() < index || index < 1) {
+                return MESSAGE_SEARCH_CMD_NOTFOUND;
+            } else if (eventList.size() != 0) {
+                removeEvent = eventList.remove(index - ZERO_OFFSET).getEventName();
+                reIndex();
+                return String.format(MESSAGE_DELETE_CMD_RESPONSE, removeEvent);
+            } else {
+                reIndex();
 				return MESSAGE_DELETE_CMD_EMPTY;
 			}
 		// Case 3: When the command is "delete + EventName"
