@@ -22,6 +22,8 @@ import org.json.simple.JSONValue;
 
 public class CalendarEvent extends Event {
 	private static final String DATE_AND_TIME_OUTPUT_FORMAT = "%s %d %s %d at %02d:%02d";
+	private static final String DATE_OUTPUT_FORMAT = "%s %d %s %d";
+	private static final String TIME_OUTPUT_FORMAT = "%02d:%02d";
 	private static final String DATE_AND_TIME_INPUT_FORMAT = "dd.MM.yyyy HH:mm";
 	private static final String MESSAGE_JSON_STRING_ERROR = "Error in toJsonString method, most likely coding error";
 	private static final String MESSAGE_TO_STRING_TEMPLATE = "%d. %s from %s to %s\n";
@@ -68,6 +70,32 @@ public class CalendarEvent extends Event {
 		return endDateAndTime;
 	}
 	
+	public String getStartDate() {
+		DateTime.Property pDayOfTheWeek = startDateAndTime.dayOfWeek();
+		DateTime.Property pMonthOfYear = startDateAndTime.monthOfYear();
+		String dateString = String.format(DATE_OUTPUT_FORMAT, pDayOfTheWeek.getAsShortText(),
+				startDateAndTime.getDayOfMonth(), pMonthOfYear.getAsShortText(), startDateAndTime.getYear());
+		return dateString;
+	}
+	
+	public String getStartTime() {
+		String timeString = String.format(TIME_OUTPUT_FORMAT, startDateAndTime.getHourOfDay(), startDateAndTime.getMinuteOfHour());
+		return timeString;
+	}
+	
+	public String getEndDate() {
+		DateTime.Property pDayOfTheWeek = endDateAndTime.dayOfWeek();
+		DateTime.Property pMonthOfYear = endDateAndTime.monthOfYear();
+		String dateString = String.format(DATE_OUTPUT_FORMAT, pDayOfTheWeek.getAsShortText(),
+				endDateAndTime.getDayOfMonth(), pMonthOfYear.getAsShortText(), endDateAndTime.getYear());
+		return dateString;
+	}
+	
+	public String getEndTime() {
+		String timeString = String.format(TIME_OUTPUT_FORMAT, endDateAndTime.getHourOfDay(), endDateAndTime.getMinuteOfHour());
+		return timeString;
+	}
+	
 	/**
 	 * Sets a new start date and time
 	 * @param newDateString in format of "E MM.dd.yyyy 'at' hh:mm:ss a zzz"
@@ -88,6 +116,14 @@ public class CalendarEvent extends Event {
 		endDateAndTime = newDate;
 	}
 	
+	public boolean isSameDay() {
+		return this.getStartDate().equals(this.getEndDate());
+	}
+	
+	public boolean isDone() {
+		return endDateAndTime.isBeforeNow();
+	}
+	
 	/**
 	 * Returns the string form of this calendar event
 	 */
@@ -96,6 +132,16 @@ public class CalendarEvent extends Event {
 		String endDateString = getFormattedEndDateString();
 		return String.format(
 				MESSAGE_TO_STRING_TEMPLATE, this.getEventIndex(), this.getEventName(), startDateString, endDateString);
+	}
+	
+	public String toPrintGroupString() {
+		if (this.isSameDay()) {
+			return String.format(MESSAGE_TO_STRING_TEMPLATE, this.getEventIndex(), this.getEventName(),
+					this.getStartTime(), this.getEndTime());
+		} else {
+			return String.format(MESSAGE_TO_STRING_TEMPLATE, this.getEventIndex(), this.getEventName(),
+					this.getStartTime(), this.getFormattedEndDateString());
+		}
 	}
 
 	private String getFormattedStartDateString() {

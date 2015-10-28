@@ -20,10 +20,19 @@ public class PrintGroup {
 		eventList.add(e);
 	}
 	
+	
+	public String getHeading() {
+		return heading;
+	}
+
+	public void setHeading(String heading) {
+		this.heading = heading;
+	}
+
 	public String toString() {
 		String printGroup = heading + NEWLINE;
 		for(Event e: eventList) {
-			printGroup += TAB + e;
+			printGroup += TAB + e.toPrintGroupString();
 		}
 		return printGroup;
 	}

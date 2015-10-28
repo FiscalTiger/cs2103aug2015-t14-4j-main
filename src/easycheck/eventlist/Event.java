@@ -43,6 +43,7 @@ public abstract class Event implements Comparable<Event> {
 		this.setEventName(eventName);
 	}
 	
+	
 	/**
 	 * Returns the event's index
 	 * @return the event's index
@@ -74,6 +75,10 @@ public abstract class Event implements Comparable<Event> {
 	public void setEventName(String newEventName) {
 		this.eventName = newEventName;
 	}
+	
+	public abstract boolean isDone();
+	
+	public abstract String toPrintGroupString();
 	
 	/*
 	 * (non-Javadoc)

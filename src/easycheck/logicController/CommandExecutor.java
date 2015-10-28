@@ -152,7 +152,7 @@ public class CommandExecutor {
 	private String display(Display cmd){
 		String response = "";
 		if(cmd.isIndex()) {
-			response += eventList.get(cmd.getEventIndex() + 1);
+			response += eventList.get(cmd.getEventIndex() - 1);
 		} else if(cmd.isFloating()) {
 			PrintGroup printGroup = new PrintGroup(PRINT_GROUP_HEADING_FLOATING);
 			for(Event e: eventList) {
@@ -162,14 +162,156 @@ public class CommandExecutor {
 			}
 			response = printGroup.toString();
 		} else if(cmd.isDone()) {
-			
-		} else {
-			if(eventList.isEmpty()) {
-				response = MESSAGE_DISPLAY_CMD_EMPTY;
-			} else {
-				for(Event e: eventList) {
-					response += e;
+			PrintGroup floatingGroup = new PrintGroup(PRINT_GROUP_HEADING_FLOATING);
+			ArrayList<PrintGroup> dateGroups = new ArrayList<PrintGroup>();
+			for(Event e: eventList) {
+				if(e instanceof FloatingTask && e.isDone()) {
+					floatingGroup.addEntry(e);
+				} else if(e instanceof CalendarEvent && e.isDone()) {
+					boolean isAdded = false;
+					CalendarEvent cal = (CalendarEvent)e;
+					for(PrintGroup dateGroup: dateGroups) {
+						if(dateGroup.getHeading().equals(cal.getStartDate())) {
+							dateGroup.addEntry(cal);
+							isAdded = true;
+							break;
+						}
+					}
+					
+					if(!isAdded) {
+						PrintGroup temp = new PrintGroup(cal.getStartDate());
+						dateGroups.add(temp);
+						temp.addEntry(cal);
+					} 
+				} else if(e instanceof ToDoEvent && e.isDone()) {
+					boolean isAdded = false;
+					ToDoEvent todo = (ToDoEvent)e;
+					for(PrintGroup dateGroup: dateGroups) {
+						if(dateGroup.getHeading().equals(todo.getDeadlineDate())) {
+							dateGroup.addEntry(todo);
+							isAdded = true;
+							break;
+						}
+					}
+					
+					if(!isAdded) {
+						PrintGroup temp = new PrintGroup(todo.getDeadlineDate());
+						dateGroups.add(temp);
+						temp.addEntry(todo);
+					} 
 				}
+			}
+			
+			response += floatingGroup.toString();
+			for(PrintGroup dateGroup: dateGroups) {
+				response += dateGroup.toString();
+			}
+		} else if(cmd.isNotDone()) {
+			PrintGroup floatingGroup = new PrintGroup(PRINT_GROUP_HEADING_FLOATING);
+			ArrayList<PrintGroup> dateGroups = new ArrayList<PrintGroup>();
+			for(Event e: eventList) {
+				if(e instanceof FloatingTask && !e.isDone()) {
+					floatingGroup.addEntry(e);
+				} else if(e instanceof CalendarEvent && !e.isDone()) {
+					boolean isAdded = false;
+					CalendarEvent cal = (CalendarEvent)e;
+					for(PrintGroup dateGroup: dateGroups) {
+						if(dateGroup.getHeading().equals(cal.getStartDate())) {
+							dateGroup.addEntry(cal);
+							isAdded = true;
+							break;
+						}
+					}
+					
+					if(!isAdded) {
+						PrintGroup temp = new PrintGroup(cal.getStartDate());
+						dateGroups.add(temp);
+						temp.addEntry(cal);
+					} 
+				} else if(e instanceof ToDoEvent && !e.isDone()) {
+					boolean isAdded = false;
+					ToDoEvent todo = (ToDoEvent)e;
+					for(PrintGroup dateGroup: dateGroups) {
+						if(dateGroup.getHeading().equals(todo.getDeadlineDate())) {
+							dateGroup.addEntry(todo);
+							isAdded = true;
+							break;
+						}
+					}
+					
+					if(!isAdded) {
+						PrintGroup temp = new PrintGroup(todo.getDeadlineDate());
+						dateGroups.add(temp);
+						temp.addEntry(todo);
+					} 
+				}
+			}
+			
+			response += floatingGroup.toString();
+			for(PrintGroup dateGroup: dateGroups) {
+				response += dateGroup.toString();
+			}
+		} else if(cmd.isDate()) {
+			PrintGroup dateGroup = new PrintGroup(cmd.getDisplayDate());
+			for(Event e: eventList) {
+				if(e instanceof CalendarEvent) {
+					CalendarEvent cal = (CalendarEvent)e;
+					if(dateGroup.getHeading().equals(cal.getStartDate())) {
+						dateGroup.addEntry(cal);
+					}
+				} else if(e instanceof ToDoEvent && !e.isDone()) {
+					ToDoEvent todo = (ToDoEvent)e;
+					if(dateGroup.getHeading().equals(todo.getDeadlineDate())) {
+						dateGroup.addEntry(todo);
+					}
+				}
+			}
+			
+			response += dateGroup.toString();
+		} else {
+			PrintGroup floatingGroup = new PrintGroup(PRINT_GROUP_HEADING_FLOATING);
+			ArrayList<PrintGroup> dateGroups = new ArrayList<PrintGroup>();
+			for(Event e: eventList) {
+				if(e instanceof FloatingTask) {
+					floatingGroup.addEntry(e);
+				} else if(e instanceof CalendarEvent && !e.isDone()) {
+					boolean isAdded = false;
+					CalendarEvent cal = (CalendarEvent)e;
+					for(PrintGroup dateGroup: dateGroups) {
+						if(dateGroup.getHeading().equals(cal.getStartDate())) {
+							dateGroup.addEntry(cal);
+							isAdded = true;
+							break;
+						}
+					}
+					
+					if(!isAdded) {
+						PrintGroup temp = new PrintGroup(cal.getStartDate());
+						dateGroups.add(temp);
+						temp.addEntry(cal);
+					} 
+				} else if(e instanceof ToDoEvent) {
+					boolean isAdded = false;
+					ToDoEvent todo = (ToDoEvent)e;
+					for(PrintGroup dateGroup: dateGroups) {
+						if(dateGroup.getHeading().equals(todo.getDeadlineDate())) {
+							dateGroup.addEntry(todo);
+							isAdded = true;
+							break;
+						}
+					}
+					
+					if(!isAdded) {
+						PrintGroup temp = new PrintGroup(todo.getDeadlineDate());
+						dateGroups.add(temp);
+						temp.addEntry(todo);
+					} 
+				}
+			}
+			
+			response += floatingGroup.toString();
+			for(PrintGroup dateGroup: dateGroups) {
+				response += dateGroup.toString();
 			}
 		}
 		//Response should not be empty

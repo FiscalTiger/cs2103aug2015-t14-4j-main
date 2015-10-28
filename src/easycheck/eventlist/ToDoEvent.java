@@ -19,10 +19,15 @@ import org.json.simple.JSONValue;
 
 public class ToDoEvent extends Event {	
 	private static final String DATE_AND_TIME_OUTPUT_FORMAT = "%s %d %s %d at %02d:%02d";
+	private static final String DATE_OUTPUT_FORMAT = "%s %d %s %d";
+	private static final String TIME_OUTPUT_FORMAT = "%02d:%02d";
 	private static final String DATE_AND_TIME_INPUT_FORMAT = "dd.MM.yyyy HH:mm";
 	private static final String MESSAGE_JSON_STRING_ERROR = "Error in toJsonString method, most likely coding error";
 	private static final String MESSAGE_TO_STRING_TEMPLATE_IS_NOT_COMPLETE = "%d. %s due on %s\n";
 	private static final String MESSAGE_TO_STRING_TEMPLATE_IS_COMPLETE = "%d. %s due on %s is complete\n";
+	
+	private static final String MESSAGE_TO_PRINT_GROUP_STRING_TEMPLATE_IS_NOT_COMPLETE = "%d. %s due at %s\n";
+	private static final String MESSAGE_TO_PRINT_GROUP_STRING_TEMPLATE_IS_COMPLETE = "%d. %s due at %s is complete\n";
 	
 	private static final String JSON_TYPE = "type";
 	private static final String JSON_EVENT_INDEX = "index";
@@ -57,6 +62,22 @@ public class ToDoEvent extends Event {
 	public DateTime getDeadline() {
 		return deadline;
 	}
+	/**
+	 * Returns the due date in day of week dd Month YYYY format
+	 * @return String
+	 */
+	public String getDeadlineDate() {
+		DateTime.Property pDayOfTheWeek = deadline.dayOfWeek();
+		DateTime.Property pMonthOfYear = deadline.monthOfYear();
+		String dateString = String.format(DATE_OUTPUT_FORMAT, pDayOfTheWeek.getAsShortText(),
+				deadline.getDayOfMonth(), pMonthOfYear.getAsShortText(), deadline.getYear());
+		return dateString;
+	}
+	
+	public String getDeadlineTime() {
+		String timeString = String.format(TIME_OUTPUT_FORMAT, deadline.getHourOfDay(), deadline.getMinuteOfHour());
+		return timeString;
+	}
 	
 	/**
 	 * Sets a new due date and time
@@ -75,7 +96,7 @@ public class ToDoEvent extends Event {
 		complete = false;
 	}
 	
-	public boolean isComplete() {
+	public boolean isDone() {
 		return complete;
 	}
 	
@@ -94,6 +115,18 @@ public class ToDoEvent extends Event {
 		} else {
 			return String.format(
 					MESSAGE_TO_STRING_TEMPLATE_IS_NOT_COMPLETE, this.getEventIndex(), this.getEventName(), deadlineString);
+		}
+	}
+	
+	public String toPrintGroupString() {
+		if(complete) {
+			return String.format(
+					MESSAGE_TO_PRINT_GROUP_STRING_TEMPLATE_IS_COMPLETE, this.getEventIndex(), this.getEventName(),
+					this.getDeadlineTime());
+		} else {
+			return String.format(
+					MESSAGE_TO_PRINT_GROUP_STRING_TEMPLATE_IS_NOT_COMPLETE, this.getEventIndex(), this.getEventName(),
+					this.getDeadlineTime());
 		}
 	}
 	
