@@ -60,6 +60,18 @@ public class CommandParser {
 
 	// flexi command keywords
 	private final String[] FLEXI_KEYWORDS = { " by ", " at ", " to ", " for " };
+	//TODO move these to constructor
+	// Date Time Formats accepted
+	private final String DATE_SPLITTER_SLASH = "/";
+	private final String DATE_SPLITTER_DOT = ".";
+	private final String DATE_INPUT_FORMAT = "dd.MM.yyyy";
+	private final String DATE_AND_TIME_INPUT_FORMAT = "dd.MM.yyyy HH:mm";
+	private final int NUM_CHAR_DATE_INPUT = DATE_INPUT_FORMAT.length();
+	private final int NUM_CHAR_DATE_TIME_INPUT = DATE_AND_TIME_INPUT_FORMAT.length();
+	private DateTimeFormatter dateFormatter = DateTimeFormat
+            .forPattern(DATE_INPUT_FORMAT);
+	private DateTimeFormatter timeFormatter = DateTimeFormat
+            .forPattern(DATE_AND_TIME_INPUT_FORMAT);
 
 	public Command parseCommand(String userCommand) {
 		String[] commandArray = splitCommand(userCommand);
@@ -137,6 +149,7 @@ public class CommandParser {
 		return arguments;
 	}
 
+    // removes leading and trailing whitespace from arguments
 	private String[] trimArguments(String[] arguments) {
 		String[] trimmedArguments = new String[arguments.length];
 		for (int i = 0; i < arguments.length; i++) {
@@ -151,5 +164,18 @@ public class CommandParser {
 			commandArguments = commandArguments.replace(FLEXI_KEYWORDS[i], ARGUMENT_SPLITTER);
 		}
 		return commandArguments.split(ARGUMENT_SPLITTER);
+	}
+	
+	private DateTime parseDate(String dateString) throws Exception {
+	    DateTime date = null;
+	    dateString = dateString.replace(DATE_SPLITTER_SLASH, DATE_SPLITTER_DOT);
+	    if (dateString.length() == NUM_CHAR_DATE_INPUT) {
+	        dateFormatter.parseDateTime(dateString);
+	    } else if (dateString.length() == NUM_CHAR_DATE_TIME_INPUT) {
+	        timeFormatter.parseDateTime(dateString);
+	    } else {
+	        throw new Exception();
+	    }
+	    return date;
 	}
 }

@@ -35,7 +35,7 @@ public class Add extends Command {
 			//end @author A0145668R
 		} else if (arguments.length==2){
 			start = null;
-			end = fmt.parseDateTime(arguments[1]);;
+			end = fmt.parseDateTime(arguments[1]);
 		} else if (arguments.length==3){
 			start = fmt.parseDateTime(arguments[1]);
 			end = fmt.parseDateTime(arguments[2]);
