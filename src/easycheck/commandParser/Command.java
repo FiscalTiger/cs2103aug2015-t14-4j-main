@@ -58,7 +58,7 @@ public class Command {
 	        case UPDATE:
 	            return new Edit(commandType,arguments);
 	        case DELETE:
-	            return new Delete(commandType,arguments);
+	            return new Delete(arguments);
 	        case UNDO:
 	            return new Undo(commandType,arguments);
 	        case SEARCH:

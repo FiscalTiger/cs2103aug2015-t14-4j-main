@@ -14,13 +14,14 @@ import easycheck.commandParser.Command;
 public class Delete extends Command{
 	private String task;
 	
-	public Delete(String commandType, String[] arguments) {
-		super(commandType, arguments);
-		if (arguments != null) {
-		    task = arguments[0];
-		}
-	}
-	public String getTaskName(){
+	public Delete(String[] arguments) {
+	    if (arguments != null) {
+            task = arguments[0];
+        } else {
+            task = null;
+        }
+    }
+    public String getTaskName(){
 		return task;
 	}
 }
