@@ -10,6 +10,7 @@ import easycheck.logicController.LogicController;
 
 public class UserInterface {
 	private static final String MESSAGE_ENTER_COMMAND = "enter command: ";
+	private static final String MESSAGE_WELCOME = "Welcome to Easy Check!\nHere are your current events and tasks.\n";
 	public String userName;
 	
 	private Scanner sc = new Scanner(System.in);
@@ -26,6 +27,7 @@ public class UserInterface {
 		String userInput = "";
 		String commandResponse = "";
         //quick hack to make the console display on startup
+		ui.display(MESSAGE_WELCOME);
 		ui.display(ui.executeCommand("display"));
 		while(true) {
 			ui.display(MESSAGE_ENTER_COMMAND);

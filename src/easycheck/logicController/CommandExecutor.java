@@ -35,7 +35,7 @@ public class CommandExecutor {
 	private static final String MESSAGE_UNDO_EMPTY_STACK = "There is nothing to undo\n";
 	private static final String MESSAGE_REDO_EMPTY_STACK = "There is nothing to redo\n";
 	
-	private static final String PRINT_GROUP_HEADING_FLOATING = "Floating:";
+	private static final String PRINT_GROUP_HEADING_FLOATING = "Floating";
 	
 	//@author A0126989H
 	private static final String MESSAGE_SEARCH_CMD_EMPTY = "There aren't any events to search!\n";
