@@ -10,9 +10,22 @@ import easycheck.commandParser.Command;
  */
 
 public class Invalid extends Command {
-
-    public Invalid(String commandType, String[] arguments) {
+	private String invalidMessage;
+	
+    public Invalid(String invalidMessage) {
+    	this.setInvalidMessage(invalidMessage);
+    }
+    
+	public Invalid(String commandType, String[] arguments) {
         super(commandType, arguments);
     }
+
+	public String getInvalidMessage() {
+		return invalidMessage;
+	}
+
+	public void setInvalidMessage(String invalidMessage) {
+		this.invalidMessage = invalidMessage;
+	}
 
 }

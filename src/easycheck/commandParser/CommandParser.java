@@ -7,7 +7,6 @@ package easycheck.commandParser;
  * @@author A0124206W
  */
 
-import java.util.Date;
 import java.util.List;
 
 import org.joda.time.DateTime;
@@ -15,8 +14,7 @@ import org.joda.time.DateTime;
 import com.joestelmach.natty.DateGroup;
 import com.joestelmach.natty.Parser;
 
-import easycheck.commandParser.CommandTypes.Display;
-
+import easycheck.commandParser.CommandTypes.*;
 
 public class CommandParser {
 	private final String COMMAND_SPLITTER = " ";
@@ -43,10 +41,13 @@ public class CommandParser {
 	private final String COMMAND_TYPE_EXIT = "exit";
 	private final String COMMAND_TYPE_INVALID = "invalid";
 	
-	private static final String MESSAGE_INVALID_DISPLAY_ARGS = "Display: Invalid flag %s\n";
-	private static final String MESSAGE_INVALID_DISPLAY_DATE = "Display: Invalid date %s\n";
-	private static final String MESSAGE_INVALID_DISPLAY_INDEX = "Display: Invalid index %s\n";
+	private static final String MESSAGE_INVALID_DISPLAY_ARGS = "Display: Invalid flag \"%s\"\n";
+	private static final String MESSAGE_INVALID_DISPLAY_DATE = "Display: Couldn't parse the date \"%s\"\n";
+	private static final String MESSAGE_INVALID_DISPLAY_INDEX = "Display: Invalid index \"%s\"\n";
 	private static final String MESSAGE_INVALID_DISPLAY_NUM_OF_ARGS = "Display: too many arugments\n";
+	
+	private static final String MESSAGE_INVALID_ADD_DATE = "Add: Couldn't parse the date \"%s\"s\n";
+	private static final String MESSAGE_INVALID_ADD_NUM_OF_ARGS = "Add: too many arugments\n";
 	
 	private final String DISPLAY_FLAG_FLOATING = "f";
 	private final String DISPLAY_FLAG_DONE = "done";
@@ -132,6 +133,7 @@ public class CommandParser {
 		try {
 			if (commandType.equalsIgnoreCase(COMMAND_TYPE_ADD)) {
 				arguments = getArgumentsAdd(commandArguments);
+				return createAddCommand(arguments);
 			} else if (commandType.equalsIgnoreCase(COMMAND_TYPE_DELETE)) {
 				arguments = getArguments(commandArguments, NUM_ARGUMENTS_DELETE);
 			} else if (commandType.equalsIgnoreCase(COMMAND_TYPE_UPDATE)) {
@@ -155,12 +157,51 @@ public class CommandParser {
 		return command;
 	}
 	
+	//@author A0145668R
 	private String[] getDisplayArguments(String commandArguments) {
 		// split arguments and then trim them.
 		String[] arguments = trimArguments(commandArguments.split(ARGUMENT_SPLITTER));
 		return arguments;
 	}
-
+	
+	//@author A0145668R
+	private Command createAddCommand(String[] arguments) {
+		Command cmd = null;
+		String taskName = arguments[0];
+		DateTime start;
+		DateTime end;
+		
+		if (arguments.length == 1) {
+			cmd = new Add(taskName);
+		} else if (arguments.length==2) {
+			end = parseDateText(arguments[1]);
+			if(end != null) {
+				cmd = new Add(taskName, end);
+			} else {
+				cmd = new Invalid(String.format(MESSAGE_INVALID_ADD_DATE, arguments[1]));
+			}
+		} else if (arguments.length==3) {
+			start = parseDateText(arguments[1]);
+			end = parseDateText(arguments[2]);
+			if(start != null && end != null) {
+				cmd = new Add(taskName, start, end);
+			} else {
+				if(start == null) {
+					cmd = new Invalid(String.format(MESSAGE_INVALID_ADD_DATE, arguments[1]));
+				}
+				if(end == null) {
+					cmd = new Invalid(String.format(MESSAGE_INVALID_ADD_DATE, arguments[2]));
+				}
+			}
+		} else {
+			cmd = new Invalid(MESSAGE_INVALID_ADD_NUM_OF_ARGS);
+		}
+		assert(cmd != null);
+		
+		return cmd;
+	}
+	
+	//@author A0145668R
 	private Command createDisplayCommand(String[] arguments) {
 		Display disp = new Display();
 		if(arguments == null) {
@@ -173,8 +214,7 @@ public class CommandParser {
 			} else if(arguments[0].equals(DISPLAY_FLAG_DONE)) {
 				disp.setDoneFlag(true);
 			} else {
-				disp.setInvalidFlag(true);
-				disp.setInvalidMessage(String.format(MESSAGE_INVALID_DISPLAY_ARGS, arguments[0]));
+				return new Invalid(String.format(MESSAGE_INVALID_DISPLAY_ARGS, arguments[0]));
 			}
 		} else if(arguments.length == 2) {
 			if(arguments[0].equals(DISPLAY_FLAG_DATE)) {
@@ -183,8 +223,7 @@ public class CommandParser {
 					disp.setDateFlag(true);
 					disp.setDisplayDate(displayDate);
 				} else {
-					disp.setInvalidFlag(true);
-					disp.setInvalidMessage(String.format(MESSAGE_INVALID_DISPLAY_DATE, arguments[1]));
+					return new Invalid(String.format(MESSAGE_INVALID_DISPLAY_DATE, arguments[1]));
 				}
 			} else if(arguments[0].equals(DISPLAY_FLAG_INDEX)) {
 				try {
@@ -192,21 +231,19 @@ public class CommandParser {
 					disp.setEventIndex(eventIndex);
 					disp.setIndexFlag(true);
 				} catch(NumberFormatException e) {
-					disp.setInvalidFlag(true);
-					disp.setInvalidMessage(String.format(MESSAGE_INVALID_DISPLAY_INDEX, arguments[1]));
+					return new Invalid(String.format(MESSAGE_INVALID_DISPLAY_INDEX, arguments[1]));
 				}
 			} else {
-				disp.setInvalidFlag(true);
-				disp.setInvalidMessage(arguments[0]);
+				return new Invalid(String.format(MESSAGE_INVALID_DISPLAY_ARGS, arguments[0]));
 			}
 		} else {
-			disp.setInvalidFlag(true);
-			disp.setInvalidMessage(MESSAGE_INVALID_DISPLAY_NUM_OF_ARGS);
+			return new Invalid(MESSAGE_INVALID_DISPLAY_NUM_OF_ARGS);
 		}
 		
 		return disp;
 	}
 	
+	//@author A0145668R
 	public DateTime parseDateText(String dateString) {
 		Parser dateParser = new Parser();
 		List<DateGroup> dateGroups = dateParser.parse(dateString);
