@@ -11,6 +11,7 @@ import easycheck.commandParser.CommandTypes.Display;
 import easycheck.commandParser.CommandTypes.Exit;
 import easycheck.commandParser.CommandTypes.Invalid;
 import easycheck.commandParser.CommandTypes.Redo;
+import easycheck.commandParser.CommandTypes.Repeat;
 import easycheck.commandParser.CommandTypes.Review;
 import easycheck.commandParser.CommandTypes.SaveAt;
 import easycheck.commandParser.CommandTypes.Search;
@@ -447,15 +448,18 @@ public class CommandExecutor {
 		assert(!response.equals(""));
 		return response;
 	}
-
+	//TODO
 	private String review(Review cmd) {
 		return "";
 	}
-
+	//TODO
 	private String saveAt(SaveAt cmd) {
 		return "Successfully Saved";
 	}
-	
+	//TODO
+    private String repeat(Repeat cmd) {
+        return null;
+    }
 	/* DISPLAY requires arguments to be of ""
 	 * 
 	 */

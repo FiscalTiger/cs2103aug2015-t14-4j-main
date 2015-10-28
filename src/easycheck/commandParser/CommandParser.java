@@ -21,6 +21,7 @@ import easycheck.commandParser.CommandTypes.Delete;
 import easycheck.commandParser.CommandTypes.Display;
 import easycheck.commandParser.CommandTypes.Invalid;
 import easycheck.commandParser.CommandTypes.Redo;
+import easycheck.commandParser.CommandTypes.Repeat;
 import easycheck.commandParser.CommandTypes.Undo;
 
 public class CommandParser {
@@ -80,17 +81,10 @@ public class CommandParser {
 	// private final int NUM_ARGUMENTS_STORE_LOCATION = 1;
 
 	private final int NUM_MAX_ARGUMENTS_DISPLAY = 2;
-	// private final int NUM_ARGUMENTS_DELETE_DONE = 0;
-	// private final int NUM_ARGUMENTS_OVERDUE = 0;
-	// private final int NUM_ARGUMENTS_DELETE_TODAY = 0;
-	// private final int NUM_ARGUMENTS_NEXT = 0;
-	// private final int NUM_ARGUMENTS_UNDO = 0;
-	private final int NUM_ARGUMENTS_EXIT = 0;
-	
 
 	// flexi command keywords
 	private final String[] FLEXI_KEYWORDS = { " by ", " at ", " to ", " for " };
-	//TODO move these to constructor
+	//TODO move these to constructor are these still needed?
 	// Date Time Formats accepted
 	private final String DATE_SPLITTER_SLASH = "/";
 	private final String DATE_SPLITTER_DOT = ".";
@@ -232,49 +226,58 @@ public class CommandParser {
     }
 
     //@author A0145668R
-	private Command createDisplayCommand(String[] arguments) {
-		Display disp = new Display();
-		if(arguments == null) {
-			disp.setDefaultFlag(true);
-		} else if(arguments.length == 1) {
-			if(arguments[0].equals(DISPLAY_FLAG_FLOATING)) {
-				disp.setFloatingFlag(true);
-			} else if(arguments[0].equals(DISPLAY_FLAG_DUE)) {
-				disp.setNotDoneFlag(true);
-			} else if(arguments[0].equals(DISPLAY_FLAG_DONE)) {
-				disp.setDoneFlag(true);
-			} else {
-				return new Invalid(String.format(MESSAGE_INVALID_DISPLAY_ARGS, arguments[0]));
-			}
-		} else if(arguments.length == 2) {
-			if(arguments[0].equals(DISPLAY_FLAG_DATE)) {
-				DateTime displayDate = parseDateText(arguments[1]);
-				if(displayDate != null) {
-					disp.setDateFlag(true);
-					disp.setDisplayDate(displayDate);
-				} else {
-					return new Invalid(String.format(MESSAGE_INVALID_DISPLAY_DATE, arguments[1]));
-				}
-			} else if(arguments[0].equals(DISPLAY_FLAG_INDEX)) {
-				try {
-					int eventIndex = Integer.parseInt(arguments[1]);
-					disp.setEventIndex(eventIndex);
-					disp.setIndexFlag(true);
-				} catch(NumberFormatException e) {
-					return new Invalid(String.format(MESSAGE_INVALID_DISPLAY_INDEX, arguments[1]));
-				}
-			} else {
-				return new Invalid(String.format(MESSAGE_INVALID_DISPLAY_ARGS, arguments[0]));
-			}
-		} else {
-			return new Invalid(MESSAGE_INVALID_DISPLAY_NUM_OF_ARGS);
-		}
-		
-		return disp;
-	}
-	
-	private Command createDeleteCommand(String[] arguments) {
+    private Command createDisplayCommand(String[] arguments) {
+        Display disp = new Display();
+        if (arguments == null) {
+            disp.setDefaultFlag(true);
+        } else if (arguments.length == 1) {
+            if (arguments[0].equals(DISPLAY_FLAG_FLOATING)) {
+                disp.setFloatingFlag(true);
+            } else if (arguments[0].equals(DISPLAY_FLAG_DUE)) {
+                disp.setNotDoneFlag(true);
+            } else if (arguments[0].equals(DISPLAY_FLAG_DONE)) {
+                disp.setDoneFlag(true);
+            } else {
+                return new Invalid(String.format(MESSAGE_INVALID_DISPLAY_ARGS,
+                        arguments[0]));
+            }
+        } else if (arguments.length == 2) {
+            if (arguments[0].equals(DISPLAY_FLAG_DATE)) {
+                DateTime displayDate = parseDateText(arguments[1]);
+                if (displayDate != null) {
+                    disp.setDateFlag(true);
+                    disp.setDisplayDate(displayDate);
+                } else {
+                    return new Invalid(String.format(
+                            MESSAGE_INVALID_DISPLAY_DATE, arguments[1]));
+                }
+            } else if (arguments[0].equals(DISPLAY_FLAG_INDEX)) {
+                try {
+                    int eventIndex = Integer.parseInt(arguments[1]);
+                    disp.setEventIndex(eventIndex);
+                    disp.setIndexFlag(true);
+                } catch (NumberFormatException e) {
+                    return new Invalid(String.format(
+                            MESSAGE_INVALID_DISPLAY_INDEX, arguments[1]));
+                }
+            } else {
+                return new Invalid(String.format(MESSAGE_INVALID_DISPLAY_ARGS,
+                        arguments[0]));
+            }
+        } else {
+            return new Invalid(MESSAGE_INVALID_DISPLAY_NUM_OF_ARGS);
+        }
+
+        return disp;
+    }
+
+    // @@author A0124206
+    private Command createDeleteCommand(String[] arguments) {
         return new Delete(arguments);
+    }
+    // @@author A0124206
+    private Command createRepeatCommand(String[] arguments) {
+        return new Repeat(arguments[PARAM_POSITION_COMMAND_ARGUMENT]);
     }
 
     //@author A0145668R
