@@ -2,77 +2,49 @@ package easycheck.eventlist;
 
 import java.io.IOException;
 import java.io.StringWriter;
-import java.text.SimpleDateFormat;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
-/*
- * Class abstraction for floating events stored by the EasyCheck application.
- * Floating events do not have a start or end time.
- * @author A0145668R
- */
-
-public abstract class Event implements Comparable<Event> {
+public class FloatingTask extends Event {
 	private static final String JSON_TYPE = "type";
 	private static final String JSON_EVENT_INDEX = "index";
 	private static final String JSON_EVENT_NAME = "name";
 	private static final String MESSAGE_JSON_STRING_ERROR = "Error in toJsonString method, most likely coding error";
 	
-	private int eventIndex;
-	private String eventName;
+	private boolean complete;
 	
-	public Event() {}
+	public FloatingTask() {}
 	
 	/**
 	 * Event constructor
 	 * @param eventIndex, the index of the event
 	 * @param eventDesc, the description of the event
 	 */
-	public Event(int eventIndex, String eventName) {
-		this.eventIndex = eventIndex;
-		this.eventName = eventName;
+	public FloatingTask(int eventIndex, String eventName) {
+		super(eventIndex, eventName);
+		this.complete = false;
 	}
 	
-	public Event(JSONObject jsonObj){
+	public FloatingTask(JSONObject jsonObj){
 		Long eventIndex = (Long) jsonObj.get(JSON_EVENT_INDEX);
 		String eventName = (String) jsonObj.get(JSON_EVENT_NAME);
 		this.setEventIndex(eventIndex.intValue());
 		this.setEventName(eventName);
 	}
 	
-	/**
-	 * Returns the event's index
-	 * @return the event's index
-	 */
-	public int getEventIndex() {
-		return eventIndex;
+	public void markComplete() {
+		complete = true;
 	}
 	
-	/**
-	 * Returns the event's description
-	 * @return the event's description
-	 */
-	public String getEventName() {
-		return eventName;
+	public void unMarkComplete() {
+		complete = false;
 	}
 	
-	/**
-	 * Change the event's index
-	 * @param newEventIndex the new event index
-	 */
-	public void setEventIndex(int newEventIndex) {
-		this.eventIndex = newEventIndex;
-	}
-	
-	/**
-	 * Change the event's name
-	 * @param newEventName the new event name
-	 */
-	public void setEventName(String newEventName) {
-		this.eventName = newEventName;
+	public boolean isComplete() {
+		return complete;
 	}
 	
 	/*
@@ -81,28 +53,30 @@ public abstract class Event implements Comparable<Event> {
 	 */
 	@Override
 	public String toString() {
-		return eventIndex + ". " + eventName + "\n";
+		return this.getEventIndex() + ". " + this.getEventName() + "\n";
 	}
 	
 	@Override
 	public boolean equals(Object obj) {
-		if (!(obj instanceof Event)) {
-			return false;
-		} else {
-			Event e = (Event) obj;
-			return eventIndex == e.getEventIndex() && eventName.equals(e.getEventName());
-		}
+		return false;
 	}
 	
 	@Override
 	public int compareTo(Event e) {
-		return eventName.compareTo(e.getEventName());
+		if(e instanceof FloatingTask) {
+			return this.getEventName().compareTo(e.getEventName());
+		} else if (e instanceof CalendarEvent) {
+			return -1;
+		} else if (e instanceof ToDoEvent) {
+			return -1;
+		}
+		return 0;
 	}
 	
 	
 	public String toJsonString() {
-		Map obj=new LinkedHashMap();
-		obj.put(JSON_TYPE, "base");
+		Map obj = new LinkedHashMap();
+		obj.put(JSON_TYPE, "floating");
 		obj.put(JSON_EVENT_INDEX, new Integer(this.getEventIndex()));
 		obj.put(JSON_EVENT_NAME, this.getEventName());
 		

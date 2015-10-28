@@ -20,6 +20,8 @@ import easycheck.commandParser.CommandTypes.Add;
 import easycheck.commandParser.CommandTypes.Delete;
 import easycheck.commandParser.CommandTypes.Display;
 import easycheck.commandParser.CommandTypes.Invalid;
+import easycheck.commandParser.CommandTypes.Redo;
+import easycheck.commandParser.CommandTypes.Undo;
 
 public class CommandParser {
 	private final String COMMAND_SPLITTER = " ";
@@ -42,9 +44,12 @@ public class CommandParser {
 	// private final String COMMAND_TYPE_DELETE_TODAY = "deleteToday";
 	// private final String COMMAND_TYPE_STORE_LOCATION = "storeLocation";
 	// private final String COMMAND_TYPE_NEXT = "next";
-	// private final String COMMAND_TYPE_UNDO = "undo";
+	private final String COMMAND_TYPE_UNDO = "undo";
+	private final String COMMAND_TYPE_REDO = "redo";
 	private final String COMMAND_TYPE_EXIT = "exit";
 	private final String COMMAND_TYPE_INVALID = "invalid";
+	
+	private final String MESSAGE_INVALID_COMMAND = "Invalid Command\n";
 	
 	private static final String MESSAGE_INVALID_DISPLAY_ARGS = "Display: Invalid flag \"%s\"\n";
 	private static final String MESSAGE_INVALID_DISPLAY_DATE = "Display: Couldn't parse the date \"%s\"\n";
@@ -130,9 +135,13 @@ public class CommandParser {
 		} else if (commandType.equalsIgnoreCase(COMMAND_TYPE_SEARCH)) {
 		  //TODO
 			command = Command.createObject(commandType, arguments);
+		} else if (commandType.equalsIgnoreCase(COMMAND_TYPE_UNDO)) {
+			command = new Undo();
+		} else if (commandType.equalsIgnoreCase(COMMAND_TYPE_REDO)) {
+			command = new Redo();
 		} else {
 		  //TODO
-			command = Command.createObject(COMMAND_TYPE_INVALID, arguments);
+			return new Invalid(MESSAGE_INVALID_COMMAND);
 		}
 		return command;
 	}
@@ -158,12 +167,10 @@ public class CommandParser {
 				return createDisplayCommand(arguments);
 			} else {
 			    //TODO
-				Command command = Command.createObject(COMMAND_TYPE_INVALID, arguments);
-				return command;
+				return new Invalid(MESSAGE_INVALID_COMMAND);
 			}
 		} catch (Exception e) {
-			Command command = Command.createObject(COMMAND_TYPE_INVALID, arguments);
-			return command;
+			return new Invalid(MESSAGE_INVALID_COMMAND);
 		}
 		// at this point, arguments should have been pulled out.
 		assert(arguments != null);

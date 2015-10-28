@@ -42,7 +42,7 @@ public class ToDoEvent extends Event {
 	}
 	
 	public ToDoEvent(JSONObject jsonObj) {
-		Integer eventIndex = (Integer) jsonObj.get(JSON_EVENT_INDEX);
+		Long eventIndex = (Long) jsonObj.get(JSON_EVENT_INDEX);
 		String eventName = (String) jsonObj.get(JSON_EVENT_NAME);
 		deadline = fmt.parseDateTime((String)jsonObj.get(JSON_DUE_DATE));
 		complete = ((Boolean)jsonObj.get(JSON_COMPLETE)).booleanValue();
@@ -102,7 +102,7 @@ public class ToDoEvent extends Event {
 	 * @return jsonString
 	 */
 	public String toJsonString() {
-		Map obj=new LinkedHashMap();
+		Map obj = new LinkedHashMap();
 		obj.put(JSON_TYPE, "todo");
 		obj.put(JSON_EVENT_INDEX, new Integer(this.getEventIndex()));
 		obj.put(JSON_EVENT_NAME, this.getEventName());
@@ -118,10 +118,10 @@ public class ToDoEvent extends Event {
 	    return out.toString();
 	}
 	
-	//@author A0126989 
+	//@author A0145668R 
 	//override equals method
 	public boolean equals(Object obj) {
-		if (!(obj instanceof Event)) {
+		if (!(obj instanceof ToDoEvent)) {
 			return false;
 		} else {
 			ToDoEvent e = (ToDoEvent) obj;
@@ -130,9 +130,26 @@ public class ToDoEvent extends Event {
 		}
 	}
 	
-	//@author A0126989 
+	//@author A0145668R 
 	//override compareTo method
 	public int compareTo(Event e) {
+		if(e instanceof FloatingTask) {
+			return 1;
+		} else if (e instanceof CalendarEvent) {
+			CalendarEvent cal = (CalendarEvent)e;
+			int result = this.deadline.compareTo(cal.getStartDateAndTime());
+			if (result == 0) {
+				result = this.getEventName().compareTo(cal.getEventName());
+			}
+			return result;
+		} else if (e instanceof ToDoEvent) {
+			ToDoEvent todo = (ToDoEvent)e;
+			int result = this.deadline.compareTo(todo.getDeadline());
+			if (result == 0) {
+				result = this.getEventName().compareTo(todo.getEventName());
+			}
+			return result;
+		}
 		return 0;
 	}
 	

@@ -60,7 +60,7 @@ public class Command {
 	        case DELETE:
 	            return new Delete(arguments);
 	        case UNDO:
-	            return new Undo(commandType,arguments);
+//	            return new Undo();
 	        case SEARCH:
 	            return new Search(commandType,arguments);
 	        case REVIEW:

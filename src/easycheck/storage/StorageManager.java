@@ -13,6 +13,7 @@ import org.json.simple.parser.ParseException;
 
 import easycheck.eventlist.CalendarEvent;
 import easycheck.eventlist.Event;
+import easycheck.eventlist.FloatingTask;
 import easycheck.eventlist.ToDoEvent;
 
 /*
@@ -24,7 +25,7 @@ import easycheck.eventlist.ToDoEvent;
 public class StorageManager {
 	private static final String EVENT_TYPE_CALENDAR_KEY = "calendar";
 	private static final String EVENT_TYPE_TODO_KEY = "todo";
-	private static final String EVENT_TYPE_BASE_KEY = "base";
+	private static final String EVENT_TYPE_BASE_KEY = "floating";
 	private static final String JSON_TYPE = "type";
 	
 	
@@ -71,7 +72,7 @@ public class StorageManager {
 				} else if (jsonObjType.equals(EVENT_TYPE_TODO_KEY)){
 					easyCheckEvents.add(new ToDoEvent(jsonObj));
 				} else if (jsonObjType.equals(EVENT_TYPE_BASE_KEY)){
-					easyCheckEvents.add(new Event(jsonObj));
+					easyCheckEvents.add(new FloatingTask(jsonObj));
 					
 				}
 				// TODO handle if type is unrecognised

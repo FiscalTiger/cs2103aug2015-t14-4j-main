@@ -4,15 +4,24 @@ import java.util.ArrayList;
 import java.util.Stack;
 
 import easycheck.commandParser.Command;
-import easycheck.commandParser.CommandTypes.*;
+import easycheck.commandParser.CommandTypes.Add;
+import easycheck.commandParser.CommandTypes.Delete;
+import easycheck.commandParser.CommandTypes.Display;
+import easycheck.commandParser.CommandTypes.Edit;
+import easycheck.commandParser.CommandTypes.Exit;
+import easycheck.commandParser.CommandTypes.Redo;
+import easycheck.commandParser.CommandTypes.Review;
+import easycheck.commandParser.CommandTypes.SaveAt;
+import easycheck.commandParser.CommandTypes.Search;
+import easycheck.commandParser.CommandTypes.Undo;
 import easycheck.eventlist.CalendarEvent;
 import easycheck.eventlist.Event;
+import easycheck.eventlist.FloatingTask;
 import easycheck.eventlist.ToDoEvent;
 
 public class CommandExecutor {
     private static int ZERO_OFFSET = 1;
     
-	private static final String MESSAGE_INVALID_COMMAND = "Invalid command.\n";
 	private static final String MESSAGE_ADD_CMD_RESPONSE = "Added %s\n";
 	private static final String MESSAGE_DISPLAY_CMD_EMPTY = "There aren't any events to display!\n";
 	private static final String MESSAGE_DELETE_CMD_EMPTY = "There aren't any events!\n";
@@ -20,6 +29,10 @@ public class CommandExecutor {
 	private static final String MESSAGE_UPDATE_CMD_RESPONSE = "Updated %s to %s successfully\n";
 	private static final String MESSAGE_INVALID_CALENDAR_DATES = "The start date must be before the end date and after the current date and time.\n";
 	private static final String MESSAGE_INVALID_TODO_DEADLINE = "The deadline must be after the current date and time.\n";
+	private static final String MESSAGE_UNDO_EMPTY_STACK = "There is nothing to undo\n";
+	private static final String MESSAGE_REDO_EMPTY_STACK = "There is nothing to redo\n";
+	
+	private static final String PRINT_GROUP_HEADING_FLOATING = "Floating:";
 	
 	//@author A0126989H
 	private static final String MESSAGE_SEARCH_CMD_EMPTY = "There aren't any events to search!\n";
@@ -55,6 +68,8 @@ public class CommandExecutor {
 	        return delete((Delete)command);
         } else if(command instanceof Undo) {
 	        return undo((Undo)command);
+        } else if(command instanceof Redo) {
+	        return redo((Redo)command);
         } else if(command instanceof Search) {
 	        return search((Search)command);
         } else if(command instanceof Review) {
@@ -84,7 +99,7 @@ public class CommandExecutor {
     			int eventIndex = eventList.size() + 1;
     			newEvent = new CalendarEvent(eventIndex, cmd.getTaskName(), cmd.getStart(), cmd.getEnd());
     			response = String.format(MESSAGE_ADD_CMD_RESPONSE, newEvent);
-    			undoStack.push(eventList);
+    			undoStack.push(new ArrayList<Event>(eventList));
     			eventList.add(newEvent);
     		} else {
     			response = MESSAGE_INVALID_CALENDAR_DATES;
@@ -95,7 +110,7 @@ public class CommandExecutor {
     			int eventIndex = eventList.size() + 1;
     			newEvent = new ToDoEvent(eventIndex, cmd.getTaskName(), cmd.getEnd());
     			response = String.format(MESSAGE_ADD_CMD_RESPONSE, newEvent);
-    			undoStack.push(eventList);
+    			undoStack.push(new ArrayList<Event>(eventList));
     			eventList.add(newEvent);
     		} else {
     			response = MESSAGE_INVALID_TODO_DEADLINE;
@@ -103,9 +118,9 @@ public class CommandExecutor {
     	  // doesn't have time limits so it creates a floating task
     	} else if (!cmd.hasStart() && !cmd.hasEnd()) {
     		int eventIndex = eventList.size() + 1;
-			newEvent = new Event(eventIndex, cmd.getTaskName());
+			newEvent = new FloatingTask(eventIndex, cmd.getTaskName());
 			response = String.format(MESSAGE_ADD_CMD_RESPONSE, newEvent);
-			undoStack.push(eventList);
+			undoStack.push(new ArrayList<Event>(eventList));
 			eventList.add(newEvent);
     	}
     	// response should have a response by this point
@@ -119,11 +134,25 @@ public class CommandExecutor {
 	 */
 	private String display(Display cmd){
 		String response = "";
-		if(eventList.isEmpty()) {
-			response = MESSAGE_DISPLAY_CMD_EMPTY;
-		} else {
+		if(cmd.isIndex()) {
+			response += eventList.get(cmd.getEventIndex() + 1);
+		} else if(cmd.isFloating()) {
+			PrintGroup printGroup = new PrintGroup(PRINT_GROUP_HEADING_FLOATING);
 			for(Event e: eventList) {
-				response += e;
+				if(e instanceof FloatingTask) {
+					printGroup.addEntry(e);
+				}
+			}
+			response = printGroup.toString();
+		} else if(cmd.isDone()) {
+			
+		} else {
+			if(eventList.isEmpty()) {
+				response = MESSAGE_DISPLAY_CMD_EMPTY;
+			} else {
+				for(Event e: eventList) {
+					response += e;
+				}
 			}
 		}
 		//Response should not be empty
@@ -153,6 +182,7 @@ public class CommandExecutor {
 		// Case 1: When the command is "delete"
 		if (arguments == null) {
 			if (eventList.size() != 0) {
+				undoStack.push(new ArrayList<Event>(eventList));
 				removeEvent = eventList.remove(0).getEventName();
 				reIndex();
 				return String.format(MESSAGE_DELETE_CMD_RESPONSE, removeEvent );
@@ -166,6 +196,7 @@ public class CommandExecutor {
             if (eventList.size() < index || index < 1) {
                 return MESSAGE_SEARCH_CMD_NOTFOUND;
             } else if (eventList.size() != 0) {
+            	undoStack.push(new ArrayList<Event>(eventList));
                 removeEvent = eventList.remove(index - ZERO_OFFSET).getEventName();
                 reIndex();
                 return String.format(MESSAGE_DELETE_CMD_RESPONSE, removeEvent);
@@ -177,6 +208,7 @@ public class CommandExecutor {
 		} else {
 			for (int i = 0; i < eventList.size(); i++) {
 				if (eventList.get(i).getEventName().contains(arguments.toLowerCase())) {
+					undoStack.push(new ArrayList<Event>(eventList));
 					removeEvent = eventList.remove(i).getEventName();
 					reIndex();
 					break;
@@ -188,17 +220,9 @@ public class CommandExecutor {
 	// @author A0126989H
 	// ReIndexing all the event in the EventList
 	public void reIndex(){
-		
-		int eventIndex = 1;
-		int size = eventList.size();
-		ArrayList<Event> temp= new ArrayList<Event>();
-		
-		for (int i = 0; i<size;i++){
-			temp.add(new Event(eventIndex,eventList.remove(0).getEventName()));
-			eventIndex++;
+		for(int i = 0; i < eventList.size(); i++) {
+			eventList.get(i).setEventIndex(i + 1);
 		}
-		
-		eventList = temp;
 	}
     // @author A0126989H
     // Checking if the delete argument is Index number
@@ -218,7 +242,31 @@ public class CommandExecutor {
     
 
 	private String undo(Undo cmd) {
-		return "";
+		if(undoStack.isEmpty()) {
+			return MESSAGE_UNDO_EMPTY_STACK;
+		} else {
+			redoStack.clear();
+			redoStack.push(new ArrayList<Event>(eventList));
+			eventList = undoStack.pop();
+		}
+		Display disp = new Display();
+		disp.setDefaultFlag(true);
+		
+		return display(disp);
+	}
+	
+	private String redo(Redo cmd) {
+		if(redoStack.isEmpty()) {
+			return MESSAGE_REDO_EMPTY_STACK;
+		} else {
+			undoStack.push(new ArrayList<Event>(eventList));
+			eventList = redoStack.pop();
+		}
+		
+		Display disp = new Display();
+		disp.setDefaultFlag(true);
+		
+		return display(disp);
 	}
 	
 	//@author A0126989H

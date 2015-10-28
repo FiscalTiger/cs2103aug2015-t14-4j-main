@@ -44,7 +44,7 @@ public class CalendarEvent extends Event {
 	}
 	
 	public CalendarEvent(JSONObject jsonObj) {
-		Integer eventIndex = (Integer) jsonObj.get(JSON_EVENT_INDEX);
+		Long eventIndex = (Long) jsonObj.get(JSON_EVENT_INDEX);
 		String eventName = (String) jsonObj.get(JSON_EVENT_NAME);
 		startDateAndTime = fmt.parseDateTime((String)jsonObj.get(JSON_START_DATE));
 		endDateAndTime = fmt.parseDateTime((String)jsonObj.get(JSON_END_DATE));
@@ -119,7 +119,7 @@ public class CalendarEvent extends Event {
 	 * @return jsonString
 	 */
 	public String toJsonString() {
-		Map obj=new LinkedHashMap();
+		Map obj = new LinkedHashMap();
 		obj.put(JSON_TYPE, "calendar");
 		obj.put(JSON_EVENT_INDEX, new Integer(this.getEventIndex()));
 		obj.put(JSON_EVENT_NAME, this.getEventName());
@@ -137,7 +137,7 @@ public class CalendarEvent extends Event {
 	
 	// TODO override equals method
 	public boolean equals(Object obj) {
-		if (!(obj instanceof Event)) {
+		if (!(obj instanceof CalendarEvent)) {
 			return false;
 		} else {
 			CalendarEvent e = (CalendarEvent) obj;
@@ -149,6 +149,26 @@ public class CalendarEvent extends Event {
 	
 	// TODO override compareTo method
 	public int compareTo(Event e) {
+		if(e instanceof FloatingTask) {
+			return 1;
+		} else if (e instanceof CalendarEvent) {
+			CalendarEvent cal = (CalendarEvent)e;
+			int result = this.startDateAndTime.compareTo(cal.getStartDateAndTime());
+			if (result == 0) {
+				result = this.endDateAndTime.compareTo(cal.getEndDateAndTime());
+				if(result == 0) {
+					result = this.getEventName().compareTo(cal.getEventName());
+				}
+			}
+			return result;
+		} else if (e instanceof ToDoEvent) {
+			ToDoEvent todo = (ToDoEvent)e;
+			int result = this.startDateAndTime.compareTo(todo.getDeadline());
+			if (result == 0) {
+				result = this.getEventName().compareTo(todo.getEventName());
+			}
+			return result;
+		}
 		return 0;
 	}
 	
