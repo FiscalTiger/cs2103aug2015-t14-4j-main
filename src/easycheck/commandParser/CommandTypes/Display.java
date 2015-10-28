@@ -17,9 +17,7 @@ public class Display extends Command {
 	private boolean indexFlag = false;
 	private boolean notDoneFlag = false;
 	private boolean doneFlag = false;
-	private boolean invalidFlag = false;
 	
-	private String invalidMessage = "";
 	private int eventIndex;
 	private DateTime displayDate;
 	
@@ -72,22 +70,6 @@ public class Display extends Command {
 
 	public void setDoneFlag(boolean doneFlag) {
 		this.doneFlag = doneFlag;
-	}
-
-	public boolean isInvalid() {
-		return invalidFlag;
-	}
-
-	public void setInvalidFlag(boolean invalidFlag) {
-		this.invalidFlag = invalidFlag;
-	}
-
-	public String getInvalidMessage() {
-		return invalidMessage;
-	}
-
-	public void setInvalidMessage(String invalidMessage) {
-		this.invalidMessage = invalidMessage;
 	}
 
 	public int getEventIndex() {

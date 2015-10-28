@@ -1,7 +1,5 @@
 package easycheck.commandParser.CommandTypes;
 import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
 
 import easycheck.commandParser.Command;
 
@@ -17,29 +15,29 @@ import easycheck.commandParser.Command;
 
 public class Add extends Command {
 	//@author A0145668R
-	private static final String DATE_AND_TIME_INPUT_FORMAT = "dd.MM.yyyy HH:mm";
-
 	private String taskName; 
-	private static DateTimeFormatter fmt = DateTimeFormat.forPattern(DATE_AND_TIME_INPUT_FORMAT);
+
 	private DateTime start;
 	private DateTime end;
 	//end @author A0145668R
 	
-	public Add(String command, String[] arguments) {
-		super(command, arguments);
-		taskName = arguments[0];
-		//@author A0145668R
-		if (arguments.length == 1) {
-			start = null;
-			end = null;
-			//end @author A0145668R
-		} else if (arguments.length==2){
-			start = null;
-			end = fmt.parseDateTime(arguments[1]);;
-		} else if (arguments.length==3){
-			start = fmt.parseDateTime(arguments[1]);
-			end = fmt.parseDateTime(arguments[2]);
-		}
+	public Add(String taskName) {
+		this.setTaskName(taskName);
+	};
+	
+	public Add(String taskName, DateTime deadline) {
+		this.setTaskName(taskName);
+		this.setEnd(deadline);
+	}
+
+	public Add(String taskName, DateTime start, DateTime end) {
+		this.setTaskName(taskName);
+		this.setStart(start);
+		this.setEnd(end);
+	}
+	
+	public void setTaskName(String taskName) {
+		this.taskName = taskName;
 	}
 	
 	public String getTaskName(){
@@ -60,6 +58,10 @@ public class Add extends Command {
 		return start;
 	}
 	
+	public void setStart(DateTime start) {
+		this.start = start;
+	}
+	
 	/**
 	 * Returns whether or not the add command contains
 	 * an end date
@@ -72,5 +74,9 @@ public class Add extends Command {
 	
 	public DateTime getEnd(){
 		return end;
+	}
+	
+	public void setEnd(DateTime end) {
+		this.end = end;
 	}
 }

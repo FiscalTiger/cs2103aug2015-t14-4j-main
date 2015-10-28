@@ -52,7 +52,7 @@ public class Command {
 	public static Command createObject(String commandType, String[] arguments) {
         switch (determineCommandType(commandType)) {
 	        case ADD:
-	            return new Add(commandType,arguments);
+//	            return new Add(commandType,arguments);
 	        case DISPLAY:
 //	        	return new Display(commandType,arguments);
 	        case UPDATE:
