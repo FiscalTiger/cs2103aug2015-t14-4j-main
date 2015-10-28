@@ -121,7 +121,13 @@ public class ToDoEvent extends Event {
 	//@author A0126989 
 	//override equals method
 	public boolean equals(Object obj) {
-		return false;
+		if (!(obj instanceof Event)) {
+			return false;
+		} else {
+			ToDoEvent e = (ToDoEvent) obj;
+			return this.getEventIndex() == e.getEventIndex() && this.getEventName().equals(e.getEventName()) &&
+					this.deadline.equals(e.getDeadline());
+		}
 	}
 	
 	//@author A0126989 

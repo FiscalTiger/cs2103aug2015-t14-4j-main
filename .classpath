@@ -1,9 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
 	<classpathentry kind="src" path="src"/>
-	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/jre1.8.0_65"/>
 	<classpathentry exported="true" kind="con" path="org.eclipse.jdt.junit.JUNIT_CONTAINER/4"/>
-	<classpathentry exported="true" kind="lib" path="src/json-simple-1.1.1.jar"/>
-	<classpathentry exported="true" kind="lib" path="src/joda-time-2.4.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Andrew/Development/Workspace/EasyCheck/libs/json-simple-1.1.1.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Andrew/Development/Workspace/EasyCheck/libs/joda-time-2.4.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Andrew/Development/Workspace/EasyCheck/libs/natty-0.12.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Andrew/Development/Workspace/EasyCheck/libs/antlr-runtime-3.5.2.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Andrew/Development/Workspace/EasyCheck/libs/gunit-3.5.2.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Andrew/Development/Workspace/EasyCheck/libs/ical4j-1.0.2.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Andrew/Development/Workspace/EasyCheck/libs/slf4j-api-1.7.10.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Andrew/Development/Workspace/EasyCheck/libs/slf4j-log4j12-1.7.10.jar"/>
+	<classpathentry kind="lib" path="C:/Users/Andrew/Development/Workspace/EasyCheck/libs/log4j-1.2.17.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
