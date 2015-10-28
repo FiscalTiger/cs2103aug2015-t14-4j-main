@@ -14,16 +14,25 @@ public class Repeat extends Command {
     public Repeat(String arguments) {
         this.taskName = arguments;
     }
-
-    public void isDaily(boolean isDaily) {
-        this.isDaily = isDaily;
+    
+    public void isDaily() {
+        // only one of the booleans can be true
+        isDaily = true;
+        isWeekly = false;
+        isMonthly = false;
     }
 
-    public void isWeekly(boolean isWeekly) {
-        this.isWeekly = isWeekly;
+    public void isWeekly() {
+        // only one of the booleans can be true
+        isDaily = false;
+        isWeekly = true;
+        isMonthly = false;
     }
 
-    public void isMonthly(boolean isMonthly) {
-        this.isMonthly = isMonthly;
+    public void isMonthly() {
+        // only one of the booleans can be true
+        isDaily = false;
+        isWeekly = false;
+        isMonthly = true;
     }
 }
