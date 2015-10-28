@@ -16,6 +16,7 @@ import org.joda.time.format.DateTimeFormatter;
 import com.joestelmach.natty.DateGroup;
 import com.joestelmach.natty.Parser;
 
+import easycheck.commandParser.Command;
 import easycheck.commandParser.CommandTypes.Add;
 import easycheck.commandParser.CommandTypes.Delete;
 import easycheck.commandParser.CommandTypes.Display;
@@ -23,6 +24,7 @@ import easycheck.commandParser.CommandTypes.Invalid;
 import easycheck.commandParser.CommandTypes.Redo;
 import easycheck.commandParser.CommandTypes.Repeat;
 import easycheck.commandParser.CommandTypes.Undo;
+import easycheck.commandParser.CommandTypes.Update;
 
 public class CommandParser {
 	private final String COMMAND_SPLITTER = " ";
@@ -34,6 +36,7 @@ public class CommandParser {
 	// command types
 	private final String COMMAND_TYPE_ADD = "add";
 	private final String COMMAND_TYPE_UPDATE = "update";
+	// private final String COMMAND_TYPE_UPDATE_SPECIFIC = "updateSpecific";
 	private final String COMMAND_TYPE_DELETE = "delete";
 	// private final String COMMAND_TYPE_ADD_REPEAT = "addRepeat";
 	// private final String COMMAND_TYPE_COMPLETE = "complete";
@@ -50,6 +53,7 @@ public class CommandParser {
 	private final String COMMAND_TYPE_EXIT = "exit";
 
 	private final String MESSAGE_INVALID_COMMAND = "Invalid Command\n";
+	private final String MESSAGE_INVALID_LESS_ARGS = "Too little arguments for command type \"%s\" \n";
 
 	private static final String MESSAGE_INVALID_DISPLAY_COMMAND = "Display: Invalid command \n";
 	private static final String MESSAGE_INVALID_DISPLAY_ARGS = "Display: Invalid flag \"%s\"\n";
@@ -60,6 +64,8 @@ public class CommandParser {
 	private static final String MESSAGE_INVALID_ADD_DATE = "Add: Couldn't parse the date \"%s\"s\n";
 	private static final String MESSAGE_INVALID_ADD_NUM_OF_ARGS = "Add: too many arugments\n";
 	
+	private static final String MESSAGE_INVALID_UPDATE_DATE = "Update: Couldn't parse the date \"%s\"s\n";
+	private static final String MESSAGE_INVALID_UPDATE_NUM_OF_ARGS = "Update: too many arugments\n";
 	private final String DISPLAY_FLAG_FLOATING = "f";
 	private final String DISPLAY_FLAG_DONE = "done";
 	private final String DISPLAY_FLAG_DUE = "due";
@@ -74,6 +80,9 @@ public class CommandParser {
 
 	// expected number of parameters for all other commands
 	private final int NUM_ARGUMENTS_UPDATE = 2;
+	private final int NUM_ARGUMENTS_UPDATE_FLOAT = 2;
+	private final int NUM_ARGUMENTS_UPDATE_TODO = 3;
+	private final int NUM_ARGUMENTS_UPDATE_CALENDAR = 4;
 	private final int NUM_ARGUMENTS_DELETE = 1;
 	// private final int NUM_ARGUMENTS_COMPLETE = 1;
 	// private final int NUM_ARGUMENTS_REMIND = 2;
@@ -151,8 +160,8 @@ public class CommandParser {
 				command = createDeleteCommand(arguments);
 			} else if (commandType.equalsIgnoreCase(COMMAND_TYPE_UPDATE)) {
 			    //TODO
-				arguments = getArguments(commandArguments, NUM_ARGUMENTS_UPDATE);
-				command = Command.createObject(commandType, arguments);
+				arguments = getArgumentsUpdate(commandArguments);
+				command = createUpdateCommand(arguments);
 			} else if (commandType.equalsIgnoreCase(COMMAND_TYPE_SEARCH)) {
 			    //TODO
 				arguments = getArguments(commandArguments, NUM_ARGUMENTS_SEARCH);
@@ -178,6 +187,11 @@ public class CommandParser {
     private String[] getArgumentsAdd(String commandArguments) {
     	// check arguments for flexi commands, then trim them.
     	String[] arguments = trimArguments(checkFlexi(commandArguments));
+    	return arguments;
+    }
+    
+    private String[] getArgumentsUpdate(String commandArguments){
+    	String[] arguments = trimArguments(commandArguments.split(ARGUMENT_SPLITTER));
     	return arguments;
     }
 
@@ -212,6 +226,47 @@ public class CommandParser {
 			}
 		} else {
 			cmd = new Invalid(MESSAGE_INVALID_ADD_NUM_OF_ARGS);
+		}
+		assert(cmd != null);
+		
+		return cmd;
+	}
+	
+	private Command createUpdateCommand(String[] arguments){
+		Command cmd = null;
+		if (arguments.length <2){
+			cmd = new Invalid(String.format(MESSAGE_INVALID_LESS_ARGS, "update"));
+			return cmd;
+		}
+		
+		String idx = arguments[0];
+		String newName = arguments[1];
+		DateTime start;
+		DateTime end;
+		if (arguments.length == 2) {
+			cmd = new Update(idx, newName);
+		} else if (arguments.length==3) {
+			end = parseDateText(arguments[2]);
+			if(end != null) {
+				cmd = new Update(idx, newName, end);
+			} else {
+				cmd = new Invalid(String.format(MESSAGE_INVALID_UPDATE_DATE, arguments[2]));
+			}
+		} else if (arguments.length==4) {
+			start = parseDateText(arguments[2]);
+			end = parseDateText(arguments[3]);
+			if(start != null && end != null) {
+				cmd = new Update(idx, newName, start, end);
+			} else {
+				if(start == null) {
+					cmd = new Invalid(String.format(MESSAGE_INVALID_UPDATE_DATE, arguments[2]));
+				}
+				if(end == null) {
+					cmd = new Invalid(String.format(MESSAGE_INVALID_UPDATE_DATE, arguments[3]));
+				}
+			}
+		} else {
+			cmd = new Invalid(MESSAGE_INVALID_UPDATE_NUM_OF_ARGS);
 		}
 		assert(cmd != null);
 		

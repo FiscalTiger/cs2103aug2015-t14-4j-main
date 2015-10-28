@@ -1,4 +1,6 @@
 package easycheck.commandParser.CommandTypes;
+import org.joda.time.DateTime;
+
 import easycheck.commandParser.Command;
 /**
  * Edit Command Type represents a parsed command for Easy Check application.
@@ -10,23 +12,48 @@ import easycheck.commandParser.Command;
  * @author A0126989H
  */
 public class Update extends Command {
-	private String task;
-	private String newEvent;
+	private String idx;
+	private String newName;
+	private DateTime start = null;
+	private DateTime end = null;
 	
-	public Update(String commandType, String[] arguments) {
-		super(commandType, arguments);
-		if (arguments.length==2){
-			task = arguments[0];
-			newEvent = arguments[1];
-		} else if (arguments.length==1){
-			task = arguments [0];
-			newEvent = arguments[1];
-		}
+	public Update(String idx, String newName) {
+		this.idx = idx;
+		this.newName = newName;
 	}
-	public String getTaskName(){
-		return task;
+	
+	public Update(String idx, String newName, DateTime end){
+		this.idx = idx;
+		this.newName = newName;
+		this.end = end;
 	}
-	public String getNewEvent(){
-		return newEvent;
+	
+	public Update(String idx, String newName, DateTime start, DateTime end){
+		this.idx = idx;
+		this.newName = newName;
+		this.start = start;
+		this.end = end;
 	}
+	
+	public String getTaskIdx(){
+		return idx;
+	}
+	public String getNewName(){
+		return newName;
+	}
+
+	public DateTime getStart(){
+		return start;
+	}
+	public DateTime getEnd() {
+		return end;
+	}
+	public boolean hasStart() {
+		return !(start == null);
+	}
+	public boolean hasEnd() {
+		return !(end == null);
+	}
+	
+	
 }

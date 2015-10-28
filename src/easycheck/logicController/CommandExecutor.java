@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Stack;
 
+import org.joda.time.DateTime;
+
 import easycheck.commandParser.Command;
 import easycheck.commandParser.CommandTypes.Add;
 import easycheck.commandParser.CommandTypes.Delete;
@@ -29,12 +31,14 @@ public class CommandExecutor {
 	private static final String MESSAGE_DISPLAY_CMD_EMPTY = "There aren't any events to display!\n";
 	private static final String MESSAGE_DELETE_CMD_EMPTY = "There aren't any events!\n";
 	private static final String MESSAGE_DELETE_CMD_RESPONSE = "Deleted \"%s\" Successfully\n";
-	private static final String MESSAGE_UPDATE_CMD_RESPONSE = "Updated %s to %s successfully\n";
+	private static final String MESSAGE_UPDATE_FLOAT_RESPONSE = "Updated %s to %s successfully\n";
+	private static final String MESSAGE_UPDATE_TODO_RESPONSE = "Updated %s successfully\n";
+	private static final String MESSAGE_UPDATE_CAL_RESPONSE = "Updated %s successfully\n";
 	private static final String MESSAGE_INVALID_CALENDAR_DATES = "The start date must be before the end date and after the current date and time.\n";
 	private static final String MESSAGE_INVALID_TODO_DEADLINE = "The deadline must be after the current date and time.\n";
 	private static final String MESSAGE_UNDO_EMPTY_STACK = "There is nothing to undo\n";
 	private static final String MESSAGE_REDO_EMPTY_STACK = "There is nothing to redo\n";
-	
+	private static final String MESSAGE_UPDATE_INVALID_IDX = "%s is an invalid index.\n";
 	private static final String PRINT_GROUP_HEADING_FLOATING = "Floating";
 	
 	//@author A0126989H
@@ -324,12 +328,42 @@ public class CommandExecutor {
 	 * @author A0126989H
 	 */
 	private String update(Update cmd) {
-        for (int i = 0; i < eventList.size(); i++){
-            if (eventList.get(i).getEventName().contains(cmd.getTaskName())){
-                eventList.get(i).setEventName(cmd.getNewEvent());
-            }
-        }
-        return String.format(MESSAGE_UPDATE_CMD_RESPONSE, cmd.getTaskName(), cmd.getNewEvent());
+		String idx = cmd.getTaskIdx();
+		String newName = cmd.getNewName();
+		String response = "";
+		Event newEvent;
+		int intIdx = 0;
+		try {
+			intIdx = Integer.parseInt(idx,10);
+		} catch (NumberFormatException e){
+			response =  String.format(MESSAGE_UPDATE_INVALID_IDX, idx);
+			return response;
+		}
+		if (intIdx > eventList.size() || intIdx <= 0){
+			response = String.format(MESSAGE_UPDATE_INVALID_IDX, idx);
+		} else if(cmd.hasStart() && cmd.hasEnd()){
+			if (CalendarEvent.areValidDates(cmd.getStart(), cmd.getEnd())){
+				newEvent = new CalendarEvent(intIdx, newName, cmd.getStart(), cmd.getEnd());
+				eventList.set(intIdx-1, newEvent);
+				response = String.format(MESSAGE_UPDATE_CAL_RESPONSE, newName);
+			} else {
+				response = MESSAGE_INVALID_CALENDAR_DATES;
+			}
+		} else if (!cmd.hasStart() && cmd.hasEnd()){
+			if (ToDoEvent.isValidDeadline(cmd.getEnd())){
+				newEvent = new ToDoEvent(intIdx, newName, cmd.getEnd());
+				eventList.set(intIdx-1, newEvent);
+				response = String.format(MESSAGE_UPDATE_TODO_RESPONSE, newName);
+			} else {
+				response = MESSAGE_INVALID_TODO_DEADLINE;
+			}
+		} else if (!cmd.hasStart() && !cmd.hasEnd()){
+			String originalName = eventList.get(intIdx-1).getEventName();
+			eventList.get(intIdx-1).setEventName(newName);
+			response = String.format(MESSAGE_UPDATE_FLOAT_RESPONSE, originalName, newName);
+		}
+		assert(!response.equals(""));
+    	return response;
 
 	}
 	//@ author A0126989H
