@@ -27,5 +27,9 @@ public class Invalid extends Command {
 	public void setInvalidMessage(String invalidMessage) {
 		this.invalidMessage = invalidMessage;
 	}
+	
+	public String toString() {
+		return this.invalidMessage;
+	}
 
 }

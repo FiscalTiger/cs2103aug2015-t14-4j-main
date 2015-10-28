@@ -62,7 +62,7 @@ public class CommandExecutor {
         } else if(command instanceof Exit) {
 	        return exit((Exit)command);
         } else {
-        	return MESSAGE_INVALID_COMMAND;
+        	return command.toString();
 	    }
     }
 	
