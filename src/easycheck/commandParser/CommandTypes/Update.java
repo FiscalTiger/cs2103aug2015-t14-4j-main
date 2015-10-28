@@ -9,11 +9,11 @@ import easycheck.commandParser.Command;
  * 
  * @author A0126989H
  */
-public class Edit extends Command {
+public class Update extends Command {
 	private String task;
 	private String newEvent;
 	
-	public Edit(String commandType, String[] arguments) {
+	public Update(String commandType, String[] arguments) {
 		super(commandType, arguments);
 		if (arguments.length==2){
 			task = arguments[0];

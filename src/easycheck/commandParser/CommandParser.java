@@ -44,8 +44,8 @@ public class CommandParser {
 	// private final String COMMAND_TYPE_NEXT = "next";
 	// private final String COMMAND_TYPE_UNDO = "undo";
 	private final String COMMAND_TYPE_EXIT = "exit";
-	private final String COMMAND_TYPE_INVALID = "invalid";
 	
+	private static final String MESSAGE_INVALID_COMMAND = "Display: Invalid command \n";
 	private static final String MESSAGE_INVALID_DISPLAY_ARGS = "Display: Invalid flag \"%s\"\n";
 	private static final String MESSAGE_INVALID_DISPLAY_DATE = "Display: Couldn't parse the date \"%s\"\n";
 	private static final String MESSAGE_INVALID_DISPLAY_INDEX = "Display: Invalid index \"%s\"\n";
@@ -125,14 +125,12 @@ public class CommandParser {
 		    //TODO
 			command = Command.createObject(commandType, arguments);
 		} else if (commandType.equalsIgnoreCase(COMMAND_TYPE_DELETE)) {
-		  //TODO
 			command = createDeleteCommand(arguments);
 		} else if (commandType.equalsIgnoreCase(COMMAND_TYPE_SEARCH)) {
 		  //TODO
 			command = Command.createObject(commandType, arguments);
 		} else {
-		  //TODO
-			command = Command.createObject(COMMAND_TYPE_INVALID, arguments);
+		    command = new Invalid(MESSAGE_INVALID_COMMAND);
 		}
 		return command;
 	}
@@ -140,34 +138,36 @@ public class CommandParser {
 	// creates Command for commands with >0 arguments.
 	private Command createCommand(String commandType, String commandArguments) {
 		String[] arguments = null;
+		Command command = null;
 		try {
 			if (commandType.equalsIgnoreCase(COMMAND_TYPE_ADD)) {
 				arguments = getArgumentsAdd(commandArguments);
-				return createAddCommand(arguments);
+				command = createAddCommand(arguments);
 			} else if (commandType.equalsIgnoreCase(COMMAND_TYPE_DELETE)) {
-			    //TODO
 				arguments = getArguments(commandArguments, NUM_ARGUMENTS_DELETE);
+				command = createDeleteCommand(arguments);
 			} else if (commandType.equalsIgnoreCase(COMMAND_TYPE_UPDATE)) {
 			    //TODO
 				arguments = getArguments(commandArguments, NUM_ARGUMENTS_UPDATE);
+				command = Command.createObject(commandType, arguments);
 			} else if (commandType.equalsIgnoreCase(COMMAND_TYPE_SEARCH)) {
 			    //TODO
 				arguments = getArguments(commandArguments, NUM_ARGUMENTS_SEARCH);
+				command = Command.createObject(commandType, arguments);
 			} else if (commandType.equalsIgnoreCase(COMMAND_TYPE_DISPLAY)) {
 				arguments = getDisplayArguments(commandArguments);
-				return createDisplayCommand(arguments);
+				command = createDisplayCommand(arguments);
 			} else {
-			    //TODO
-				Command command = Command.createObject(COMMAND_TYPE_INVALID, arguments);
-				return command;
+			    //if command type not recognized
+				command = new Invalid(MESSAGE_INVALID_COMMAND);
 			}
 		} catch (Exception e) {
-			Command command = Command.createObject(COMMAND_TYPE_INVALID, arguments);
-			return command;
+		    // catch any exceptions thrown by creation of commands
+			command = new Invalid(MESSAGE_INVALID_COMMAND);
 		}
 		// at this point, arguments should have been pulled out.
 		assert(arguments != null);
-		Command command = Command.createObject(commandType, arguments);
+		assert(command != null);
 		return command;
 	}
 	
