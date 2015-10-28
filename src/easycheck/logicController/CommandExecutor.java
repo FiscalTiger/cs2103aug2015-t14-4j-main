@@ -1,19 +1,21 @@
 package easycheck.logicController;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Stack;
 
 import easycheck.commandParser.Command;
 import easycheck.commandParser.CommandTypes.Add;
 import easycheck.commandParser.CommandTypes.Delete;
 import easycheck.commandParser.CommandTypes.Display;
-import easycheck.commandParser.CommandTypes.Edit;
 import easycheck.commandParser.CommandTypes.Exit;
+import easycheck.commandParser.CommandTypes.Invalid;
 import easycheck.commandParser.CommandTypes.Redo;
 import easycheck.commandParser.CommandTypes.Review;
 import easycheck.commandParser.CommandTypes.SaveAt;
 import easycheck.commandParser.CommandTypes.Search;
 import easycheck.commandParser.CommandTypes.Undo;
+import easycheck.commandParser.CommandTypes.Update;
 import easycheck.eventlist.CalendarEvent;
 import easycheck.eventlist.Event;
 import easycheck.eventlist.FloatingTask;
@@ -104,9 +106,10 @@ public class CommandExecutor {
     		if (CalendarEvent.areValidDates(cmd.getStart(), cmd.getEnd())) {
     			int eventIndex = eventList.size() + 1;
     			newEvent = new CalendarEvent(eventIndex, cmd.getTaskName(), cmd.getStart(), cmd.getEnd());
-    			response = String.format(MESSAGE_ADD_CMD_RESPONSE, newEvent);
     			undoStack.push(new ArrayList<Event>(eventList));
     			eventList.add(newEvent);
+    			sort();
+    			response = String.format(MESSAGE_ADD_CMD_RESPONSE, newEvent);
     		} else {
     			response = MESSAGE_INVALID_CALENDAR_DATES;
     		}
@@ -115,9 +118,10 @@ public class CommandExecutor {
     		if (ToDoEvent.isValidDeadline(cmd.getEnd())) {
     			int eventIndex = eventList.size() + 1;
     			newEvent = new ToDoEvent(eventIndex, cmd.getTaskName(), cmd.getEnd());
-    			response = String.format(MESSAGE_ADD_CMD_RESPONSE, newEvent);
     			undoStack.push(new ArrayList<Event>(eventList));
     			eventList.add(newEvent);
+    			sort();
+    			response = String.format(MESSAGE_ADD_CMD_RESPONSE, newEvent);
     		} else {
     			response = MESSAGE_INVALID_TODO_DEADLINE;
     		}
@@ -125,15 +129,22 @@ public class CommandExecutor {
     	} else if (!cmd.hasStart() && !cmd.hasEnd()) {
     		int eventIndex = eventList.size() + 1;
 			newEvent = new FloatingTask(eventIndex, cmd.getTaskName());
-			response = String.format(MESSAGE_ADD_CMD_RESPONSE, newEvent);
 			undoStack.push(new ArrayList<Event>(eventList));
 			eventList.add(newEvent);
+			sort();
+			response = String.format(MESSAGE_ADD_CMD_RESPONSE, newEvent);
+
     	}
     	// response should have a response by this point
     	assert(!response.equals(""));
     	return response;
 	}
 	
+	private void sort() {
+		Collections.sort(eventList);
+		reIndex();
+	}
+
 	/**
 	 * Displays all events
 	 * @author A0145668R
