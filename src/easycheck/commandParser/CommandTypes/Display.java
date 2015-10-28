@@ -11,6 +11,8 @@ import easycheck.commandParser.Command;
  */
 
 public class Display extends Command {
+	private static final String DATE_OUTPUT_FORMAT = "%s %d %s %d";
+
 	private boolean dateFlag = false;
 	private boolean floatingFlag = false;
 	private boolean defaultFlag = false;
@@ -80,8 +82,12 @@ public class Display extends Command {
 		this.eventIndex = eventIndex;
 	}
 
-	public DateTime getDisplayDate() {
-		return displayDate;
+	public String getDisplayDate() {
+		DateTime.Property pDayOfTheWeek = displayDate.dayOfWeek();
+		DateTime.Property pMonthOfYear = displayDate.monthOfYear();
+		String dateString = String.format(DATE_OUTPUT_FORMAT, pDayOfTheWeek.getAsShortText(),
+				displayDate.getDayOfMonth(), pMonthOfYear.getAsShortText(), displayDate.getYear());
+		return dateString;
 	}
 
 	public void setDisplayDate(DateTime displayDate) {

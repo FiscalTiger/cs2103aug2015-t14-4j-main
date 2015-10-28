@@ -43,7 +43,7 @@ public class FloatingTask extends Event {
 		complete = false;
 	}
 	
-	public boolean isComplete() {
+	public boolean isDone() {
 		return complete;
 	}
 	
@@ -54,6 +54,10 @@ public class FloatingTask extends Event {
 	@Override
 	public String toString() {
 		return this.getEventIndex() + ". " + this.getEventName() + "\n";
+	}
+	
+	public String toPrintGroupString() {
+		return this.toString();
 	}
 	
 	@Override
