@@ -7,6 +7,7 @@ import easycheck.eventlist.Event;
 public class PrintGroup {
 	public static final String NEWLINE = "\n";
 	public static final String TAB = "\t";
+	public static final String COLON = ":";
 	
 	private String heading;
 	private ArrayList<Event> eventList;
@@ -30,7 +31,7 @@ public class PrintGroup {
 	}
 
 	public String toString() {
-		String printGroup = heading + NEWLINE;
+		String printGroup = heading + COLON + NEWLINE;
 		for(Event e: eventList) {
 			printGroup += TAB + e.toPrintGroupString();
 		}
