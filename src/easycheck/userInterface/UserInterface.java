@@ -25,7 +25,8 @@ public class UserInterface {
 		UserInterface ui = new UserInterface(fileName);
 		String userInput = "";
 		String commandResponse = "";
-		
+        //quick hack to make the console display on startup
+		ui.display(ui.executeCommand("display"));
 		while(true) {
 			ui.display(MESSAGE_ENTER_COMMAND);
 			userInput = ui.getInput();
