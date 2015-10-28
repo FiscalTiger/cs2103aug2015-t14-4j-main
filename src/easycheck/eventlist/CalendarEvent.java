@@ -137,7 +137,14 @@ public class CalendarEvent extends Event {
 	
 	// TODO override equals method
 	public boolean equals(Object obj) {
-		return false;
+		if (!(obj instanceof Event)) {
+			return false;
+		} else {
+			CalendarEvent e = (CalendarEvent) obj;
+			return this.getEventIndex() == e.getEventIndex() && this.getEventName().equals(e.getEventName()) &&
+					this.startDateAndTime.equals(e.getStartDateAndTime()) && 
+					this.endDateAndTime.equals(e.getEndDateAndTime());
+		}
 	}
 	
 	// TODO override compareTo method

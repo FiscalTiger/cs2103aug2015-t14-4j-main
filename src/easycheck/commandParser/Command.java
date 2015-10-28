@@ -1,8 +1,16 @@
 package easycheck.commandParser;
-import easycheck.commandParser.CommandTypes.*;
-
 import java.util.ArrayList;
 
+import easycheck.commandParser.CommandTypes.Add;
+import easycheck.commandParser.CommandTypes.Delete;
+import easycheck.commandParser.CommandTypes.Display;
+import easycheck.commandParser.CommandTypes.Edit;
+import easycheck.commandParser.CommandTypes.Exit;
+import easycheck.commandParser.CommandTypes.Invalid;
+import easycheck.commandParser.CommandTypes.Review;
+import easycheck.commandParser.CommandTypes.SaveAt;
+import easycheck.commandParser.CommandTypes.Search;
+import easycheck.commandParser.CommandTypes.Undo;
 
 /**
  * Command Type represents a parsed command for Easy Check application.
@@ -20,6 +28,8 @@ public class Command {
 	static ArrayList<String> cachedFile = new ArrayList<String>();
     private COMMAND_TYPE commandType;
     private String[] arguments;
+    
+    public Command() {};
     
     public Command(String commandType, String[] arguments){
     	this.commandType = determineCommandType(commandType);
@@ -44,7 +54,7 @@ public class Command {
 	        case ADD:
 	            return new Add(commandType,arguments);
 	        case DISPLAY:
-	        	return new Display(commandType,arguments);
+//	        	return new Display(commandType,arguments);
 	        case UPDATE:
 	            return new Edit(commandType,arguments);
 	        case DELETE:

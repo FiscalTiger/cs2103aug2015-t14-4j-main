@@ -7,9 +7,16 @@ package easycheck.commandParser;
  * @@author A0124206W
  */
 
+import java.util.Date;
+import java.util.List;
+
 import org.joda.time.DateTime;
-import org.joda.time.format.DateTimeFormat;
-import org.joda.time.format.DateTimeFormatter;
+
+import com.joestelmach.natty.DateGroup;
+import com.joestelmach.natty.Parser;
+
+import easycheck.commandParser.CommandTypes.Display;
+
 
 public class CommandParser {
 	private final String COMMAND_SPLITTER = " ";
@@ -35,6 +42,17 @@ public class CommandParser {
 	// private final String COMMAND_TYPE_UNDO = "undo";
 	private final String COMMAND_TYPE_EXIT = "exit";
 	private final String COMMAND_TYPE_INVALID = "invalid";
+	
+	private static final String MESSAGE_INVALID_DISPLAY_ARGS = "Display: Invalid flag %s\n";
+	private static final String MESSAGE_INVALID_DISPLAY_DATE = "Display: Invalid date %s\n";
+	private static final String MESSAGE_INVALID_DISPLAY_INDEX = "Display: Invalid index %s\n";
+	private static final String MESSAGE_INVALID_DISPLAY_NUM_OF_ARGS = "Display: too many arugments\n";
+	
+	private final String DISPLAY_FLAG_FLOATING = "f";
+	private final String DISPLAY_FLAG_DONE = "done";
+	private final String DISPLAY_FLAG_DUE = "due";
+	private final String DISPLAY_FLAG_DATE = "d";
+	private final String DISPLAY_FLAG_INDEX = "i";
 
 	// expected number of parameters for add commands
 	private final int NUM_ARGUMENTS_ADD = 1;
@@ -50,13 +68,14 @@ public class CommandParser {
 	private final int NUM_ARGUMENTS_SEARCH = 1;
 	// private final int NUM_ARGUMENTS_STORE_LOCATION = 1;
 
-	private final int NUM_ARGUMENTS_DISPLAY = 0;
+	private final int NUM_MAX_ARGUMENTS_DISPLAY = 2;
 	// private final int NUM_ARGUMENTS_DELETE_DONE = 0;
 	// private final int NUM_ARGUMENTS_OVERDUE = 0;
 	// private final int NUM_ARGUMENTS_DELETE_TODAY = 0;
 	// private final int NUM_ARGUMENTS_NEXT = 0;
 	// private final int NUM_ARGUMENTS_UNDO = 0;
 	private final int NUM_ARGUMENTS_EXIT = 0;
+	
 
 	// flexi command keywords
 	private final String[] FLEXI_KEYWORDS = { " by ", " at ", " to ", " for " };
@@ -82,7 +101,7 @@ public class CommandParser {
 		String[] arguments = null;
 		Command command;
 		if (commandType.equalsIgnoreCase(COMMAND_TYPE_DISPLAY)) {
-			command = Command.createObject(commandType, arguments);
+			command = createDisplayCommand(arguments);
 		} else if (commandType.equalsIgnoreCase(COMMAND_TYPE_EXIT)) {
 			command = Command.createObject(commandType, arguments);
 		} else if (commandType.equalsIgnoreCase(COMMAND_TYPE_DELETE)) {
@@ -107,6 +126,9 @@ public class CommandParser {
 				arguments = getArguments(commandArguments, NUM_ARGUMENTS_UPDATE);
 			} else if (commandType.equalsIgnoreCase(COMMAND_TYPE_SEARCH)) {
 				arguments = getArguments(commandArguments, NUM_ARGUMENTS_SEARCH);
+			} else if (commandType.equalsIgnoreCase(COMMAND_TYPE_DISPLAY)) {
+				arguments = getDisplayArguments(commandArguments);
+				return createDisplayCommand(arguments);
 			} else {
 				Command command = Command.createObject(COMMAND_TYPE_INVALID, arguments);
 				return command;
@@ -119,6 +141,72 @@ public class CommandParser {
 		assert(arguments != null);
 		Command command = Command.createObject(commandType, arguments);
 		return command;
+	}
+	
+	private String[] getDisplayArguments(String commandArguments) {
+		// split arguments and then trim them.
+		String[] arguments = trimArguments(commandArguments.split(ARGUMENT_SPLITTER));
+		return arguments;
+	}
+
+	private Command createDisplayCommand(String[] arguments) {
+		Display disp = new Display();
+		if(arguments == null) {
+			disp.setDefaultFlag(true);
+		} else if(arguments.length == 1) {
+			if(arguments[0].equals(DISPLAY_FLAG_FLOATING)) {
+				disp.setFloatingFlag(true);
+			} else if(arguments[0].equals(DISPLAY_FLAG_DUE)) {
+				disp.setNotDoneFlag(true);
+			} else if(arguments[0].equals(DISPLAY_FLAG_DONE)) {
+				disp.setDoneFlag(true);
+			} else {
+				disp.setInvalidFlag(true);
+				disp.setInvalidMessage(String.format(MESSAGE_INVALID_DISPLAY_ARGS, arguments[0]));
+			}
+		} else if(arguments.length == 2) {
+			if(arguments[0].equals(DISPLAY_FLAG_DATE)) {
+				DateTime displayDate = parseDateText(arguments[1]);
+				if(displayDate != null) {
+					disp.setDateFlag(true);
+					disp.setDisplayDate(displayDate);
+				} else {
+					disp.setInvalidFlag(true);
+					disp.setInvalidMessage(String.format(MESSAGE_INVALID_DISPLAY_DATE, arguments[1]));
+				}
+			} else if(arguments[0].equals(DISPLAY_FLAG_INDEX)) {
+				try {
+					int eventIndex = Integer.parseInt(arguments[1]);
+					disp.setEventIndex(eventIndex);
+					disp.setIndexFlag(true);
+				} catch(NumberFormatException e) {
+					disp.setInvalidFlag(true);
+					disp.setInvalidMessage(String.format(MESSAGE_INVALID_DISPLAY_INDEX, arguments[1]));
+				}
+			} else {
+				disp.setInvalidFlag(true);
+				disp.setInvalidMessage(arguments[0]);
+			}
+		} else {
+			disp.setInvalidFlag(true);
+			disp.setInvalidMessage(MESSAGE_INVALID_DISPLAY_NUM_OF_ARGS);
+		}
+		
+		return disp;
+	}
+	
+	public DateTime parseDateText(String dateString) {
+		Parser dateParser = new Parser();
+		List<DateGroup> dateGroups = dateParser.parse(dateString);
+		if (dateGroups.size() != 1) {
+			return null;
+		} else {
+		  DateGroup dateGroup = dateGroups.get(0);
+		  if (dateGroup.getDates().size() != 1) {
+			  return null;
+		  }
+		  return new DateTime(dateGroup.getDates().get(0));
+		}
 	}
 
 	// get arguments for add type - supports flexi commands
