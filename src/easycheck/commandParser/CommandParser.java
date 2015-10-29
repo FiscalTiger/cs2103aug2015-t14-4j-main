@@ -25,6 +25,7 @@ import easycheck.commandParser.CommandTypes.Redo;
 import easycheck.commandParser.CommandTypes.Repeat;
 import easycheck.commandParser.CommandTypes.Undo;
 import easycheck.commandParser.CommandTypes.Update;
+import easycheck.commandParser.CommandTypes.Markdone;
 
 public class CommandParser {
 	private final String COMMAND_SPLITTER = " ";
@@ -43,6 +44,7 @@ public class CommandParser {
 	// private final String COMMAND_TYPE_REMIND = "remind";
 	private final String COMMAND_TYPE_SEARCH = "search";
 	private final String COMMAND_TYPE_DISPLAY = "display";
+	private final String COMMAND_TYPE_MARKDONE = "done";
 	// private final String COMMAND_TYPE_DELETE_DONE = "deleteDone";
 	// private final String COMMAND_TYPE_OVERDUE = "overdue ";
 	// private final String COMMAND_TYPE_DELETE_TODAY = "deleteToday";
@@ -134,8 +136,9 @@ public class CommandParser {
 		} else if (commandType.equalsIgnoreCase(COMMAND_TYPE_DELETE)) {
 			command = createDeleteCommand(arguments);
 		} else if (commandType.equalsIgnoreCase(COMMAND_TYPE_SEARCH)) {
-		  //TODO
 			command = Command.createObject(commandType, arguments);
+		} else if (commandType.equalsIgnoreCase(COMMAND_TYPE_MARKDONE)) {
+			command = createMarkDoneCommand(arguments);
 		} else if (commandType.equalsIgnoreCase(COMMAND_TYPE_UNDO)) {
 			command = new Undo();
 		} else if (commandType.equalsIgnoreCase(COMMAND_TYPE_REDO)) {
@@ -157,6 +160,9 @@ public class CommandParser {
 			} else if (commandType.equalsIgnoreCase(COMMAND_TYPE_DELETE)) {
 				arguments = getArguments(commandArguments, NUM_ARGUMENTS_DELETE);
 				command = createDeleteCommand(arguments);
+			} else if (commandType.equalsIgnoreCase(COMMAND_TYPE_MARKDONE)) {
+				arguments = getArguments(commandArguments, NUM_ARGUMENTS_DELETE);
+				command = createMarkDoneCommand(arguments);
 			} else if (commandType.equalsIgnoreCase(COMMAND_TYPE_UPDATE)) {
 				arguments = getArgumentsUpdate(commandArguments);
 				command = createUpdateCommand(arguments);
@@ -327,6 +333,10 @@ public class CommandParser {
     // @@author A0124206
     private Command createDeleteCommand(String[] arguments) {
         return new Delete(arguments);
+    }
+    // @author A0126989H
+    private Command createMarkDoneCommand(String[] arguments) {
+        return new Markdone(arguments);
     }
     // @@author A0124206
     private Command createRepeatCommand(String[] arguments) {

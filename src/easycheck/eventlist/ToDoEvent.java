@@ -43,7 +43,7 @@ public class ToDoEvent extends Event {
 		this.setEventIndex(eventIndex);
 		this.setEventName(eventName);
 		deadline = dueDateAndTime;
-		complete = false;
+		this.complete = false;
 	}
 	
 	public ToDoEvent(JSONObject jsonObj) {
@@ -189,4 +189,11 @@ public class ToDoEvent extends Event {
 	public static boolean isValidDeadline(DateTime deadline) {
 		return deadline.isAfterNow();
 	}
+	// @author A0126989H
+		public void setDone(){
+			this.complete = true;
+		}
+		public void setUndone(){
+			this.complete = false;
+		}
 }

@@ -19,6 +19,7 @@ import easycheck.commandParser.CommandTypes.SaveAt;
 import easycheck.commandParser.CommandTypes.Search;
 import easycheck.commandParser.CommandTypes.Undo;
 import easycheck.commandParser.CommandTypes.Update;
+import easycheck.commandParser.CommandTypes.Markdone;
 import easycheck.eventlist.CalendarEvent;
 import easycheck.eventlist.Event;
 import easycheck.eventlist.FloatingTask;
@@ -30,7 +31,7 @@ public class CommandExecutor {
 	private static final String MESSAGE_ADD_CMD_RESPONSE = "Added %s\n";
 	private static final String MESSAGE_DISPLAY_CMD_EMPTY = "There aren't any events to display!\n";
 	private static final String MESSAGE_DELETE_CMD_EMPTY = "There aren't any events!\n";
-	private static final String MESSAGE_DELETE_CMD_RESPONSE = "Deleted \"%s\" Successfully\n";
+	private static final String MESSAGE_DELETE_CMD_RESPONSE = "Deleted \"%s\" successfully\n";
 	private static final String MESSAGE_UPDATE_FLOAT_RESPONSE = "Updated %s to %s successfully\n";
 	private static final String MESSAGE_UPDATE_TODO_RESPONSE = "Updated %s successfully\n";
 	private static final String MESSAGE_UPDATE_CAL_RESPONSE = "Updated %s successfully\n";
@@ -49,6 +50,19 @@ public class CommandExecutor {
 	private static final String MESSAGE_DELETE_CMD_ALL = "Congratulations on completing all task! :)\n";
 
 	private static final String MESSAGE_DELETE_CMD_SPECIALCOMMAND = "all ";
+	private static final String MESSAGE_DELETE_CMD_DONETASK = "Deleted all done tasks successfully\n";
+
+	private static final String MESSAGE_MARKDONE_CMD_RESPONSE = "Successfully mark %s as Done!\n";
+
+	private static final String MESSAGE_MARDONE_CMD_EMPTY = "Your todoList is currently empty!\n";
+
+	private static final String MESSAGE_MARKDONE_CMD_NOTFOUND = "There are no such events!\n";
+
+	private static final String MESSAGE_MARKDONE_CMD_SPECIALCOMMAND = "all ";
+
+	private static final String MESSAGE_MARKDONE_CMD_ALL = "Congratulations on finishing all tasks! :)\n";
+
+	
 
 	private ArrayList<Event> eventList;
 	private Stack<ArrayList<Event>> undoStack;
@@ -78,6 +92,8 @@ public class CommandExecutor {
 			return update((Update) command);
 		} else if (command instanceof Delete) {
 			return delete((Delete) command);
+		} else if (command instanceof Markdone) {
+			return markdone((Markdone) command);
 		} else if (command instanceof Undo) {
 			return undo((Undo) command);
 		} else if (command instanceof Redo) {
@@ -375,6 +391,100 @@ public class CommandExecutor {
 		return response;
 
 	}
+	
+	
+	//@author A0126989H
+	private String markdone(Markdone cmd){
+		String arguments = cmd.getTaskName();
+		// Case 1: When the command is "done"
+		if (arguments == null) {
+			return doneFirst(cmd);
+		// Case 3: When the command is "done + index"
+		} else if (isNumeric(arguments)) {
+			return doneIndex(cmd);
+		/* Case 2: 
+		* Special Command : " done all"
+		* done Multiple matching String and "done all + eventName"
+		*/ 
+		} else if (arguments.length() >= 3 && 
+				arguments.substring(0, 3).equals(MESSAGE_MARKDONE_CMD_SPECIALCOMMAND.trim())) {
+			return doneSpecial(cmd);
+		// Case 4: When the command is "done + EventName"
+		} else {
+			return doneEvent(cmd);
+		}
+	}
+
+	private String doneEvent(Markdone cmd) {
+		String arguments = cmd.getTaskName();
+		String doneEvent = "";
+		for (int i = 0; i < eventList.size(); i++) {
+			if (eventList.get(i).getEventName().contains(arguments.toLowerCase())) {
+				undoStack.push(new ArrayList<Event>(eventList));
+				eventList.get(i).setDone();
+				doneEvent = eventList.get(i).getEventName();
+				break;
+			}
+		}
+		if (doneEvent.equals(""))
+			return MESSAGE_MARKDONE_CMD_NOTFOUND;
+		else
+			return String.format(MESSAGE_MARKDONE_CMD_RESPONSE, doneEvent);
+	}
+
+	private String doneSpecial(Markdone cmd) {
+		String arguments = cmd.getTaskName();
+		System.out.println("arguments: " + arguments);
+		String doneEvent = "";
+		if (arguments.equals(MESSAGE_MARKDONE_CMD_SPECIALCOMMAND.trim())) {
+			undoStack.push(new ArrayList<Event>(eventList));
+			for (int i = 0; i < eventList.size();i++){
+				eventList.get(i).setDone();
+			}
+			return MESSAGE_MARKDONE_CMD_ALL;
+		} else {
+			undoStack.push(new ArrayList<Event>(eventList));
+			for (int i = 0; i < eventList.size(); i++) {
+				if (eventList.get(i).getEventName().contains(arguments.substring(4))) {
+					eventList.get(i).setDone();
+					doneEvent = eventList.get(i).getEventName();
+				}
+			}
+			if (doneEvent.equals("")){
+				return MESSAGE_MARKDONE_CMD_NOTFOUND;
+			}
+			doneEvent = MESSAGE_MARKDONE_CMD_SPECIALCOMMAND +  doneEvent;
+		}
+		return String.format(MESSAGE_MARKDONE_CMD_RESPONSE, doneEvent);
+	}
+
+	private String doneIndex(Markdone cmd) {
+		String arguments = cmd.getTaskName();
+		String doneEvent = "";
+		int index = Integer.parseInt(arguments);
+		if (eventList.size() < index || index < 1) {
+			return MESSAGE_MARKDONE_CMD_NOTFOUND;
+		} else if (eventList.size() != 0) {
+			undoStack.push(new ArrayList<Event>(eventList));
+			eventList.get(index - ZERO_OFFSET).setDone();
+			doneEvent = eventList.get(index - ZERO_OFFSET).getEventName();
+			return String.format(MESSAGE_MARKDONE_CMD_RESPONSE, doneEvent);
+		} else {
+			return MESSAGE_MARDONE_CMD_EMPTY;
+		}
+	}
+
+	private String doneFirst(Markdone cmd) {
+		String doneEvent = "";
+		if (eventList.size() != 0) {
+			undoStack.push(new ArrayList<Event>(eventList));
+			eventList.get(0).setDone();
+			doneEvent = eventList.get(0).getEventName();
+			return String.format(MESSAGE_MARKDONE_CMD_RESPONSE, doneEvent);
+		} else {
+			return MESSAGE_MARDONE_CMD_EMPTY;
+		}
+	}
 
 	// @ author A0126989H
 	/*
@@ -383,8 +493,8 @@ public class CommandExecutor {
 	 */
 	private String delete(Delete cmd) {
 		String arguments = cmd.getTaskName();
-		System.out.println("arguemtns: " + arguments);
 		// Case 1: When the command is "delete"
+		assert(!eventList.isEmpty());
 		if (arguments == null) {
 			return deleteFirst(cmd);
 		// Case 3: When the command is "delete + index"
@@ -408,8 +518,15 @@ public class CommandExecutor {
 	}
 	// To be Implemented
 	private String deleteDone(Delete cmd) {
-		
-		return null;
+		undoStack.push(new ArrayList<Event>(eventList));
+		for (int i = 0; i < eventList.size();i++){
+			if (eventList.get(i).isDone()){
+				eventList.remove(i);
+				i--;
+			}
+		}
+		reIndex();
+		return MESSAGE_DELETE_CMD_DONETASK;
 	}
 
 	private String deleteEvent(Delete cmd) {
@@ -471,7 +588,6 @@ public class CommandExecutor {
 	}
 
 	private String deleteFirst(Delete cmd) {
-		String arguments = cmd.getTaskName();
 		String removeEvent = "";
 		if (eventList.size() != 0) {
 			undoStack.push(new ArrayList<Event>(eventList));
