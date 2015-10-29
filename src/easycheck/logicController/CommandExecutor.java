@@ -43,8 +43,11 @@ public class CommandExecutor {
 	
 	//@author A0126989H
 	private static final String MESSAGE_SEARCH_CMD_EMPTY = "There aren't any events to search!\n";
+	private static final String MESSAGE_DELETE_CMD_NOTFOUND = "There are no such events!\n";
+
 	private static final String MESSAGE_SEARCH_CMD_NOTFOUND = "There are no such events!\n";
-	
+
+
 	
 	private ArrayList<Event> eventList;
 	private Stack<ArrayList<Event>> undoStack;
@@ -386,10 +389,10 @@ public class CommandExecutor {
 				return MESSAGE_DELETE_CMD_EMPTY;
 			}
 		// Case 2: When the command is "delete + index"
-		}else if (isNumeric(arguments)){
+		} else if (isNumeric(arguments)){
 		    int index = Integer.parseInt(arguments);
             if (eventList.size() < index || index < 1) {
-                return MESSAGE_SEARCH_CMD_NOTFOUND;
+                return MESSAGE_DELETE_CMD_NOTFOUND;
             } else if (eventList.size() != 0) {
             	undoStack.push(new ArrayList<Event>(eventList));
                 removeEvent = eventList.remove(index - ZERO_OFFSET).getEventName();
@@ -407,6 +410,8 @@ public class CommandExecutor {
 					removeEvent = eventList.remove(i).getEventName();
 					reIndex();
 					break;
+				} else {
+					return MESSAGE_DELETE_CMD_NOTFOUND;
 				}
 			}
 		}
