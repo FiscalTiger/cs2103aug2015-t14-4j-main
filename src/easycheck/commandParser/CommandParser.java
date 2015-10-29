@@ -16,10 +16,10 @@ import org.joda.time.format.DateTimeFormatter;
 import com.joestelmach.natty.DateGroup;
 import com.joestelmach.natty.Parser;
 
-import easycheck.commandParser.Command;
 import easycheck.commandParser.CommandTypes.Add;
 import easycheck.commandParser.CommandTypes.Delete;
 import easycheck.commandParser.CommandTypes.Display;
+import easycheck.commandParser.CommandTypes.Exit;
 import easycheck.commandParser.CommandTypes.Invalid;
 import easycheck.commandParser.CommandTypes.Redo;
 import easycheck.commandParser.CommandTypes.Repeat;
@@ -130,8 +130,7 @@ public class CommandParser {
 		if (commandType.equalsIgnoreCase(COMMAND_TYPE_DISPLAY)) {
 			command = createDisplayCommand(arguments);
 		} else if (commandType.equalsIgnoreCase(COMMAND_TYPE_EXIT)) {
-		    //TODO
-			command = Command.createObject(commandType, arguments);
+			command = new Exit();
 		} else if (commandType.equalsIgnoreCase(COMMAND_TYPE_DELETE)) {
 			command = createDeleteCommand(arguments);
 		} else if (commandType.equalsIgnoreCase(COMMAND_TYPE_SEARCH)) {
@@ -159,7 +158,6 @@ public class CommandParser {
 				arguments = getArguments(commandArguments, NUM_ARGUMENTS_DELETE);
 				command = createDeleteCommand(arguments);
 			} else if (commandType.equalsIgnoreCase(COMMAND_TYPE_UPDATE)) {
-			    //TODO
 				arguments = getArgumentsUpdate(commandArguments);
 				command = createUpdateCommand(arguments);
 			} else if (commandType.equalsIgnoreCase(COMMAND_TYPE_SEARCH)) {

@@ -363,6 +363,7 @@ public class CommandExecutor {
 			response = String.format(MESSAGE_UPDATE_FLOAT_RESPONSE, originalName, newName);
 		}
 		assert(!response.equals(""));
+		sort();
     	return response;
 
 	}

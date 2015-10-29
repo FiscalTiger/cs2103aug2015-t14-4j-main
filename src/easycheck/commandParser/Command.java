@@ -56,9 +56,9 @@ public class Command {
 	        case DISPLAY:
 //	        	return new Display(commandType,arguments);
 	        case UPDATE:
-	            return new Update(commandType,arguments);
+//	            return new Update();
 	        case DELETE:
-	            return new Delete(arguments);
+//	            return new Delete(arguments);
 	        case UNDO:
 //	            return new Undo();
 	        case SEARCH:
@@ -70,7 +70,7 @@ public class Command {
 	        case INVALID: 
 	        	return new Invalid(commandType, arguments);
 	        default:
-	        	return new Exit(commandType,arguments);
+	        	return null;
 	        }
     }
 	
