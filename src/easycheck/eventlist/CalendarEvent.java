@@ -193,7 +193,10 @@ public class CalendarEvent extends Event {
 		}
 	}
 	
-	// TODO override compareTo method
+	/**
+	 * Used to compare to Event subclasses
+	 * @return int
+	 */
 	public int compareTo(Event e) {
 		if(e instanceof FloatingTask) {
 			return 1;
@@ -218,6 +221,10 @@ public class CalendarEvent extends Event {
 		return 0;
 	}
 	
+	/*
+	 * Checks if dates are valid for this date and time
+	 * and if end is after start
+	 */
 	public static boolean areValidDates(DateTime start, DateTime end) {
 		return (start.isBefore(end) && start.isAfterNow());
 	}

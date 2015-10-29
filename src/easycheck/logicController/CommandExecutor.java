@@ -39,7 +39,7 @@ public class CommandExecutor {
 	private static final String MESSAGE_UNDO_EMPTY_STACK = "There is nothing to undo\n";
 	private static final String MESSAGE_REDO_EMPTY_STACK = "There is nothing to redo\n";
 	private static final String MESSAGE_UPDATE_INVALID_IDX = "%s is an invalid index.\n";
-	private static final String PRINT_GROUP_HEADING_FLOATING = "Floating";
+	private static final String PRINT_GROUP_HEADING_FLOATING = "To Do";
 	
 	//@author A0126989H
 	private static final String MESSAGE_SEARCH_CMD_EMPTY = "There aren't any events to search!\n";
@@ -448,6 +448,7 @@ public class CommandExecutor {
 			redoStack.clear();
 			redoStack.push(new ArrayList<Event>(eventList));
 			eventList = undoStack.pop();
+			reIndex();
 		}
 		Display disp = new Display();
 		disp.setDefaultFlag(true);
@@ -461,6 +462,7 @@ public class CommandExecutor {
 		} else {
 			undoStack.push(new ArrayList<Event>(eventList));
 			eventList = redoStack.pop();
+			reIndex();
 		}
 		
 		Display disp = new Display();
