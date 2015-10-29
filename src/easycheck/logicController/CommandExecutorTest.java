@@ -1,6 +1,7 @@
-/*package easycheck.logicController;
+package easycheck.logicController;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 
@@ -14,6 +15,7 @@ import easycheck.commandParser.Command;
 import easycheck.commandParser.CommandTypes.Add;
 import easycheck.eventlist.CalendarEvent;
 import easycheck.eventlist.Event;
+import easycheck.eventlist.FloatingTask;
 import easycheck.eventlist.ToDoEvent;
 
 public class CommandExecutorTest {
@@ -70,9 +72,8 @@ public class CommandExecutorTest {
 		String expected;
 		
 		// Good Calendar Event
-		String[] goodCalCommandArgs = {"Good Cal Event", GOOD_START_DATE, GOOD_END_DATE};
 		CalendarEvent goodCal = new CalendarEvent(1, "Good Cal Event", goodStart, goodEnd);
-		cmd = new Add("add", goodCalCommandArgs);
+		cmd = new Add("Good Cal Event", goodStart, goodEnd);
 		desc = "Creates good calendar event";
 		expected = "Added " + goodCal + "\n";
 		testOneCommand(desc, expected, cmd);
@@ -84,9 +85,8 @@ public class CommandExecutorTest {
 		String expected;
 		
 		// Good Floating task
-		String[] goodFloatingCommandArgs = {"Good floating task"};
-		Event goodFloating = new Event(3, "Good floating task");
-		cmd = new Add("add", goodFloatingCommandArgs);
+		Event goodFloating = new FloatingTask(1, "Good floating task");
+		cmd = new Add("Good floating task");
 		desc = "Creates good floating task";
 		expected = "Added " + goodFloating + "\n";
 		testOneCommand(desc, expected, cmd);
@@ -98,8 +98,7 @@ public class CommandExecutorTest {
 		String expected;
 		
 		// Old To Do Event
-		String[] oldToDoCommandArgs = {"Old To Do Event", BAD_END_DATE};
-		cmd = new Add("add", oldToDoCommandArgs);
+		cmd = new Add("Old To Do Event", badDeadline);
 		desc = "Tries to make a to do event where the due date already past";
 		expected = MESSAGE_INVALID_TODO_DEADLINE;
 		testOneCommand(desc, expected, cmd);
@@ -111,9 +110,8 @@ public class CommandExecutorTest {
 		String expected;
 		
 		// Good To Do Event
-		String[] goodToDoCommandArgs = {"Good To Do Event", GOOD_END_DATE};
 		ToDoEvent goodToDo = new ToDoEvent(2, "Good To Do Event", goodEnd);
-		cmd = new Add("add", goodToDoCommandArgs);
+		cmd = new Add("Good To Do Event", goodEnd);
 		desc = "Creates good to do event";
 		expected = "Added " + goodToDo + "\n";
 		testOneCommand(desc, expected, cmd);
@@ -126,7 +124,7 @@ public class CommandExecutorTest {
 		
 		// Old Calendar Event
 		String[] oldCalCommandArgs = {"Old Cal Event", OLD_START_DATE, GOOD_END_DATE};
-		cmd = new Add("add", oldCalCommandArgs);
+		cmd = new Add("Old Cal Event", oldStart, goodEnd);
 		desc = "Tries to make a calendar event where the start date already past";
 		expected = MESSAGE_INVALID_CALENDAR_DATES;
 		testOneCommand(desc, expected, cmd);
@@ -138,8 +136,7 @@ public class CommandExecutorTest {
 		String expected;
 		
 		// Bad Calendar Event
-		String[] badCalCommandArgs = {"Bad Cal Event", BAD_START_DATE, GOOD_END_DATE};
-		cmd = new Add("add", badCalCommandArgs);
+		cmd = new Add("Bad Cal Event", badStart, goodEnd);
 		desc = "Tries to make a bad calendar event";
 		expected = MESSAGE_INVALID_CALENDAR_DATES;
 		testOneCommand(desc, expected, cmd);
@@ -150,4 +147,3 @@ public class CommandExecutorTest {
 	}
 
 }
-*/
