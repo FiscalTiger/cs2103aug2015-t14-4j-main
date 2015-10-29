@@ -43,9 +43,10 @@ public class CommandExecutor {
 	
 	//@author A0126989H
 	private static final String MESSAGE_SEARCH_CMD_EMPTY = "There aren't any events to search!\n";
-	private static final String MESSAGE_DELETE_CMD_NOTFOUND = "There are no such events!\n";
-
 	private static final String MESSAGE_SEARCH_CMD_NOTFOUND = "There are no such events!\n";
+	
+	private static final String MESSAGE_DELETE_CMD_NOTFOUND = "There are no such events!\n";
+	private static final String MESSAGE_DELETE_CMD_ALL = "Congratulations on completing all task! :)";
 
 
 	
@@ -331,7 +332,7 @@ public class CommandExecutor {
 	 * @author A0126989H
 	 */
 	private String update(Update cmd) {
-		String idx = cmd.getTaskIdx();
+		String idx = cmd.getTaskIdx();	
 		String newName = cmd.getNewName();
 		String response = "";
 		Event newEvent;
@@ -388,7 +389,16 @@ public class CommandExecutor {
 				reIndex();
 				return MESSAGE_DELETE_CMD_EMPTY;
 			}
-		// Case 2: When the command is "delete + index"
+		// Case 2: Special Command : " delete all"
+		} else if (arguments.equals("all")){
+			eventList.clear();
+			return MESSAGE_DELETE_CMD_ALL;
+		// Case 2: Delete Done
+			
+			
+		// Case 3: Delete Multiple matching String
+			
+		// Case 3: When the command is "delete + index"
 		} else if (isNumeric(arguments)){
 		    int index = Integer.parseInt(arguments);
             if (eventList.size() < index || index < 1) {
@@ -402,7 +412,7 @@ public class CommandExecutor {
                 reIndex();
 				return MESSAGE_DELETE_CMD_EMPTY;
 			}
-		// Case 3: When the command is "delete + EventName"
+		// Case 4: When the command is "delete + EventName"
 		} else {
 			for (int i = 0; i < eventList.size(); i++) {
 				if (eventList.get(i).getEventName().contains(arguments.toLowerCase())) {
