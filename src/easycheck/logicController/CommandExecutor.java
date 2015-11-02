@@ -1,10 +1,14 @@
 package easycheck.logicController;
 
+import java.util.Date;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Stack;
 
 import org.joda.time.DateTime;
+import org.joda.time.Period;
 
 import easycheck.commandParser.Command;
 import easycheck.commandParser.CommandTypes.Add;
@@ -50,14 +54,12 @@ public class CommandExecutor {
 	private static final String MESSAGE_DELETE_CMD_SPECIALCOMMAND = "all ";
 	private static final String MESSAGE_DELETE_CMD_DONETASK = "Deleted all done tasks successfully\n";
 	private static final String MESSAGE_DELETE_CMD_ALLTASKS = "Deleted \"%s\" related tasks successfully\n";
-	
+
 	private static final String MESSAGE_MARKDONE_CMD_RESPONSE = "Successfully mark %s as Done!\n";
 	private static final String MESSAGE_MARDONE_CMD_EMPTY = "Your todoList is currently empty!\n";
 	private static final String MESSAGE_MARKDONE_CMD_NOTFOUND = "There are no such events!\n";
 	private static final String MESSAGE_MARKDONE_CMD_SPECIALCOMMAND = "all ";
 	private static final String MESSAGE_MARKDONE_CMD_ALL = "Congratulations on finishing all tasks! :)\n";
-
-	
 
 	private ArrayList<Event> eventList;
 	private Stack<ArrayList<Event>> undoStack;
@@ -386,25 +388,24 @@ public class CommandExecutor {
 		return response;
 
 	}
-	
-	
-	//@author A0126989H
-	private String markdone(Markdone cmd){
+
+	// @author A0126989H
+	private String markdone(Markdone cmd) {
 		String arguments = cmd.getTaskName();
 		// Case 1: When the command is "done"
 		if (arguments == null) {
 			return doneFirst(cmd);
-		// Case 3: When the command is "done + index"
+			// Case 3: When the command is "done + index"
 		} else if (isNumeric(arguments)) {
 			return doneIndex(cmd);
-		/* Case 2: 
-		* Special Command : " done all"
-		* done Multiple matching String and "done all + eventName"
-		*/ 
-		} else if (arguments.length() >= 3 && 
-				arguments.substring(0, 3).equals(MESSAGE_MARKDONE_CMD_SPECIALCOMMAND.trim())) {
+			/*
+			 * Case 2: Special Command : " done all" done Multiple matching
+			 * String and "done all + eventName"
+			 */
+		} else if (arguments.length() >= 3
+				&& arguments.substring(0, 3).equals(MESSAGE_MARKDONE_CMD_SPECIALCOMMAND.trim())) {
 			return doneSpecial(cmd);
-		// Case 4: When the command is "done + EventName"
+			// Case 4: When the command is "done + EventName"
 		} else {
 			return doneEvent(cmd);
 		}
@@ -433,7 +434,7 @@ public class CommandExecutor {
 		String doneEvent = "";
 		if (arguments.equals(MESSAGE_MARKDONE_CMD_SPECIALCOMMAND.trim())) {
 			undoStack.push(new ArrayList<Event>(eventList));
-			for (int i = 0; i < eventList.size();i++){
+			for (int i = 0; i < eventList.size(); i++) {
 				eventList.get(i).setDone();
 			}
 			return MESSAGE_MARKDONE_CMD_ALL;
@@ -445,10 +446,10 @@ public class CommandExecutor {
 					doneEvent = eventList.get(i).getEventName();
 				}
 			}
-			if (doneEvent.equals("")){
+			if (doneEvent.equals("")) {
 				return MESSAGE_MARKDONE_CMD_NOTFOUND;
 			}
-			doneEvent = MESSAGE_MARKDONE_CMD_SPECIALCOMMAND +  doneEvent;
+			doneEvent = MESSAGE_MARKDONE_CMD_SPECIALCOMMAND + doneEvent;
 		}
 		return String.format(MESSAGE_MARKDONE_CMD_RESPONSE, doneEvent);
 	}
@@ -492,30 +493,30 @@ public class CommandExecutor {
 		assert(!eventList.isEmpty());
 		if (arguments == null) {
 			return deleteFirst(cmd);
-		// Case 2: When the command is "delete + index"
+			// Case 2: When the command is "delete + index"
 		} else if (isNumeric(arguments)) {
 			return deleteIndex(cmd);
-		/* Case 3: 
-		* Special Command : " delete all"
-		* Delete Multiple matching String and "delete all + eventName"
-		*/ 
-		} else if (arguments.length() >= 3 && 
-				arguments.substring(0, 3).equals(MESSAGE_DELETE_CMD_SPECIALCOMMAND.trim())) {
+			/*
+			 * Case 3: Special Command : " delete all" Delete Multiple matching
+			 * String and "delete all + eventName"
+			 */
+		} else
+			if (arguments.length() >= 3 && arguments.substring(0, 3).equals(MESSAGE_DELETE_CMD_SPECIALCOMMAND.trim())) {
 			return deleteSpecial(cmd);
-		// Case 4: Delete Done Tasks "delete done"
-		} else if (arguments.length() >= 4 &&
-				arguments.equals("done")){
+			// Case 4: Delete Done Tasks "delete done"
+		} else if (arguments.length() >= 4 && arguments.equals("done")) {
 			return deleteDone(cmd);
-		// Case 5: When the command is "delete + EventName"
+			// Case 5: When the command is "delete + EventName"
 		} else {
 			return deleteEvent(cmd);
 		}
 	}
+
 	// To be Implemented
 	private String deleteDone(Delete cmd) {
 		undoStack.push(new ArrayList<Event>(eventList));
-		for (int i = 0; i < eventList.size();i++){
-			if (eventList.get(i).isDone()){
+		for (int i = 0; i < eventList.size(); i++) {
+			if (eventList.get(i).isDone()) {
 				eventList.remove(i);
 				i--;
 			}
@@ -556,10 +557,10 @@ public class CommandExecutor {
 					i--;
 				}
 			}
-			if (removeEvent.equals("")){
+			if (removeEvent.equals("")) {
 				return MESSAGE_DELETE_CMD_NOTFOUND;
 			}
- 			reIndex();
+			reIndex();
 		}
 		return String.format(MESSAGE_DELETE_CMD_ALLTASKS, removeEvent);
 	}
@@ -648,19 +649,34 @@ public class CommandExecutor {
 		String response = "";
 		if (eventList.isEmpty()) {
 			response = MESSAGE_SEARCH_CMD_EMPTY;
+		} else if (cmd.getArgument().equals("freetime")) {
+			response = getFreeTime();
 		} else {
 			for (Event e : eventList) {
-				if (e.getEventName().toLowerCase().contains(cmd.getArgument()[0].toLowerCase()))
+				if (e.getEventName().toLowerCase().contains(cmd.getArgument().toLowerCase())) {
 					response += e;
+				}
 			}
 		}
-
 		if (response.equals("")) {
 			response = MESSAGE_SEARCH_CMD_NOTFOUND;
 		}
 		// Response should not be empty
 		assert(!response.equals(""));
 		return response;
+	}
+
+	private String getFreeTime() {
+		DateTime today = new DateTime();
+		System.out.println(today);
+		System.out.println(today.plus(Period.days(1)));
+
+		for (Event e : eventList) {
+			if (e instanceof CalendarEvent) {
+				System.out.println("timestart: " + ((CalendarEvent) e).getStartTime());
+			}
+		}
+		return "";
 	}
 
 	// TODO

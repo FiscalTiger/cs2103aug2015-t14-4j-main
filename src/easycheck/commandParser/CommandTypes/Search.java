@@ -10,7 +10,7 @@ public class Search extends Command{
 		searchTerms = arguments;
 	}
 	
-	public String[] getArgument(){
-		return searchTerms;
+	public String getArgument(){
+		return searchTerms[0].toLowerCase();
 	}
 }
