@@ -1,4 +1,4 @@
-/*package easycheck.logicController;
+package easycheck.logicController;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -9,6 +9,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import easycheck.commandParser.Command;
+import easycheck.commandParser.CommandParser;
 import easycheck.commandParser.CommandTypes.Add;
 import easycheck.commandParser.CommandTypes.Delete;
 import easycheck.commandParser.CommandTypes.Display;
@@ -24,14 +25,6 @@ public class DeleteCommandUnitTest {
 	public void setUp() {
 		ArrayList<Event> EventList = new ArrayList<Event>();
 		cmdExe = new CommandExecutor(new ArrayList<Event>());
-		EventList.add(new Event(1, "Do homework"));
-		EventList.add(new Event(2, "Test tomorrow"));
-		EventList.add(new Event(3, "Presentation in two weeks"));
-		EventList.add(new Event(4, "Buy new laptop"));
-		EventList.add(new Event(5, "Birthday party this sunday"));
-		EventList.add(new Event(6, "Final exam revision"));
-		EventList.add(new Event(7, "CS2103 test"));
-		EventList.add(new Event(8, "Check email"));
 	}
 
 	@Test
@@ -49,7 +42,7 @@ public class DeleteCommandUnitTest {
 		String[] deleteArgument = null;
 		Delete cmd = new Delete(deleteArgument);
 		String desc = "test Case 1 Delete Without argument";
-		String expected = "Deleted Do homework Successfully\n";
+		String expected = "Deleted \"Do homework\" successfully\n";
 		testOneCommand(desc, expected, cmd);
 	}
 
@@ -67,29 +60,29 @@ public class DeleteCommandUnitTest {
 		String[] deleteArgument = {"2"};
 		Delete cmd = new Delete(deleteArgument);
 		String desc = "test Case 2 Delete Presentation argument";
-		String expected = "Deleted Presentation in two weeks Successfully\n";
+		String expected = "Deleted \"Presentation in two weeks\" successfully\n";
 		testOneCommand(desc, expected, cmd);
 	}
 	
-	// Case 3: when Command is "Delete Laptop"
+	// Case 5: when Command is "Delete Laptop"
 		@Test
 		public void testDeleteCase3() {
 			String[] argument = { "Do homework" };
-			Add command = new Add("add", argument);
+			Add command = new Add("Do homework");
 			cmdExe.executeCommand(command);
 			
 			argument[0] = "Presentation in two weeks";
-			command = new Add("add", argument);
+			command = new Add(argument[0]);
 			cmdExe.executeCommand(command);
 			
 			argument[0] = "Buy new laptop";
-			command = new Add("add", argument);
+			command = new Add(argument[0]);
 			cmdExe.executeCommand(command);
 			
 			String[] deleteArgument = {"Laptop"};
-			Delete cmd = new Delete("delete", deleteArgument);
+			Delete cmd = new Delete(deleteArgument);
 			String desc = "test Case 2 Delete Presentation argument";
-			String expected = "Deleted Buy new laptop Successfully\n";
+			String expected = "Deleted \"Buy new laptop\" successfully\n";
 			testOneCommand(desc, expected, cmd);
 		}
 
@@ -100,6 +93,4 @@ public class DeleteCommandUnitTest {
 	private void testOneCommand(String description, String expected, Command command) {
 		assertEquals(description, expected, cmdExe.executeCommand(command));
 	}
-
 }
-*/

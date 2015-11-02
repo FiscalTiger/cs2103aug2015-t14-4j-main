@@ -45,21 +45,15 @@ public class CommandExecutor {
 	// @author A0126989H
 	private static final String MESSAGE_SEARCH_CMD_EMPTY = "There aren't any events to search!\n";
 	private static final String MESSAGE_SEARCH_CMD_NOTFOUND = "There are no such events!\n";
-
 	private static final String MESSAGE_DELETE_CMD_NOTFOUND = "There are no such events!\n";
 	private static final String MESSAGE_DELETE_CMD_ALL = "Congratulations on completing all task! :)\n";
-
 	private static final String MESSAGE_DELETE_CMD_SPECIALCOMMAND = "all ";
 	private static final String MESSAGE_DELETE_CMD_DONETASK = "Deleted all done tasks successfully\n";
 
 	private static final String MESSAGE_MARKDONE_CMD_RESPONSE = "Successfully mark %s as Done!\n";
-
 	private static final String MESSAGE_MARDONE_CMD_EMPTY = "Your todoList is currently empty!\n";
-
 	private static final String MESSAGE_MARKDONE_CMD_NOTFOUND = "There are no such events!\n";
-
 	private static final String MESSAGE_MARKDONE_CMD_SPECIALCOMMAND = "all ";
-
 	private static final String MESSAGE_MARKDONE_CMD_ALL = "Congratulations on finishing all tasks! :)\n";
 
 	
@@ -497,21 +491,21 @@ public class CommandExecutor {
 		assert(!eventList.isEmpty());
 		if (arguments == null) {
 			return deleteFirst(cmd);
-		// Case 3: When the command is "delete + index"
+		// Case 2: When the command is "delete + index"
 		} else if (isNumeric(arguments)) {
 			return deleteIndex(cmd);
-		/* Case 2: 
+		/* Case 3: 
 		* Special Command : " delete all"
 		* Delete Multiple matching String and "delete all + eventName"
 		*/ 
 		} else if (arguments.length() >= 3 && 
 				arguments.substring(0, 3).equals(MESSAGE_DELETE_CMD_SPECIALCOMMAND.trim())) {
 			return deleteSpecial(cmd);
-		// Case 3: Delete Done Tasks "delete done"
+		// Case 4: Delete Done Tasks "delete done"
 		} else if (arguments.length() >= 4 &&
 				arguments.equals("done")){
 			return deleteDone(cmd);
-		// Case 4: When the command is "delete + EventName"
+		// Case 5: When the command is "delete + EventName"
 		} else {
 			return deleteEvent(cmd);
 		}

@@ -24,7 +24,7 @@ public class Command {
 	private static final String MESSAGE_COMMAND_NULL = "Error in reading command";
 
 
-	
+	 
 	static ArrayList<String> cachedFile = new ArrayList<String>();
     private COMMAND_TYPE commandType;
     private String[] arguments;
