@@ -18,12 +18,10 @@ import easycheck.eventlist.Event;
 //@author A0126989H
 
 public class DeleteCommandUnitTest {
-	private ArrayList<Event> EventList;
 	private CommandExecutor cmdExe;
 
 	@Before
 	public void setUp() {
-		ArrayList<Event> EventList = new ArrayList<Event>();
 		cmdExe = new CommandExecutor(new ArrayList<Event>());
 	}
 
@@ -63,10 +61,66 @@ public class DeleteCommandUnitTest {
 		String expected = "Deleted \"Presentation in two weeks\" successfully\n";
 		testOneCommand(desc, expected, cmd);
 	}
+	/* Case 3: 
+	* Special Command : " delete all"
+	* Delete Multiple matching String and "delete all + eventName"
+	*/ 
+	@Test
+	public void testDeleteCase3() {
+		String argument = "Do homework";
+		Add command = new Add(argument);
+		cmdExe.executeCommand(command);
+		
+		String argument2 = "Presentation in two weeks";
+		command = new Add(argument2);
+		cmdExe.executeCommand(command);
+		
+		String argument3 = "Read CS2103";
+		command = new Add(argument3);
+		cmdExe.executeCommand(command);
+		
+
+		String[] deleteArgument = {"all"};
+		Delete cmd = new Delete(deleteArgument);
+		String desc = "test Case 2 Delete Presentation argument";
+		String expected = "Congratulations on completing all task! :)\n";
+		testOneCommand(desc, expected, cmd);
+	}
+	
+	@Test
+	public void testDeleteCase3_Specific() {
+		String argument = "Do homework";
+		Add command = new Add(argument);
+		cmdExe.executeCommand(command);
+		
+		String argument2 = "Presentation in two weeks";
+		command = new Add(argument2);
+		cmdExe.executeCommand(command);
+		
+		String argument3 = "Read CS2103";
+		command = new Add(argument3);
+		cmdExe.executeCommand(command);
+		
+		String argument4 = "Prepare CS2103 Dev Guide";
+		command = new Add(argument4);
+		cmdExe.executeCommand(command);
+		
+		String argument5 = "Presentation for CS2103,12/11/2015";
+		command = new Add(argument5);
+		cmdExe.executeCommand(command);
+		
+
+		String[] deleteArgument = {"all CS2103"};
+		Delete cmd = new Delete(deleteArgument);
+		String desc = "test Case 2 Delete Presentation argument";
+		String expected = "Deleted \"all cs2103\" related tasks successfully\n";
+		testOneCommand(desc, expected, cmd);
+	}
+	// Case 4: Delete Done Tasks "delete done"
 	
 	// Case 5: when Command is "Delete Laptop"
 		@Test
-		public void testDeleteCase3() {
+		public void testDeleteCase5() {
 			String[] argument = { "Do homework" };
 			Add command = new Add("Do homework");
 			cmdExe.executeCommand(command);

@@ -49,7 +49,8 @@ public class CommandExecutor {
 	private static final String MESSAGE_DELETE_CMD_ALL = "Congratulations on completing all task! :)\n";
 	private static final String MESSAGE_DELETE_CMD_SPECIALCOMMAND = "all ";
 	private static final String MESSAGE_DELETE_CMD_DONETASK = "Deleted all done tasks successfully\n";
-
+	private static final String MESSAGE_DELETE_CMD_ALLTASKS = "Deleted \"%s\" related tasks successfully\n";
+	
 	private static final String MESSAGE_MARKDONE_CMD_RESPONSE = "Successfully mark %s as Done!\n";
 	private static final String MESSAGE_MARDONE_CMD_EMPTY = "Your todoList is currently empty!\n";
 	private static final String MESSAGE_MARKDONE_CMD_NOTFOUND = "There are no such events!\n";
@@ -527,7 +528,7 @@ public class CommandExecutor {
 		String arguments = cmd.getTaskName();
 		String removeEvent = "";
 		for (int i = 0; i < eventList.size(); i++) {
-			if (eventList.get(i).getEventName().contains(arguments.toLowerCase())) {
+			if (eventList.get(i).getEventName().toLowerCase().contains(arguments)) {
 				undoStack.push(new ArrayList<Event>(eventList));
 				removeEvent = eventList.remove(i).getEventName();
 				reIndex();
@@ -542,7 +543,7 @@ public class CommandExecutor {
 
 	private String deleteSpecial(Delete cmd) {
 		String arguments = cmd.getTaskName();
-		String removeEvent = "";
+		String removeEvent = arguments;
 		if (arguments.equals(MESSAGE_DELETE_CMD_SPECIALCOMMAND.trim())) {
 			undoStack.push(new ArrayList<Event>(eventList));
 			eventList.clear();
@@ -550,18 +551,17 @@ public class CommandExecutor {
 		} else {
 			undoStack.push(new ArrayList<Event>(eventList));
 			for (int i = 0; i < eventList.size(); i++) {
-				if (eventList.get(i).getEventName().contains(arguments.substring(4))) {
-					removeEvent = eventList.remove(i).getEventName();
+				if (eventList.get(i).getEventName().toLowerCase().contains(arguments.substring(4))) {
+					eventList.remove(i).getEventName();
 					i--;
 				}
 			}
 			if (removeEvent.equals("")){
 				return MESSAGE_DELETE_CMD_NOTFOUND;
 			}
-			removeEvent = MESSAGE_DELETE_CMD_SPECIALCOMMAND +  removeEvent;
  			reIndex();
 		}
-		return String.format(MESSAGE_DELETE_CMD_RESPONSE, removeEvent);
+		return String.format(MESSAGE_DELETE_CMD_ALLTASKS, removeEvent);
 	}
 
 	private String deleteIndex(Delete cmd) {
