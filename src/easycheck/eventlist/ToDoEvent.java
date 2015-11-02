@@ -100,6 +100,14 @@ public class ToDoEvent extends Event {
 		return complete;
 	}
 	
+	public boolean isSameDay(DateTime date){
+		DateTime.Property pDayOfTheWeek = date.dayOfWeek();
+		DateTime.Property pMonthOfYear = date.monthOfYear();
+		String dateString = String.format(DATE_OUTPUT_FORMAT, pDayOfTheWeek.getAsShortText(),
+				date.getDayOfMonth(), pMonthOfYear.getAsShortText(), date.getYear());
+		return dateString.equals(getDeadlineDate());
+	}
+	
 	/**
 	 * Returns the string form of this calendar event
 	 */

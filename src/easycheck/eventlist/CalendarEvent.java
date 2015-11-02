@@ -122,6 +122,22 @@ public class CalendarEvent extends Event {
 		return this.getStartDate().equals(this.getEndDate());
 	}
 	
+	public boolean isSameStartDay(DateTime date){
+		DateTime.Property pDayOfTheWeek = date.dayOfWeek();
+		DateTime.Property pMonthOfYear = date.monthOfYear();
+		String dateString = String.format(DATE_OUTPUT_FORMAT, pDayOfTheWeek.getAsShortText(),
+				date.getDayOfMonth(), pMonthOfYear.getAsShortText(), date.getYear());
+		return dateString.equals(getStartDate());
+	}
+	
+	public boolean isSameEndDay(DateTime date){
+		DateTime.Property pDayOfTheWeek = date.dayOfWeek();
+		DateTime.Property pMonthOfYear = date.monthOfYear();
+		String dateString = String.format(DATE_OUTPUT_FORMAT, pDayOfTheWeek.getAsShortText(),
+				date.getDayOfMonth(), pMonthOfYear.getAsShortText(), date.getYear());
+		return dateString.equals(getEndDate());
+	}
+	
 	public boolean isDone() {
 		return endDateAndTime.isBeforeNow();
 	}

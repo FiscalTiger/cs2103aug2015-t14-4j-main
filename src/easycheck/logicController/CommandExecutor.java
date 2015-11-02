@@ -4,6 +4,7 @@ import java.util.Date;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Stack;
 
@@ -667,16 +668,45 @@ public class CommandExecutor {
 	}
 
 	private String getFreeTime() {
+		boolean[] freetime = new boolean[24];
+		Arrays.fill(freetime, true);
+		String indayEvent = "";
+		String freeSlots ="";
+		String response = "";
+		int start=0;
+		int end=0;
 		DateTime today = new DateTime();
-		System.out.println(today);
-		System.out.println(today.plus(Period.days(1)));
+		DateTime tomorrow = today.plus(Period.days(1));
 
 		for (Event e : eventList) {
 			if (e instanceof CalendarEvent) {
-				System.out.println("timestart: " + ((CalendarEvent) e).getStartTime());
+				if (((CalendarEvent) e).isSameStartDay((tomorrow))) {
+					indayEvent += e;
+					freetime[((CalendarEvent) e).getStartDateAndTime().getHourOfDay()] = false;
+				} else if (((CalendarEvent) e).isSameEndDay((tomorrow))) {
+					indayEvent += e;
+					freetime[((CalendarEvent) e).getEndDateAndTime().getHourOfDay()] = false;
+				}
+			} else if (e instanceof ToDoEvent) {
+				if (((ToDoEvent) e).isSameDay((tomorrow))){
+					indayEvent += e;
+					freetime[((ToDoEvent) e).getDeadline().getHourOfDay()] = false;
+				}
 			}
 		}
-		return "";
+		
+		for (int i = 7; i < 24; i++) {
+			if (freetime[i]==true){
+				start =i;
+				while(i<24&&freetime[i]==true){
+					i++;
+				}
+				end = i;
+			}
+			freeSlots += "Free from :  " + start + "---" +end + "\n";
+		}
+		response = indayEvent + "\n" + freeSlots + "\n";
+		return response;
 	}
 
 	// TODO
