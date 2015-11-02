@@ -650,8 +650,10 @@ public class CommandExecutor {
 		String response = "";
 		if (eventList.isEmpty()) {
 			response = MESSAGE_SEARCH_CMD_EMPTY;
-		} else if (cmd.getArgument().equals("freetime")) {
+		} else if (cmd.isFreetimeSearch() && !cmd.hasDate()) {
 			response = getFreeTime();
+		} else if (cmd.isFreetimeSearch() && cmd.hasDate()){
+			response = getFreeTimeSpec(cmd);
 		} else {
 			for (Event e : eventList) {
 				if (e.getEventName().toLowerCase().contains(cmd.getArgument().toLowerCase())) {
@@ -664,6 +666,47 @@ public class CommandExecutor {
 		}
 		// Response should not be empty
 		assert(!response.equals(""));
+		return response;
+	}
+
+	private String getFreeTimeSpec(Search cmd) {
+		boolean[] freetime = new boolean[24];
+		Arrays.fill(freetime, true);
+		String indayEvent = "";
+		String freeSlots ="";
+		String response = "";
+		int start=0;
+		int end=0;
+		DateTime tomorrow = cmd.getDate();
+
+		for (Event e : eventList) {
+			if (e instanceof CalendarEvent) {
+				if (((CalendarEvent) e).isSameStartDay((tomorrow))) {
+					indayEvent += e;
+					freetime[((CalendarEvent) e).getStartDateAndTime().getHourOfDay()] = false;
+				} else if (((CalendarEvent) e).isSameEndDay((tomorrow))) {
+					indayEvent += e;
+					freetime[((CalendarEvent) e).getEndDateAndTime().getHourOfDay()] = false;
+				}
+			} else if (e instanceof ToDoEvent) {
+				if (((ToDoEvent) e).isSameDay((tomorrow))){
+					indayEvent += e;
+					freetime[((ToDoEvent) e).getDeadline().getHourOfDay()] = false;
+				}
+			}
+		}
+		
+		for (int i = 7; i < 24; i++) {
+			if (freetime[i]==true){
+				start =i;
+				while(i<24&&freetime[i]==true){
+					i++;
+				}
+				end = i;
+			}
+			freeSlots += "Free from :  " + start + "---" +end + "\n";
+		}
+		response = indayEvent + "\n" + freeSlots + "\n";
 		return response;
 	}
 
