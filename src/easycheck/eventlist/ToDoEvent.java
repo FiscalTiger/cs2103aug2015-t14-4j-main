@@ -22,6 +22,13 @@ public class ToDoEvent extends Event {
 	private static final String DATE_OUTPUT_FORMAT = "%s %d %s %d";
 	private static final String TIME_OUTPUT_FORMAT = "%02d:%02d";
 	private static final String DATE_AND_TIME_INPUT_FORMAT = "dd.MM.yyyy HH:mm";
+	
+	private static final String REPEATING_DAILY = "daily";
+	private static final String REPEATING_WEEKLY = "weekly";
+	private static final String REPEATING_BIWEEKLY = "biweekly";
+	private static final String REPEATING_MONTHLY = "monthly";
+	private static final String REPEATING_YEARLY = "yearly";
+	
 	private static final String MESSAGE_JSON_STRING_ERROR = "Error in toJsonString method, most likely coding error";
 	private static final String MESSAGE_TO_STRING_TEMPLATE_IS_NOT_COMPLETE = "%d. %s due on %s\n";
 	private static final String MESSAGE_TO_STRING_TEMPLATE_IS_COMPLETE = "%d. %s due on %s is complete\n";
@@ -34,16 +41,45 @@ public class ToDoEvent extends Event {
 	private static final String JSON_EVENT_NAME = "name";
 	private static final String JSON_DUE_DATE = "due";
 	private static final String JSON_COMPLETE = "completed";
+	private static final String JSON_REPEAT = "repeating";
+	private static final String JSON_FREQUENCY = "frequency";
+	private static final String JSON_STOPDATE = "stopdate";
 	
 	private static DateTimeFormatter fmt = DateTimeFormat.forPattern(DATE_AND_TIME_INPUT_FORMAT);
 	private DateTime deadline;
+	private DateTime stopDate;
 	private boolean complete;
+	private boolean repeating;
+	private String frequency;
 	
 	public ToDoEvent(int eventIndex, String eventName, DateTime dueDateAndTime) {
 		this.setEventIndex(eventIndex);
 		this.setEventName(eventName);
 		deadline = dueDateAndTime;
 		this.complete = false;
+		this.setRepeating(false);
+		this.setFrequency(null);
+		this.stopDate = null;
+	}
+	
+	public ToDoEvent(int eventIndex, String eventName, DateTime dueDateAndTime, boolean repeating, String frequency) {
+		this.setEventIndex(eventIndex);
+		this.setEventName(eventName);
+		deadline = dueDateAndTime;
+		this.complete = false;
+		this.setRepeating(repeating);
+		this.setFrequency(frequency);
+		this.stopDate = null;
+	}
+	
+	public ToDoEvent(int eventIndex, String eventName, DateTime dueDateAndTime, boolean repeating, String frequency, DateTime stopDate) {
+		this.setEventIndex(eventIndex);
+		this.setEventName(eventName);
+		deadline = dueDateAndTime;
+		this.complete = false;
+		this.setRepeating(repeating);
+		this.setFrequency(frequency);
+		this.setStopDate(stopDate);
 	}
 	
 	public ToDoEvent(JSONObject jsonObj) {
@@ -51,6 +87,13 @@ public class ToDoEvent extends Event {
 		String eventName = (String) jsonObj.get(JSON_EVENT_NAME);
 		deadline = fmt.parseDateTime((String)jsonObj.get(JSON_DUE_DATE));
 		complete = ((Boolean)jsonObj.get(JSON_COMPLETE)).booleanValue();
+		repeating = ((Boolean)jsonObj.get(JSON_REPEAT)).booleanValue();
+		
+		if(repeating) {
+			stopDate = fmt.parseDateTime((String)jsonObj.get(JSON_STOPDATE));
+			frequency = (String) jsonObj.get(JSON_FREQUENCY);
+		}
+		
 		this.setEventIndex(eventIndex.intValue());
 		this.setEventName(eventName);
 	}
@@ -60,22 +103,57 @@ public class ToDoEvent extends Event {
 	 * @return DateTime deadline
 	 */
 	public DateTime getDeadline() {
+		if(this.isRepeating() && !this.isUpdated()) {
+			try {
+				update();
+			} catch (Exception e) {
+				System.out.println(e.getMessage());
+			}
+		}
 		return deadline;
 	}
+	
+	private void update() throws Exception {
+		switch(frequency) {
+		case REPEATING_DAILY:
+			deadline.plusDays(1);
+			break;
+		case REPEATING_WEEKLY:
+			deadline.plusWeeks(1);
+			break;
+		case REPEATING_BIWEEKLY:
+			deadline.plusWeeks(2);
+			break;
+		case REPEATING_MONTHLY:
+			deadline.plusMonths(1);
+			break;
+		case REPEATING_YEARLY:
+			deadline.plusYears(1);
+			break;
+		default:
+			throw new Exception("Got to defualt case in update. Something is wrong!");
+		}
+		if(deadline.isAfter(stopDate)) {
+			setDone();
+		}
+	}
+
 	/**
 	 * Returns the due date in day of week dd Month YYYY format
 	 * @return String
 	 */
 	public String getDeadlineDate() {
-		DateTime.Property pDayOfTheWeek = deadline.dayOfWeek();
-		DateTime.Property pMonthOfYear = deadline.monthOfYear();
+		DateTime.Property pDayOfTheWeek = this.getDeadline().dayOfWeek();
+		DateTime.Property pMonthOfYear = this.getDeadline().monthOfYear();
 		String dateString = String.format(DATE_OUTPUT_FORMAT, pDayOfTheWeek.getAsShortText(),
-				deadline.getDayOfMonth(), pMonthOfYear.getAsShortText(), deadline.getYear());
+				this.getDeadline().getDayOfMonth(), pMonthOfYear.getAsShortText(), 
+				this.getDeadline().getYear());
 		return dateString;
 	}
 	
 	public String getDeadlineTime() {
-		String timeString = String.format(TIME_OUTPUT_FORMAT, deadline.getHourOfDay(), deadline.getMinuteOfHour());
+		String timeString = String.format(TIME_OUTPUT_FORMAT, this.getDeadline().getHourOfDay(), 
+				this.getDeadline().getMinuteOfHour());
 		return timeString;
 	}
 	
@@ -100,6 +178,10 @@ public class ToDoEvent extends Event {
 		return complete;
 	}
 	
+	public boolean isUpdated() {
+		return deadline.isAfterNow() || !complete;
+	}
+	
 	public boolean isSameDay(DateTime date){
 		DateTime.Property pDayOfTheWeek = date.dayOfWeek();
 		DateTime.Property pMonthOfYear = date.monthOfYear();
@@ -112,11 +194,12 @@ public class ToDoEvent extends Event {
 	 * Returns the string form of this calendar event
 	 */
 	public String toString() {
-		DateTime.Property pDayOfTheWeek = deadline.dayOfWeek();
-		DateTime.Property pMonthOfYear = deadline.monthOfYear();
+		DateTime.Property pDayOfTheWeek = this.getDeadline().dayOfWeek();
+		DateTime.Property pMonthOfYear = this.getDeadline().monthOfYear();
 		String deadlineString = String.format(DATE_AND_TIME_OUTPUT_FORMAT, pDayOfTheWeek.getAsShortText(),
-				deadline.getDayOfMonth(), pMonthOfYear.getAsShortText(), deadline.getYear(),
-				deadline.getHourOfDay(), deadline.getMinuteOfHour());
+				this.getDeadline().getDayOfMonth(), pMonthOfYear.getAsShortText(), 
+				this.getDeadline().getYear(), this.getDeadline().getHourOfDay(), 
+				this.getDeadline().getMinuteOfHour());
 		if(complete) {
 			return String.format(
 					MESSAGE_TO_STRING_TEMPLATE_IS_COMPLETE, this.getEventIndex(), this.getEventName(), deadlineString);
@@ -143,12 +226,17 @@ public class ToDoEvent extends Event {
 	 * @return jsonString
 	 */
 	public String toJsonString() {
-		Map obj = new LinkedHashMap();
+		Map<String, Object> obj = new LinkedHashMap<String, Object>();
 		obj.put(JSON_TYPE, "todo");
 		obj.put(JSON_EVENT_INDEX, new Integer(this.getEventIndex()));
 		obj.put(JSON_EVENT_NAME, this.getEventName());
-		obj.put(JSON_DUE_DATE, fmt.print(deadline));
+		obj.put(JSON_DUE_DATE, fmt.print(this.getDeadline()));
 		obj.put(JSON_COMPLETE, new Boolean(complete));
+		obj.put(JSON_REPEAT, repeating);
+		if(repeating) {
+			obj.put(JSON_FREQUENCY, frequency);
+			obj.put(JSON_STOPDATE, stopDate);
+		}
 		
 		StringWriter out = new StringWriter();
 	    try {
@@ -167,7 +255,7 @@ public class ToDoEvent extends Event {
 		} else {
 			ToDoEvent e = (ToDoEvent) obj;
 			return this.getEventIndex() == e.getEventIndex() && this.getEventName().equals(e.getEventName()) &&
-					this.deadline.equals(e.getDeadline());
+					this.getDeadline().equals(e.getDeadline());
 		}
 	}
 	
@@ -178,14 +266,14 @@ public class ToDoEvent extends Event {
 			return 1;
 		} else if (e instanceof CalendarEvent) {
 			CalendarEvent cal = (CalendarEvent)e;
-			int result = this.deadline.compareTo(cal.getStartDateAndTime());
+			int result = this.getDeadline().compareTo(cal.getStartDateAndTime());
 			if (result == 0) {
 				result = this.getEventName().compareTo(cal.getEventName());
 			}
 			return result;
 		} else if (e instanceof ToDoEvent) {
 			ToDoEvent todo = (ToDoEvent)e;
-			int result = this.deadline.compareTo(todo.getDeadline());
+			int result = this.getDeadline().compareTo(todo.getDeadline());
 			if (result == 0) {
 				result = this.getEventName().compareTo(todo.getEventName());
 			}
@@ -194,14 +282,40 @@ public class ToDoEvent extends Event {
 		return 0;
 	}
 	
-	public static boolean isValidDeadline(DateTime deadline) {
-		return deadline.isAfterNow();
-	}
 	// @author A0126989H
-		public void setDone(){
-			this.complete = true;
-		}
-		public void setUndone(){
-			this.complete = false;
-		}
+	public void setDone(){
+		this.complete = true;
+	}
+	public void setUndone(){
+		this.complete = false;
+	}
+	
+	//@author A0145668R
+	public boolean isRepeating() {
+		return repeating;
+	}
+
+	public void setRepeating(boolean repeating) {
+		this.repeating = repeating;
+	}
+
+	public boolean hasStopDate() {
+		return stopDate != null;
+	}
+
+	public void setStopDate(DateTime stopDate) {
+		this.stopDate = stopDate;
+	}
+
+	public String getFrequency() {
+		return frequency;
+	}
+
+	public void setFrequency(String frequency) {
+		this.frequency = frequency;
+	}
+	
+	public static boolean isValidDate(DateTime date) {
+		return date.isAfterNow();
+	}
 }

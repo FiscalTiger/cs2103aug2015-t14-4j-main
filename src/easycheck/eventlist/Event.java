@@ -92,14 +92,8 @@ public abstract class Event implements Comparable<Event> {
 	}
 	
 	@Override
-	public boolean equals(Object obj) {
-		if (!(obj instanceof Event)) {
-			return false;
-		} else {
-			Event e = (Event) obj;
-			return eventIndex == e.getEventIndex() && eventName.equals(e.getEventName());
-		}
-	}
+	public abstract boolean equals(Object obj);
+	
 	public void setDone(){
 		complete = true;
 	}
@@ -108,23 +102,7 @@ public abstract class Event implements Comparable<Event> {
 	}
 	
 	@Override
-	public int compareTo(Event e) {
-		return eventName.compareTo(e.getEventName());
-	}
+	public abstract int compareTo(Event e);
 	
-	
-	public String toJsonString() {
-		Map obj=new LinkedHashMap();
-		obj.put(JSON_TYPE, "base");
-		obj.put(JSON_EVENT_INDEX, new Integer(this.getEventIndex()));
-		obj.put(JSON_EVENT_NAME, this.getEventName());
-		
-		StringWriter out = new StringWriter();
-	    try {
-			JSONValue.writeJSONString(obj, out);
-		} catch (IOException e) {
-			System.out.println(MESSAGE_JSON_STRING_ERROR);
-		}
-	    return out.toString();
-	}
+	public abstract String toJsonString();
 }

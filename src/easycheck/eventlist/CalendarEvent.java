@@ -139,7 +139,7 @@ public class CalendarEvent extends Event {
 	}
 	
 	public boolean isDone() {
-		return endDateAndTime.isBeforeNow();
+		return endDateAndTime.isBeforeNow() && complete;
 	}
 	
 	/**
@@ -246,6 +246,7 @@ public class CalendarEvent extends Event {
 	public static boolean areValidDates(DateTime start, DateTime end) {
 		return (start.isBefore(end) && start.isAfterNow());
 	}
+	
 	public void setDone(){
 		complete = true;
 	}

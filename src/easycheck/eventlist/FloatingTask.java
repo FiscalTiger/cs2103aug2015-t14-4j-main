@@ -92,10 +92,12 @@ public class FloatingTask extends Event {
 		}
 	    return out.toString();
 	}
+	
 	// @author A0126989H
 	public void setDone(){
 		this.complete = true;
 	}
+	
 	public void setUndone(){
 		this.complete = false;
 	}

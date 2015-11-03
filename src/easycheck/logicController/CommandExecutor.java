@@ -133,7 +133,7 @@ public class CommandExecutor {
 			}
 			// has arguments for a to do event
 		} else if (!cmd.hasStart() && cmd.hasEnd()) {
-			if (ToDoEvent.isValidDeadline(cmd.getEnd())) {
+			if (ToDoEvent.isValidDate(cmd.getEnd())) {
 				int eventIndex = eventList.size() + 1;
 				newEvent = new ToDoEvent(eventIndex, cmd.getTaskName(), cmd.getEnd());
 				undoStack.push(new ArrayList<Event>(eventList));
@@ -175,7 +175,7 @@ public class CommandExecutor {
 		} else if (cmd.isFloating()) {
 			response = getDisplayFloatingString();
 		} else if (cmd.isDone()) {
-			response = getDisplayNotDoneString();
+			response = getDisplayDoneString();
 		} else if (cmd.isDate()) {
 			response = getDisplayDateString(cmd.getDisplayDate());
 		} else {
@@ -187,6 +187,7 @@ public class CommandExecutor {
 	}
 	
 	// Get Floating tasks for display string
+	// @author A0145668R
 	private String getDisplayFloatingString() {
 		String response = "";
 		PrintGroup printGroup = new PrintGroup(PRINT_GROUP_HEADING_FLOATING);
@@ -199,6 +200,8 @@ public class CommandExecutor {
 		return response;
 	}
 	
+	// Get the tasks on a specific date for the display command
+	// @author A0145668R
 	private String getDisplayDateString(String dateText) {
 		String response = "";
 		PrintGroup dateGroup = new PrintGroup(dateText);
@@ -220,8 +223,9 @@ public class CommandExecutor {
 		return response;
 	}
 	
-	// Get display string for tasks t
-	private String getDisplayNotDoneString() {
+	// Get done tasks for display string
+	// @author A0145668R
+	private String getDisplayDoneString() {
 		String response = "";
 		PrintGroup floatingGroup = new PrintGroup(PRINT_GROUP_HEADING_FLOATING);
 		ArrayList<PrintGroup> dateGroups = new ArrayList<PrintGroup>();
@@ -269,7 +273,9 @@ public class CommandExecutor {
 		}
 		return response;
 	}
-
+	
+	// Get the default text for display string
+	// @author A0145668R
 	private String getDefaultDisplayString() {
 		String response = "";
 		PrintGroup floatingGroup = new PrintGroup(PRINT_GROUP_HEADING_FLOATING);
@@ -347,7 +353,7 @@ public class CommandExecutor {
 				response = MESSAGE_INVALID_CALENDAR_DATES;
 			}
 		} else if (!cmd.hasStart() && cmd.hasEnd()) {
-			if (ToDoEvent.isValidDeadline(cmd.getEnd())) {
+			if (ToDoEvent.isValidDate(cmd.getEnd())) {
 				newEvent = new ToDoEvent(intIdx, newName, cmd.getEnd());
 				eventList.set(intIdx - 1, newEvent);
 				response = String.format(MESSAGE_UPDATE_TODO_RESPONSE, newName);
@@ -589,7 +595,9 @@ public class CommandExecutor {
 		}
 		return true;
 	}
-
+	
+	// Executes an Undo command
+	// @author A0145668R
 	private String undo(Undo cmd) {
 		if (undoStack.isEmpty()) {
 			return MESSAGE_UNDO_EMPTY_STACK;
@@ -604,7 +612,9 @@ public class CommandExecutor {
 
 		return display(disp);
 	}
-
+	
+	// Executes an Undo command
+	// @author A0145668R
 	private String redo(Redo cmd) {
 		if (redoStack.isEmpty()) {
 			return MESSAGE_REDO_EMPTY_STACK;
