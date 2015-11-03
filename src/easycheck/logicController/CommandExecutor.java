@@ -30,7 +30,6 @@ public class CommandExecutor {
 	private static int ZERO_OFFSET = 1;
 
 	private static final String MESSAGE_ADD_CMD_RESPONSE = "Added %s\n";
-	private static final String MESSAGE_DISPLAY_CMD_EMPTY = "There aren't any events to display!\n";
 	private static final String MESSAGE_DELETE_CMD_EMPTY = "There aren't any events!\n";
 	private static final String MESSAGE_DELETE_CMD_RESPONSE = "Deleted \"%s\" successfully\n";
 	private static final String MESSAGE_UPDATE_FLOAT_RESPONSE = "Updated %s to %s successfully\n";
