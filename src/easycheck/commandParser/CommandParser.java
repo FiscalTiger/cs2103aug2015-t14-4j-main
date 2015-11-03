@@ -62,10 +62,10 @@ public class CommandParser {
     private static final String MESSAGE_INVALID_DISPLAY_NUM_OF_ARGS = "Display: too many arguments\n";
 
     private static final String MESSAGE_INVALID_ADD_DATE = "Add: Couldn't parse the date \"%s\"s\n";
-    private static final String MESSAGE_INVALID_ADD_NUM_OF_ARGS = "Add: too many arugments\n";
+    private static final String MESSAGE_INVALID_ADD_NUM_OF_ARGS = "Add: too many arguments\n";
 
     private static final String MESSAGE_INVALID_UPDATE_DATE = "Update: Couldn't parse the date \"%s\"s\n";
-    private static final String MESSAGE_INVALID_UPDATE_NUM_OF_ARGS = "Update: too many arugments\n";
+    private static final String MESSAGE_INVALID_UPDATE_NUM_OF_ARGS = "Update: too many arguments\n";
     private static final String DISPLAY_FLAG_FLOATING = "f";
     private static final String DISPLAY_FLAG_DONE = "done";
     private static final String DISPLAY_FLAG_DUE = "due";
@@ -85,14 +85,13 @@ public class CommandParser {
     private static final int NUM_CHAR_DATE_INPUT = DATE_INPUT_FORMAT.length();
     private static final int NUM_CHAR_DATE_TIME_INPUT = DATE_AND_TIME_INPUT_FORMAT
             .length();
-    private DateTimeFormatter dateFormatter = DateTimeFormat
-            .forPattern(DATE_INPUT_FORMAT);
     private DateTimeFormatter timeFormatter = DateTimeFormat
             .forPattern(DATE_AND_TIME_INPUT_FORMAT);
 
     // flexi command keywords
     private final String[] FLEXI_KEYWORDS = { " by ", " at ", " on " };
-
+    private final String FLEXI_KEYWORD_EVENT_SPLITTER = " to ";
+    private final String DUMMY_TIME = " 23:59";
     // parses the arguments and calls the appropriate create command.
     public Command parseCommand(String userCommand) {
         String[] commandArray = splitCommand(userCommand);
@@ -224,7 +223,8 @@ public class CommandParser {
                 cmd = new Invalid(MESSAGE_INVALID_ADD_NUM_OF_ARGS);
             }
         } catch (Exception e) {
-            cmd = new Invalid(MESSAGE_INVALID_ADD_NUM_OF_ARGS);
+            cmd = new Invalid(String.format(
+                    MESSAGE_INVALID_ADD_DATE, arguments[1]));
         }
         assert (cmd != null);
 
@@ -429,11 +429,24 @@ public class CommandParser {
                 && (dateString.length() <= NUM_CHAR_DATE_TIME_INPUT)) {
             timeFormatter.parseDateTime(dateString);
         } else if (dateString.length() <= NUM_CHAR_DATE_INPUT) {
-            dateFormatter.parseDateTime(dateString);
+            timeFormatter.parseDateTime(dateString + DUMMY_TIME);
         } else {
-            // there is more than 1 date
-            // how to handle?
+            // there is more than 1 date (should be 2)
+            String[] dateStringArray = splitDates(dateString);
+            if (dateStringArray.length != 2) {
+                throw new Exception();
+            } else {
+                isValidExplicitDate(dateStringArray[FIRST_PARSED_DATE_TEXT]);
+                isValidExplicitDate(dateStringArray[SECOND_PARSED_DATE_TEXT]);
+            }
         }
         return true;
+    }
+    
+    // splits and trims date strings in the form of "date to date"
+    private String[] splitDates(String dateString) {
+        String[] dateStrings = trimArguments(dateString
+                .split(FLEXI_KEYWORD_EVENT_SPLITTER));
+        return dateStrings;
     }
 }

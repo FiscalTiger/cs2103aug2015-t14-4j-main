@@ -68,7 +68,6 @@ public class ParserTest {
     // 0th month is a boundary value for month
     @Test
     public void addBadTaskZeroMonth() {
-        System.out.println("NEXT TEST");
         CommandParser parser = new CommandParser();
         Command invalid = parser
                 .parseCommand("add task name by 0/11/2016 13:30");
