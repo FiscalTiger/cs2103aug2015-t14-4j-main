@@ -23,6 +23,7 @@ public abstract class Event implements Comparable<Event> {
 	
 	private int eventIndex;
 	private String eventName;
+	private boolean complete;
 	
 	public Event() {}
 	
@@ -34,6 +35,7 @@ public abstract class Event implements Comparable<Event> {
 	public Event(int eventIndex, String eventName) {
 		this.eventIndex = eventIndex;
 		this.eventName = eventName;
+		this.complete = false;
 	}
 	
 	public Event(JSONObject jsonObj){
@@ -97,6 +99,12 @@ public abstract class Event implements Comparable<Event> {
 			Event e = (Event) obj;
 			return eventIndex == e.getEventIndex() && eventName.equals(e.getEventName());
 		}
+	}
+	public void setDone(){
+		complete = true;
+	}
+	public void setUndone(){
+		complete = false;
 	}
 	
 	@Override

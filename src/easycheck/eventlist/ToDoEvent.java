@@ -43,7 +43,7 @@ public class ToDoEvent extends Event {
 		this.setEventIndex(eventIndex);
 		this.setEventName(eventName);
 		deadline = dueDateAndTime;
-		complete = false;
+		this.complete = false;
 	}
 	
 	public ToDoEvent(JSONObject jsonObj) {
@@ -98,6 +98,14 @@ public class ToDoEvent extends Event {
 	
 	public boolean isDone() {
 		return complete;
+	}
+	
+	public boolean isSameDay(DateTime date){
+		DateTime.Property pDayOfTheWeek = date.dayOfWeek();
+		DateTime.Property pMonthOfYear = date.monthOfYear();
+		String dateString = String.format(DATE_OUTPUT_FORMAT, pDayOfTheWeek.getAsShortText(),
+				date.getDayOfMonth(), pMonthOfYear.getAsShortText(), date.getYear());
+		return dateString.equals(getDeadlineDate());
 	}
 	
 	/**
@@ -189,4 +197,11 @@ public class ToDoEvent extends Event {
 	public static boolean isValidDeadline(DateTime deadline) {
 		return deadline.isAfterNow();
 	}
+	// @author A0126989H
+		public void setDone(){
+			this.complete = true;
+		}
+		public void setUndone(){
+			this.complete = false;
+		}
 }

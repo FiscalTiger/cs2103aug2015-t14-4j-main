@@ -22,6 +22,10 @@ public class Delete extends Command{
         }
     }
     public String getTaskName(){
-		return task;
+    	if (task == null){
+    		return task;
+    	} else {
+    		return task.toLowerCase();
+    	}
 	}
 }

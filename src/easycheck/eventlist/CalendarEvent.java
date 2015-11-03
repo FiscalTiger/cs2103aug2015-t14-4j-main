@@ -37,12 +37,14 @@ public class CalendarEvent extends Event {
 	private static DateTimeFormatter fmt = DateTimeFormat.forPattern(DATE_AND_TIME_INPUT_FORMAT);
 	private DateTime startDateAndTime;
 	private DateTime endDateAndTime;
+	private boolean complete;
 	
 	public CalendarEvent(int eventIndex, String eventName, DateTime startDateAndTime, DateTime endDateAndTime) {
 		this.setEventIndex(eventIndex);
 		this.setEventName(eventName);
 		this.startDateAndTime = startDateAndTime;
 		this.endDateAndTime = endDateAndTime;
+		this.complete = false;
 	}
 	
 	public CalendarEvent(JSONObject jsonObj) {
@@ -118,6 +120,22 @@ public class CalendarEvent extends Event {
 	
 	public boolean isSameDay() {
 		return this.getStartDate().equals(this.getEndDate());
+	}
+	
+	public boolean isSameStartDay(DateTime date){
+		DateTime.Property pDayOfTheWeek = date.dayOfWeek();
+		DateTime.Property pMonthOfYear = date.monthOfYear();
+		String dateString = String.format(DATE_OUTPUT_FORMAT, pDayOfTheWeek.getAsShortText(),
+				date.getDayOfMonth(), pMonthOfYear.getAsShortText(), date.getYear());
+		return dateString.equals(getStartDate());
+	}
+	
+	public boolean isSameEndDay(DateTime date){
+		DateTime.Property pDayOfTheWeek = date.dayOfWeek();
+		DateTime.Property pMonthOfYear = date.monthOfYear();
+		String dateString = String.format(DATE_OUTPUT_FORMAT, pDayOfTheWeek.getAsShortText(),
+				date.getDayOfMonth(), pMonthOfYear.getAsShortText(), date.getYear());
+		return dateString.equals(getEndDate());
 	}
 	
 	public boolean isDone() {
@@ -227,5 +245,8 @@ public class CalendarEvent extends Event {
 	 */
 	public static boolean areValidDates(DateTime start, DateTime end) {
 		return (start.isBefore(end) && start.isAfterNow());
+	}
+	public void setDone(){
+		complete = true;
 	}
 }
