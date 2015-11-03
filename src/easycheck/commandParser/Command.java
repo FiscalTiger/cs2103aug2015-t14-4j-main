@@ -17,7 +17,7 @@ import easycheck.commandParser.CommandTypes.Undo;
  * In order to pass data into Storage, please call method, getCachedFile() which 
  * returns the ArrayList<string> cachedFile. 
  * 
- * @author A0126989H
+ * @@author A0126989H
  */
 public class Command {
 	private static final String MESSAGE_COMMAND_NULL = "Error in reading command";

@@ -21,7 +21,7 @@ public class ParserTest {
             .forPattern("MM/dd/yyyy HH:mm");
     public static DateTime testStartDate = formatter
             .parseDateTime("11/12/2015 13:30");
-    /*
+    
     @Test
     public void init() {
         CommandParser parser = new CommandParser();
@@ -55,23 +55,23 @@ public class ParserTest {
         assertEquals(testStartDate, add.getEnd());
         assertEquals(false, add.hasStart());
     }
-*/
+
     // 13th month is a boundary value for month
     @Test
     public void addBadTaskThirteenthMonth() {
         CommandParser parser = new CommandParser();
         Command invalid = parser
-                .parseCommand("add task name by 31/11/2015 13:30");
+                .parseCommand("add task name by 13/11/2016 13:30");
         assertTrue(invalid instanceof Invalid);
     }
 
     // 0th month is a boundary value for month
-
     @Test
     public void addBadTaskZeroMonth() {
+        System.out.println("NEXT TEST");
         CommandParser parser = new CommandParser();
         Command invalid = parser
-                .parseCommand("add task name by 0/11/2015 13:30");
+                .parseCommand("add task name by 0/11/2016 13:30");
         assertTrue(invalid instanceof Invalid);
     }
 
