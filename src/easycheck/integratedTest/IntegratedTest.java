@@ -1,9 +1,11 @@
-package easycheck.userInterface;
+package easycheck.integratedTest;
 
 import static org.junit.Assert.assertEquals;
 
 import org.junit.Before;
 import org.junit.Test;
+
+import easycheck.userInterface.UserInterface;
 
 public class IntegratedTest {
     String fileName = "integratedtestingfile.txt";
@@ -23,7 +25,7 @@ public class IntegratedTest {
     @Before
     public void clearFile() {
         commandResponse = ui.executeCommand("display");
-        while (!commandResponse.equals("Floating:\n")) {
+        while (!commandResponse.equals("To Do:\n\n")) {
             ui.executeCommand("delete");
             commandResponse = ui.executeCommand("display");
         }
@@ -33,25 +35,30 @@ public class IntegratedTest {
     }
 
     @Test
-    public void testEmptyFile() {
+    public void testDisplayEmpty() {
         commandResponse = ui.executeCommand("display");
-        assertEquals("Floating:\n", commandResponse);
+        assertEquals("To Do:\n\n", commandResponse);
     }
 
     @Test
-    public void testAdd() {
+    public void testAddToDo() {
         commandResponse = ui.executeCommand("add Plan Christmas Party");
         assertEquals("Added 1. Plan Christmas Party\n\n", commandResponse);
-        // these tests will only work until Christmas #goodenough
+    }
+    @Test
+    public void testAddDeadline() {
         commandResponse = ui
                 .executeCommand("add buy Christmas presents, 25 Dec 12:00");
         assertEquals(
-                "Added 2. buy Christmas presents due on Fri 25 Dec 2015 at 12:00\n\n",
+                "Added 1. buy Christmas presents due on Fri 25 Dec 2015 at 12:00\n\n",
                 commandResponse);
+    }
+    @Test
+    public void testAddEvent() {
         commandResponse = ui
                 .executeCommand("add Christmas Party, 25 Dec 12:00, 26 DEC 13:00");
         assertEquals(
-                "Added 2. Christmas Party from Fri 25 Dec 2015 at 12:00 to Sat 26 Dec 2015 at 13:00\n\n",
+                "Added 1. Christmas Party from Fri 25 Dec 2015 at 12:00 to Sat 26 Dec 2015 at 13:00\n\n",
                 commandResponse);
     }
 
