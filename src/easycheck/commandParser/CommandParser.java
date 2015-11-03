@@ -223,7 +223,8 @@ public class CommandParser {
                 cmd = new Invalid(MESSAGE_INVALID_ADD_NUM_OF_ARGS);
             }
         } catch (Exception e) {
-            cmd = new Invalid(MESSAGE_INVALID_COMMAND);
+            cmd = new Invalid(String.format(
+                    MESSAGE_INVALID_ADD_DATE, arguments[1]));
         }
         assert (cmd != null);
 
