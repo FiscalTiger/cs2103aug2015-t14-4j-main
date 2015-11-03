@@ -78,7 +78,7 @@ public class CommandParser {
 	private final int NUM_ARGUMENTS_SEARCH = 1;
 
 	// flexi command keywords
-	private final String[] FLEXI_KEYWORDS = { " by ", " at ", " to ", " for " };
+	private final String[] FLEXI_KEYWORDS = { " by ", " at ", " to ", " for ", " on " };
 
 	// parses the arguments and calls the appropriate create command.
 	public Command parseCommand(String userCommand) {
