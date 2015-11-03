@@ -1,8 +1,5 @@
 package easycheck.logicController;
 
-import java.util.Date;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -17,14 +14,13 @@ import easycheck.commandParser.CommandTypes.Delete;
 import easycheck.commandParser.CommandTypes.Display;
 import easycheck.commandParser.CommandTypes.Exit;
 import easycheck.commandParser.CommandTypes.Invalid;
+import easycheck.commandParser.CommandTypes.Markdone;
 import easycheck.commandParser.CommandTypes.Redo;
 import easycheck.commandParser.CommandTypes.Repeat;
-import easycheck.commandParser.CommandTypes.Review;
 import easycheck.commandParser.CommandTypes.SaveAt;
 import easycheck.commandParser.CommandTypes.Search;
 import easycheck.commandParser.CommandTypes.Undo;
 import easycheck.commandParser.CommandTypes.Update;
-import easycheck.commandParser.CommandTypes.Markdone;
 import easycheck.eventlist.CalendarEvent;
 import easycheck.eventlist.Event;
 import easycheck.eventlist.FloatingTask;
@@ -98,8 +94,6 @@ public class CommandExecutor {
 			return redo((Redo) command);
 		} else if (command instanceof Search) {
 			return search((Search) command);
-		} else if (command instanceof Review) {
-			return review((Review) command);
 		} else if (command instanceof SaveAt) {
 			return saveAt((SaveAt) command);
 		} else if (command instanceof Exit) {
@@ -753,11 +747,6 @@ public class CommandExecutor {
 	}
 
 	// TODO
-	private String review(Review cmd) {
-		return "";
-	}
-
-	// TODO
 	private String saveAt(SaveAt cmd) {
 		return "Successfully Saved";
 	}
@@ -767,10 +756,6 @@ public class CommandExecutor {
 		return null;
 	}
 
-	/*
-	 * DISPLAY requires arguments to be of ""
-	 * 
-	 */
 	private String exit(Exit cmd) {
 		System.exit(1);
 		return "";

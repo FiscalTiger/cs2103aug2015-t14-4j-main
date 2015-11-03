@@ -7,7 +7,6 @@ import easycheck.commandParser.CommandTypes.Display;
 import easycheck.commandParser.CommandTypes.Update;
 import easycheck.commandParser.CommandTypes.Exit;
 import easycheck.commandParser.CommandTypes.Invalid;
-import easycheck.commandParser.CommandTypes.Review;
 import easycheck.commandParser.CommandTypes.SaveAt;
 import easycheck.commandParser.CommandTypes.Search;
 import easycheck.commandParser.CommandTypes.Undo;
@@ -46,7 +45,7 @@ public class Command {
     }
 
 	public enum COMMAND_TYPE {
-		ADD, DISPLAY, UPDATE, DELETE, UNDO, SEARCH, REVIEW, SAVE_AT, INVALID, EXIT
+		ADD, DISPLAY, UPDATE, DELETE, UNDO, SEARCH, SAVE_AT, INVALID, EXIT
 	};
 	
 	public static Command createObject(String commandType, String[] arguments) {
@@ -63,8 +62,6 @@ public class Command {
 //	            return new Undo();
 	        case SEARCH:
 	            return new Search(commandType,arguments);
-	        case REVIEW:
-	            return new Review(commandType,arguments);
 	        case SAVE_AT:
 	            return new SaveAt(commandType,arguments);
 	        case INVALID: 
@@ -91,8 +88,6 @@ public class Command {
 			return COMMAND_TYPE.UNDO;
 		} else if (commandType.equalsIgnoreCase("search")) {
 			return COMMAND_TYPE.SEARCH;
-		} else if (commandType.equalsIgnoreCase("review")) {
-			return COMMAND_TYPE.REVIEW;
 		} else if (commandType.equalsIgnoreCase("save_at")){
 			return COMMAND_TYPE.SAVE_AT; 
 		} else if (commandType.equalsIgnoreCase("exit")){
