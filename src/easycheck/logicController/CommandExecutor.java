@@ -75,7 +75,6 @@ public class CommandExecutor {
 	 * @return responseString
 	 * @@author A0145668R
 	 */
-
 	public String executeCommand(Command command) {
 		if (command instanceof Add) {
 			return add((Add) command);
@@ -612,7 +611,7 @@ public class CommandExecutor {
 		return display(disp);
 	}
 	
-	// Executes an Undo command
+	// Executes an Redo command
 	// @author A0145668R
 	private String redo(Redo cmd) {
 		if (redoStack.isEmpty()) {

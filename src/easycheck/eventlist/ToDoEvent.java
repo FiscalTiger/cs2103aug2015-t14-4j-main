@@ -115,26 +115,28 @@ public class ToDoEvent extends Event {
 	
 	private void update() throws Exception {
 		switch(frequency) {
-		case REPEATING_DAILY:
-			deadline.plusDays(1);
-			break;
-		case REPEATING_WEEKLY:
-			deadline.plusWeeks(1);
-			break;
-		case REPEATING_BIWEEKLY:
-			deadline.plusWeeks(2);
-			break;
-		case REPEATING_MONTHLY:
-			deadline.plusMonths(1);
-			break;
-		case REPEATING_YEARLY:
-			deadline.plusYears(1);
-			break;
-		default:
-			throw new Exception("Got to defualt case in update. Something is wrong!");
+			case REPEATING_DAILY:
+				deadline.plusDays(1);
+				break;
+			case REPEATING_WEEKLY:
+				deadline.plusWeeks(1);
+				break;
+			case REPEATING_BIWEEKLY:
+				deadline.plusWeeks(2);
+				break;
+			case REPEATING_MONTHLY:
+				deadline.plusMonths(1);
+				break;
+			case REPEATING_YEARLY:
+				deadline.plusYears(1);
+				break;
+			default:
+				throw new Exception("Got to defualt case in update. Something is wrong!");
 		}
-		if(deadline.isAfter(stopDate)) {
-			setDone();
+		if(hasStopDate()) {
+			if(deadline.isAfter(stopDate)) {
+				setDone();
+			}
 		}
 	}
 
@@ -232,10 +234,10 @@ public class ToDoEvent extends Event {
 		obj.put(JSON_EVENT_NAME, this.getEventName());
 		obj.put(JSON_DUE_DATE, fmt.print(this.getDeadline()));
 		obj.put(JSON_COMPLETE, new Boolean(complete));
-		obj.put(JSON_REPEAT, repeating);
+		obj.put(JSON_REPEAT, new Boolean(repeating));
 		if(repeating) {
 			obj.put(JSON_FREQUENCY, frequency);
-			obj.put(JSON_STOPDATE, stopDate);
+			obj.put(JSON_STOPDATE, fmt.print(stopDate));
 		}
 		
 		StringWriter out = new StringWriter();

@@ -8,13 +8,11 @@ package easycheck.eventlist;
 
 import java.io.IOException;
 import java.io.StringWriter;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.joda.time.DateTime;
+import org.joda.time.Duration;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 import org.json.simple.JSONObject;
@@ -28,23 +26,58 @@ public class CalendarEvent extends Event {
 	private static final String MESSAGE_JSON_STRING_ERROR = "Error in toJsonString method, most likely coding error";
 	private static final String MESSAGE_TO_STRING_TEMPLATE = "%d. %s from %s to %s\n";
 	
+	private static final String REPEATING_DAILY = "daily";
+	private static final String REPEATING_WEEKLY = "weekly";
+	private static final String REPEATING_BIWEEKLY = "biweekly";
+	private static final String REPEATING_MONTHLY = "monthly";
+	private static final String REPEATING_YEARLY = "yearly";
+	
 	private static final String JSON_TYPE = "type";
 	private static final String JSON_EVENT_INDEX = "index";
 	private static final String JSON_EVENT_NAME = "name";
 	private static final String JSON_START_DATE = "start";
 	private static final String JSON_END_DATE = "end";
+	private static final String JSON_REPEAT = "repeating";
+	private static final String JSON_FREQUENCY = "frequency";
+	private static final String JSON_STOPDATE = "stopdate";
 	
 	private static DateTimeFormatter fmt = DateTimeFormat.forPattern(DATE_AND_TIME_INPUT_FORMAT);
 	private DateTime startDateAndTime;
 	private DateTime endDateAndTime;
-	private boolean complete;
+	private DateTime stopDate;
+	private boolean repeating;
+	private String frequency;
 	
 	public CalendarEvent(int eventIndex, String eventName, DateTime startDateAndTime, DateTime endDateAndTime) {
 		this.setEventIndex(eventIndex);
 		this.setEventName(eventName);
 		this.startDateAndTime = startDateAndTime;
 		this.endDateAndTime = endDateAndTime;
-		this.complete = false;
+		this.setRepeating(false);
+		this.setFrequency(null);
+		this.setStopDate(null);
+	}
+	
+	public CalendarEvent(int eventIndex, String eventName, DateTime startDateAndTime, DateTime endDateAndTime,
+			boolean repeating, String frequency) {
+		this.setEventIndex(eventIndex);
+		this.setEventName(eventName);
+		this.startDateAndTime = startDateAndTime;
+		this.endDateAndTime = endDateAndTime;
+		this.setRepeating(repeating);
+		this.setFrequency(frequency);
+		this.setStopDate(null);
+	}
+	
+	public CalendarEvent(int eventIndex, String eventName, DateTime startDateAndTime, DateTime endDateAndTime,
+			boolean repeating, String frequency, DateTime stopDate) {
+		this.setEventIndex(eventIndex);
+		this.setEventName(eventName);
+		this.startDateAndTime = startDateAndTime;
+		this.endDateAndTime = endDateAndTime;
+		this.setRepeating(repeating);
+		this.setFrequency(frequency);
+		this.setStopDate(stopDate);
 	}
 	
 	public CalendarEvent(JSONObject jsonObj) {
@@ -52,6 +85,13 @@ public class CalendarEvent extends Event {
 		String eventName = (String) jsonObj.get(JSON_EVENT_NAME);
 		startDateAndTime = fmt.parseDateTime((String)jsonObj.get(JSON_START_DATE));
 		endDateAndTime = fmt.parseDateTime((String)jsonObj.get(JSON_END_DATE));
+		repeating = ((Boolean)jsonObj.get(JSON_REPEAT)).booleanValue();
+		
+		if(repeating) {
+			stopDate = fmt.parseDateTime((String)jsonObj.get(JSON_STOPDATE));
+			frequency = (String) jsonObj.get(JSON_FREQUENCY);
+		}
+		
 		this.setEventIndex(eventIndex.intValue());
 		this.setEventName(eventName);
 	}
@@ -61,6 +101,9 @@ public class CalendarEvent extends Event {
 	 * @return DateTime startDateAndTime
 	 */
 	public DateTime getStartDateAndTime() {
+		if(this.isRepeating() && !this.isUpdated()) {
+			update();
+		}
 		return startDateAndTime;
 	}
 	
@@ -69,32 +112,39 @@ public class CalendarEvent extends Event {
 	 * @return DateTime endDateAndTime
 	 */
 	public DateTime getEndDateAndTime() {
+		if(this.isRepeating() && !this.isUpdated()) {
+			update();
+		}
 		return endDateAndTime;
 	}
 	
+	public Duration getDuration() {
+		return new Duration(getStartDateAndTime(), getEndDateAndTime());
+	}
+	
 	public String getStartDate() {
-		DateTime.Property pDayOfTheWeek = startDateAndTime.dayOfWeek();
-		DateTime.Property pMonthOfYear = startDateAndTime.monthOfYear();
+		DateTime.Property pDayOfTheWeek = getStartDateAndTime().dayOfWeek();
+		DateTime.Property pMonthOfYear = getStartDateAndTime().monthOfYear();
 		String dateString = String.format(DATE_OUTPUT_FORMAT, pDayOfTheWeek.getAsShortText(),
-				startDateAndTime.getDayOfMonth(), pMonthOfYear.getAsShortText(), startDateAndTime.getYear());
+				getStartDateAndTime().getDayOfMonth(), pMonthOfYear.getAsShortText(), getStartDateAndTime().getYear());
 		return dateString;
 	}
 	
 	public String getStartTime() {
-		String timeString = String.format(TIME_OUTPUT_FORMAT, startDateAndTime.getHourOfDay(), startDateAndTime.getMinuteOfHour());
+		String timeString = String.format(TIME_OUTPUT_FORMAT, getStartDateAndTime().getHourOfDay(), getStartDateAndTime().getMinuteOfHour());
 		return timeString;
 	}
 	
 	public String getEndDate() {
-		DateTime.Property pDayOfTheWeek = endDateAndTime.dayOfWeek();
-		DateTime.Property pMonthOfYear = endDateAndTime.monthOfYear();
+		DateTime.Property pDayOfTheWeek = getEndDateAndTime().dayOfWeek();
+		DateTime.Property pMonthOfYear = getEndDateAndTime().monthOfYear();
 		String dateString = String.format(DATE_OUTPUT_FORMAT, pDayOfTheWeek.getAsShortText(),
-				endDateAndTime.getDayOfMonth(), pMonthOfYear.getAsShortText(), endDateAndTime.getYear());
+				getEndDateAndTime().getDayOfMonth(), pMonthOfYear.getAsShortText(), getEndDateAndTime().getYear());
 		return dateString;
 	}
 	
 	public String getEndTime() {
-		String timeString = String.format(TIME_OUTPUT_FORMAT, endDateAndTime.getHourOfDay(), endDateAndTime.getMinuteOfHour());
+		String timeString = String.format(TIME_OUTPUT_FORMAT, getEndDateAndTime().getHourOfDay(), getEndDateAndTime().getMinuteOfHour());
 		return timeString;
 	}
 	
@@ -139,7 +189,49 @@ public class CalendarEvent extends Event {
 	}
 	
 	public boolean isDone() {
-		return endDateAndTime.isBeforeNow() && complete;
+		if(hasStopDate()) {
+			if(repeating && !isUpdated()) {
+				update();
+			}
+			return stopDate.isAfter(endDateAndTime);
+		}
+		return endDateAndTime.isBeforeNow();
+	}
+	
+	private void update() {
+		Duration dur = getDuration();
+		switch(frequency) {
+			case REPEATING_DAILY:
+				startDateAndTime.plusDays(1);
+				endDateAndTime.plus(dur);
+				break;
+			case REPEATING_WEEKLY:
+				startDateAndTime.plusWeeks(1);
+				endDateAndTime.plus(dur);
+				break;
+			case REPEATING_BIWEEKLY:
+				startDateAndTime.plusWeeks(2);
+				endDateAndTime.plus(dur);
+				break;
+			case REPEATING_MONTHLY:
+				startDateAndTime.plusMonths(1);
+				endDateAndTime.plus(dur);
+				break;
+			case REPEATING_YEARLY:
+				startDateAndTime.plusYears(1);
+				endDateAndTime.plus(dur);
+				break;
+			default:
+				try {
+					throw new Exception("Got to defualt case in update. Something is wrong!");
+				} catch (Exception e) {
+					System.out.println(e.getMessage());
+				}
+		}
+	}
+
+	public boolean isUpdated() {
+		return endDateAndTime.isAfterNow();
 	}
 	
 	/**
@@ -163,19 +255,19 @@ public class CalendarEvent extends Event {
 	}
 
 	private String getFormattedStartDateString() {
-		DateTime.Property pDayOfTheWeek = startDateAndTime.dayOfWeek();
-		DateTime.Property pMonthOfYear = startDateAndTime.monthOfYear();
+		DateTime.Property pDayOfTheWeek = getStartDateAndTime().dayOfWeek();
+		DateTime.Property pMonthOfYear = getStartDateAndTime().monthOfYear();
 		return String.format(DATE_AND_TIME_OUTPUT_FORMAT, pDayOfTheWeek.getAsShortText(),
-				startDateAndTime.getDayOfMonth(), pMonthOfYear.getAsShortText(), startDateAndTime.getYear(),
-				startDateAndTime.getHourOfDay(), startDateAndTime.getMinuteOfHour());
+				getStartDateAndTime().getDayOfMonth(), pMonthOfYear.getAsShortText(), getStartDateAndTime().getYear(),
+				getStartDateAndTime().getHourOfDay(), getStartDateAndTime().getMinuteOfHour());
 	}
 	
 	private String getFormattedEndDateString() {
-		DateTime.Property pDayOfTheWeek = endDateAndTime.dayOfWeek();
-		DateTime.Property pMonthOfYear = endDateAndTime.monthOfYear();
+		DateTime.Property pDayOfTheWeek = getEndDateAndTime().dayOfWeek();
+		DateTime.Property pMonthOfYear = getEndDateAndTime().monthOfYear();
 		return String.format(DATE_AND_TIME_OUTPUT_FORMAT, pDayOfTheWeek.getAsShortText(),
-				endDateAndTime.getDayOfMonth(), pMonthOfYear.getAsShortText(), endDateAndTime.getYear(),
-				endDateAndTime.getHourOfDay(), endDateAndTime.getMinuteOfHour());
+				getEndDateAndTime().getDayOfMonth(), pMonthOfYear.getAsShortText(), getEndDateAndTime().getYear(),
+				getEndDateAndTime().getHourOfDay(), getEndDateAndTime().getMinuteOfHour());
 	}
 	
 	/**
@@ -183,12 +275,17 @@ public class CalendarEvent extends Event {
 	 * @return jsonString
 	 */
 	public String toJsonString() {
-		Map obj = new LinkedHashMap();
+		Map<String, Object> obj = new LinkedHashMap<String, Object>();
 		obj.put(JSON_TYPE, "calendar");
 		obj.put(JSON_EVENT_INDEX, new Integer(this.getEventIndex()));
 		obj.put(JSON_EVENT_NAME, this.getEventName());
-		obj.put(JSON_START_DATE, fmt.print(startDateAndTime));
-		obj.put(JSON_END_DATE, fmt.print(endDateAndTime));
+		obj.put(JSON_START_DATE, fmt.print(getStartDateAndTime()));
+		obj.put(JSON_END_DATE, fmt.print(getEndDateAndTime()));
+		obj.put(JSON_REPEAT, new Boolean(repeating));
+		if(repeating) {
+			obj.put(JSON_FREQUENCY, frequency);
+			obj.put(JSON_STOPDATE, fmt.print(stopDate));
+		}
 		
 		StringWriter out = new StringWriter();
 	    try {
@@ -206,7 +303,7 @@ public class CalendarEvent extends Event {
 		} else {
 			CalendarEvent e = (CalendarEvent) obj;
 			return this.getEventIndex() == e.getEventIndex() && this.getEventName().equals(e.getEventName()) &&
-					this.startDateAndTime.equals(e.getStartDateAndTime()) && 
+					this.getStartDateAndTime().equals(e.getStartDateAndTime()) && 
 					this.endDateAndTime.equals(e.getEndDateAndTime());
 		}
 	}
@@ -220,9 +317,9 @@ public class CalendarEvent extends Event {
 			return 1;
 		} else if (e instanceof CalendarEvent) {
 			CalendarEvent cal = (CalendarEvent)e;
-			int result = this.startDateAndTime.compareTo(cal.getStartDateAndTime());
+			int result = this.getStartDateAndTime().compareTo(cal.getStartDateAndTime());
 			if (result == 0) {
-				result = this.endDateAndTime.compareTo(cal.getEndDateAndTime());
+				result = this.getEndDateAndTime().compareTo(cal.getEndDateAndTime());
 				if(result == 0) {
 					result = this.getEventName().compareTo(cal.getEventName());
 				}
@@ -230,7 +327,7 @@ public class CalendarEvent extends Event {
 			return result;
 		} else if (e instanceof ToDoEvent) {
 			ToDoEvent todo = (ToDoEvent)e;
-			int result = this.startDateAndTime.compareTo(todo.getDeadline());
+			int result = this.getStartDateAndTime().compareTo(todo.getDeadline());
 			if (result == 0) {
 				result = this.getEventName().compareTo(todo.getEventName());
 			}
@@ -248,6 +345,31 @@ public class CalendarEvent extends Event {
 	}
 	
 	public void setDone(){
-		complete = true;
+		//method stub for polymorthism
+	}
+	
+	// @author A0145668R
+	public boolean hasStopDate() {
+		return stopDate != null;
+	}
+
+	public void setStopDate(DateTime stopDate) {
+		this.stopDate = stopDate;
+	}
+
+	public boolean isRepeating() {
+		return repeating;
+	}
+
+	public void setRepeating(boolean repeating) {
+		this.repeating = repeating;
+	}
+
+	public String getFrequency() {
+		return frequency;
+	}
+
+	public void setFrequency(String frequency) {
+		this.frequency = frequency;
 	}
 }
