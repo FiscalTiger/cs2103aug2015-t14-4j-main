@@ -56,7 +56,7 @@ public class IntegratedTest {
     @Test
     public void testAddEvent() {
         commandResponse = ui
-                .executeCommand("add Christmas Party, 25 Dec 12:00, 26 DEC 13:00");
+                .executeCommand("add Christmas Party, 25 Dec 12:00, 26 Dec 13:00");
         assertEquals(
                 "Added 1. Christmas Party from Fri 25 Dec 2015 at 12:00 to Sat 26 Dec 2015 at 13:00\n\n",
                 commandResponse);

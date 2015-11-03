@@ -57,7 +57,6 @@ public class CommandParser {
 	private final String MESSAGE_INVALID_COMMAND = "Invalid Command\n";
 	private final String MESSAGE_INVALID_LESS_ARGS = "Too little arguments for command type \"%s\" \n";
 
-	private static final String MESSAGE_INVALID_DISPLAY_COMMAND = "Display: Invalid command \n";
 	private static final String MESSAGE_INVALID_DISPLAY_ARGS = "Display: Invalid flag \"%s\"\n";
 	private static final String MESSAGE_INVALID_DISPLAY_DATE = "Display: Couldn't parse the date \"%s\"\n";
 	private static final String MESSAGE_INVALID_DISPLAY_INDEX = "Display: Invalid index \"%s\"\n";
@@ -74,39 +73,12 @@ public class CommandParser {
 	private final String DISPLAY_FLAG_DATE = "d";
 	private final String DISPLAY_FLAG_INDEX = "i";
 
-	// expected number of parameters for add commands
-	private final int NUM_ARGUMENTS_ADD = 1;
-	private final int NUM_ARGUMENTS_ADD_TODO_EVENT = 2;
-	private final int NUM_ARGUMENTS_ADD_CALENDAR_EVENT = 2;
-	// private final int NUM_ARGUMENTS_ADD_REPEAT = 2;
-
 	// expected number of parameters for all other commands
-	private final int NUM_ARGUMENTS_UPDATE = 2;
-	private final int NUM_ARGUMENTS_UPDATE_FLOAT = 2;
-	private final int NUM_ARGUMENTS_UPDATE_TODO = 3;
-	private final int NUM_ARGUMENTS_UPDATE_CALENDAR = 4;
 	private final int NUM_ARGUMENTS_DELETE = 1;
-	// private final int NUM_ARGUMENTS_COMPLETE = 1;
-	// private final int NUM_ARGUMENTS_REMIND = 2;
 	private final int NUM_ARGUMENTS_SEARCH = 1;
-	// private final int NUM_ARGUMENTS_STORE_LOCATION = 1;
-
-	private final int NUM_MAX_ARGUMENTS_DISPLAY = 2;
 
 	// flexi command keywords
 	private final String[] FLEXI_KEYWORDS = { " by ", " at ", " to ", " for " };
-	//TODO move these to constructor are these still needed?
-	// Date Time Formats accepted
-	private final String DATE_SPLITTER_SLASH = "/";
-	private final String DATE_SPLITTER_DOT = ".";
-	private final String DATE_INPUT_FORMAT = "dd.MM.yyyy";
-	private final String DATE_AND_TIME_INPUT_FORMAT = "dd.MM.yyyy HH:mm";
-	private final int NUM_CHAR_DATE_INPUT = DATE_INPUT_FORMAT.length();
-	private final int NUM_CHAR_DATE_TIME_INPUT = DATE_AND_TIME_INPUT_FORMAT.length();
-	private DateTimeFormatter dateFormatter = DateTimeFormat
-            .forPattern(DATE_INPUT_FORMAT);
-	private DateTimeFormatter timeFormatter = DateTimeFormat
-            .forPattern(DATE_AND_TIME_INPUT_FORMAT);
 
 	// parses the arguments and calls the appropriate create command.
 	public Command parseCommand(String userCommand) {
@@ -338,7 +310,8 @@ public class CommandParser {
     private Command createMarkDoneCommand(String[] arguments) {
         return new Markdone(arguments);
     }
-    // @@author A0124206
+    // @author 
+    // feel free to change it haha
     private Command createRepeatCommand(String[] arguments) {
         return new Repeat(arguments[PARAM_POSITION_COMMAND_ARGUMENT]);
     }
@@ -384,16 +357,4 @@ public class CommandParser {
 		return commandArguments.split(ARGUMENT_SPLITTER);
 	}
 	
-	private DateTime parseDate(String dateString) throws Exception {
-	    DateTime date = null;
-	    dateString = dateString.replace(DATE_SPLITTER_SLASH, DATE_SPLITTER_DOT);
-	    if (dateString.length() == NUM_CHAR_DATE_INPUT) {
-	        dateFormatter.parseDateTime(dateString);
-	    } else if (dateString.length() == NUM_CHAR_DATE_TIME_INPUT) {
-	        timeFormatter.parseDateTime(dateString);
-	    } else {
-	        throw new Exception();
-	    }
-	    return date;
-	}
 }
