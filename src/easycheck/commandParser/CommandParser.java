@@ -136,7 +136,6 @@ public class CommandParser {
 				arguments = getArgumentsUpdate(commandArguments);
 				command = createUpdateCommand(arguments);
 			} else if (commandType.equalsIgnoreCase(COMMAND_TYPE_SEARCH)) {
-			    //TODO
 				arguments = getArguments(commandArguments, NUM_ARGUMENTS_SEARCH);
 				command = Command.createObject(commandType, arguments);
 			} else if (commandType.equalsIgnoreCase(COMMAND_TYPE_DISPLAY)) {

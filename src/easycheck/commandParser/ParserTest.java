@@ -61,7 +61,7 @@ public class ParserTest {
     public void addBadTaskThirteenthMonth() {
         CommandParser parser = new CommandParser();
         Command invalid = parser
-                .parseCommand("add task name by 31/11/2015 13:30");
+                .parseCommand("add task name by 13/11/2015 13:30");
         assertTrue(invalid instanceof Invalid);
     }
 
