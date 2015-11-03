@@ -35,6 +35,6 @@ public class PrintGroup {
 		for(Event e: eventList) {
 			printGroup += TAB + e.toPrintGroupString();
 		}
-		return printGroup;
+		return printGroup + NEWLINE;
 	}
 }
