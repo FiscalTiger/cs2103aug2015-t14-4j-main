@@ -107,8 +107,6 @@ public class CommandParser {
 			command = new Exit();
 		} else if (commandType.equalsIgnoreCase(COMMAND_TYPE_DELETE)) {
 			command = createDeleteCommand(arguments);
-		} else if (commandType.equalsIgnoreCase(COMMAND_TYPE_SEARCH)) {
-			command = Command.createObject(commandType, arguments);
 		} else if (commandType.equalsIgnoreCase(COMMAND_TYPE_MARKDONE)) {
 			command = createMarkDoneCommand(arguments);
 		} else if (commandType.equalsIgnoreCase(COMMAND_TYPE_UNDO)) {
