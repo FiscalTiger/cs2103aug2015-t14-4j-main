@@ -6,7 +6,11 @@ import org.junit.Before;
 import org.junit.Test;
 
 import easycheck.userInterface.UserInterface;
-
+/**
+ * Integrated JUnit Test for EasyCheck basic commands
+ * @@author A0124206W
+ *
+ */
 public class IntegratedTest {
     String fileName = "integratedtestingfile.txt";
     UserInterface ui = new UserInterface(fileName);
