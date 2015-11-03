@@ -15,10 +15,6 @@ public class Invalid extends Command {
     public Invalid(String invalidMessage) {
     	this.setInvalidMessage(invalidMessage);
     }
-    
-	public Invalid(String commandType, String[] arguments) {
-        super(commandType, arguments);
-    }
 
 	public String getInvalidMessage() {
 		return invalidMessage;
@@ -29,7 +25,7 @@ public class Invalid extends Command {
 	}
 	
 	public String toString() {
-		return this.invalidMessage;
+		return getInvalidMessage();
 	}
 
 }

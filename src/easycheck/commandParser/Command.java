@@ -68,7 +68,7 @@ public class Command {
 	        case SAVE_AT:
 	            return new SaveAt(commandType,arguments);
 	        case INVALID: 
-	        	return new Invalid(commandType, arguments);
+//	        	return new Invalid(commandType);
 	        default:
 	        	return null;
 	        }
