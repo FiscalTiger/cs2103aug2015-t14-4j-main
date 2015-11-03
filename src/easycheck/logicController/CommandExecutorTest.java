@@ -123,7 +123,6 @@ public class CommandExecutorTest {
 		String expected;
 		
 		// Old Calendar Event
-		String[] oldCalCommandArgs = {"Old Cal Event", OLD_START_DATE, GOOD_END_DATE};
 		cmd = new Add("Old Cal Event", oldStart, goodEnd);
 		desc = "Tries to make a calendar event where the start date already past";
 		expected = MESSAGE_INVALID_CALENDAR_DATES;

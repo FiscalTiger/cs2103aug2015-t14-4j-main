@@ -33,6 +33,11 @@ public class CommandParser {
 	private final int COMMAND_ARRAY_LENGTH = 2;
 	private final int PARAM_POSITION_COMMAND_TYPE = 0;
 	private final int PARAM_POSITION_COMMAND_ARGUMENT = 1;
+	
+	private final int DATE_GROUP_ONE_DATE = 1;
+	private final int DATE_GROUP_TWO_DATES = 2;
+	private final int FIRST_PARSED_DATE_TEXT = 0;
+	private final int SECOND_PARSED_DATE_TEXT = 1;
 
 	// command types
 	private final String COMMAND_TYPE_ADD = "add";
@@ -72,7 +77,7 @@ public class CommandParser {
 	private final int NUM_ARGUMENTS_SEARCH = 1;
 
 	// flexi command keywords
-	private final String[] FLEXI_KEYWORDS = { " by ", " at ", " to ", " for ", " on " };
+	private final String[] FLEXI_KEYWORDS = { " by ", " at ", " on " };
 
 	// parses the arguments and calls the appropriate create command.
 	public Command parseCommand(String userCommand) {
@@ -169,27 +174,31 @@ public class CommandParser {
 		String taskName = arguments[0];
 		DateTime start;
 		DateTime end;
+		DateTime[] parsedDates;
 		
 		if (arguments.length == 1) {
 			cmd = new Add(taskName);
 		} else if (arguments.length==2) {
-			end = parseDateText(arguments[1]);
-			if(end != null) {
-				cmd = new Add(taskName, end);
-			} else {
-				cmd = new Invalid(String.format(MESSAGE_INVALID_ADD_DATE, arguments[1]));
-			}
-		} else if (arguments.length==3) {
-			start = parseDateText(arguments[1]);
-			end = parseDateText(arguments[2]);
-			if(start != null && end != null) {
-				cmd = new Add(taskName, start, end);
-			} else {
-				if(start == null) {
+			parsedDates = parseDateText(arguments[1]);
+			if(parsedDates.length == 1) {
+				end = parsedDates[FIRST_PARSED_DATE_TEXT];
+				if(end != null) {
+					cmd = new Add(taskName, end);
+				} else {
 					cmd = new Invalid(String.format(MESSAGE_INVALID_ADD_DATE, arguments[1]));
 				}
-				if(end == null) {
-					cmd = new Invalid(String.format(MESSAGE_INVALID_ADD_DATE, arguments[2]));
+			} else if(parsedDates.length == 2) {
+				start = parsedDates[FIRST_PARSED_DATE_TEXT];
+				end = parsedDates[SECOND_PARSED_DATE_TEXT];
+				if(start != null && end != null) {
+					cmd = new Add(taskName, start, end);
+				} else {
+					if(start == null) {
+						cmd = new Invalid(String.format(MESSAGE_INVALID_ADD_DATE, arguments[1]));
+					}
+					if(end == null) {
+						cmd = new Invalid(String.format(MESSAGE_INVALID_ADD_DATE, arguments[2]));
+					}
 				}
 			}
 		} else {
@@ -211,18 +220,19 @@ public class CommandParser {
 		String newName = arguments[1];
 		DateTime start;
 		DateTime end;
+		
 		if (arguments.length == 2) {
 			cmd = new Update(idx, newName);
 		} else if (arguments.length==3) {
-			end = parseDateText(arguments[2]);
+			end = parseDateText(arguments[2])[FIRST_PARSED_DATE_TEXT];
 			if(end != null) {
 				cmd = new Update(idx, newName, end);
 			} else {
 				cmd = new Invalid(String.format(MESSAGE_INVALID_UPDATE_DATE, arguments[2]));
 			}
 		} else if (arguments.length==4) {
-			start = parseDateText(arguments[2]);
-			end = parseDateText(arguments[3]);
+			start = parseDateText(arguments[2])[FIRST_PARSED_DATE_TEXT];
+			end = parseDateText(arguments[3])[SECOND_PARSED_DATE_TEXT];
 			if(start != null && end != null) {
 				cmd = new Update(idx, newName, start, end);
 			} else {
@@ -266,7 +276,7 @@ public class CommandParser {
             }
         } else if (arguments.length == 2) {
             if (arguments[0].equals(DISPLAY_FLAG_DATE)) {
-                DateTime displayDate = parseDateText(arguments[1]);
+                DateTime displayDate = parseDateText(arguments[1])[FIRST_PARSED_DATE_TEXT];
                 if (displayDate != null) {
                     disp.setDateFlag(true);
                     disp.setDisplayDate(displayDate);
@@ -309,18 +319,29 @@ public class CommandParser {
     }
 
     //@author A0145668R
-	public DateTime parseDateText(String dateString) {
+	public DateTime[] parseDateText(String dateString) {
 		Parser dateParser = new Parser();
+		DateTime[] parsedDates;
 		List<DateGroup> dateGroups = dateParser.parse(dateString);
-		if (dateGroups.size() != 1) {
-			return null;
+		if (dateGroups.size() == 1) {
+			DateGroup dateGroup = dateGroups.get(0);
+			if (dateGroup.getDates().size() == 1) {
+				parsedDates = new DateTime[DATE_GROUP_ONE_DATE];
+				parsedDates[0] = new DateTime(dateGroup.getDates().get(0));
+			} else if (dateGroup.getDates().size() == 2) {
+				parsedDates = new DateTime[DATE_GROUP_TWO_DATES];
+				parsedDates[0] = new DateTime(dateGroup.getDates().get(0));
+				parsedDates[1] = new DateTime(dateGroup.getDates().get(1));
+			} else {
+				parsedDates = new DateTime[DATE_GROUP_ONE_DATE];
+				parsedDates[0] = null;
+			}
+			
 		} else {
-		  DateGroup dateGroup = dateGroups.get(0);
-		  if (dateGroup.getDates().size() != 1) {
-			  return null;
-		  }
-		  return new DateTime(dateGroup.getDates().get(0));
+			parsedDates = new DateTime[DATE_GROUP_ONE_DATE];
+			parsedDates[0] = null;
 		}
+		return parsedDates;
 	}
 
 	private String[] getArguments(String commandArguments, int expectedArguments) throws Exception {
