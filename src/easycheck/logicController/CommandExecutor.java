@@ -16,6 +16,7 @@ import easycheck.commandParser.CommandTypes.Display;
 import easycheck.commandParser.CommandTypes.Exit;
 import easycheck.commandParser.CommandTypes.Invalid;
 import easycheck.commandParser.CommandTypes.Markdone;
+import easycheck.commandParser.CommandTypes.ReadFrom;
 import easycheck.commandParser.CommandTypes.Redo;
 import easycheck.commandParser.CommandTypes.Repeat;
 import easycheck.commandParser.CommandTypes.SaveAt;
@@ -105,6 +106,8 @@ public class CommandExecutor {
 			return exit((Exit) command);
 		} else if (command instanceof Invalid) {
 			return Invalid((Invalid) command);
+		} else if (command instanceof ReadFrom) {
+			return readFrom((ReadFrom) command);
 		} else {
 			return command.toString();
 		}
@@ -794,16 +797,20 @@ public class CommandExecutor {
 	}
 	
 	// @@author A0121560W
-		private String saveAt(SaveAt cmd) {
-			String target = cmd.getTarget();
-			StorageManager saveTarget = new StorageManager(target);
-			try {
-				saveTarget.writeDataToEasyCheckFile(this.getEventList());
-			} catch (IOException e) {
-				return String.format(MESSAGE_SAVE_AT_IO_EXCEPTION, target);
-			}
-			return String.format(MESSAGE_SAVE_AT_SUCCESS, target);
+	private String saveAt(SaveAt cmd) {
+		String target = cmd.getTarget();
+		StorageManager saveTarget = new StorageManager(target);
+		try {
+			saveTarget.writeDataToEasyCheckFile(this.getEventList());
+		} catch (IOException e) {
+			return String.format(MESSAGE_SAVE_AT_IO_EXCEPTION, target);
 		}
+		return String.format(MESSAGE_SAVE_AT_SUCCESS, target);
+	}
+	
+	private String readFrom(ReadFrom cmd){
+		return cmd.getReadTarget();
+	}
 
 
 }

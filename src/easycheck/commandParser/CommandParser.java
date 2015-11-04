@@ -22,6 +22,7 @@ import easycheck.commandParser.CommandTypes.Display;
 import easycheck.commandParser.CommandTypes.Exit;
 import easycheck.commandParser.CommandTypes.Invalid;
 import easycheck.commandParser.CommandTypes.Markdone;
+import easycheck.commandParser.CommandTypes.ReadFrom;
 import easycheck.commandParser.CommandTypes.Redo;
 import easycheck.commandParser.CommandTypes.Repeat;
 import easycheck.commandParser.CommandTypes.SaveAt;
@@ -53,7 +54,9 @@ public class CommandParser {
     private final String COMMAND_TYPE_UNDO = "undo";
     private final String COMMAND_TYPE_REDO = "redo";
     private final String COMMAND_TYPE_EXIT = "exit";
-    private final String COMMAND_TYPE_SAVE_AT ="save_at";
+    private final String COMMAND_TYPE_SAVE_AT = "save_at";
+    private final String COMMAND_TYPE_READ_FROM = "read_from";
+    
 
     private final String MESSAGE_INVALID_COMMAND = "Invalid Command\n";
     private final String MESSAGE_INVALID_LESS_ARGS = "Too little arguments for command type \"%s\" \n";
@@ -90,6 +93,7 @@ public class CommandParser {
     private final int NUM_ARGUMENTS_DELETE = 1;
     private final int NUM_ARGUMENTS_SEARCH = 1;
     private final int NUM_ARGUMENTS_SAVE_AT = 1;
+    private final int NUM_ARGUMENTS_READ_FROM = 1;
 
     // Date Time Formats accepted
     private static final String DATE_SPLITTER_SLASH = "/";
@@ -173,6 +177,9 @@ public class CommandParser {
             } else if (commandType.equalsIgnoreCase(COMMAND_TYPE_SAVE_AT)){
             	arguments = getArguments(commandArguments, NUM_ARGUMENTS_SAVE_AT);
             	command = createSaveAtCommand(arguments);
+            } else if (commandType.equalsIgnoreCase(COMMAND_TYPE_READ_FROM)){
+            	arguments = getArguments(commandArguments, NUM_ARGUMENTS_READ_FROM);
+            	command = createReadFromCommand(arguments);
             } else {
             
                 // if command type not recognized
@@ -537,6 +544,10 @@ public class CommandParser {
     // only one argument expected, handled by getArguments
     private Command createSaveAtCommand(String[] target) {
 		return new SaveAt(target[0]);
+	}
+    
+    private Command createReadFromCommand(String[] target) {
+		return new ReadFrom(target[0]);
 	}
 
 }

@@ -30,7 +30,7 @@ public class StorageManager {
 	
 	
 	private File easyCheckFile;
-	
+	// @@author A0121560W
 	public StorageManager(String easyCheckFileName) {
 		if (!checkFileExists(easyCheckFileName)){
 			createFile(easyCheckFileName);
@@ -89,7 +89,7 @@ public class StorageManager {
 		
 		return easyCheckEvents;
 	}
-	
+
 	public void writeDataToEasyCheckFile(ArrayList<Event> eventList) throws IOException{
 		FileWriter writer = new FileWriter(easyCheckFile);
 		for (Event event: eventList){
