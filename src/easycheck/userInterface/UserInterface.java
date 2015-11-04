@@ -2,6 +2,10 @@ package easycheck.userInterface;
 
 import java.util.Scanner;
 
+import org.fusesource.jansi.AnsiConsole;
+import static org.fusesource.jansi.Ansi.*;
+import static org.fusesource.jansi.Ansi.Color.*;
+
 import easycheck.logicController.LogicController;
 
 /*
@@ -17,6 +21,7 @@ public class UserInterface {
 	private LogicController logicController;
 
 	public static void main(String[] args){
+		AnsiConsole.systemInstall();
 		String fileName;
 		if(args.length == 0) {
 			fileName = "myeasycheck.txt";
@@ -55,6 +60,7 @@ public class UserInterface {
 	}
 	
 	public void display(String msg) {
-		System.out.print(msg);
+		System.out.print(ansi().render(msg));
+		System.out.flush();
 	}
 }

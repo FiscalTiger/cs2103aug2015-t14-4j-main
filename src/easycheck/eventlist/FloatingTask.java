@@ -13,6 +13,8 @@ public class FloatingTask extends Event {
 	private static final String JSON_EVENT_INDEX = "index";
 	private static final String JSON_EVENT_NAME = "name";
 	private static final String MESSAGE_JSON_STRING_ERROR = "Error in toJsonString method, most likely coding error";
+	private static final String YELLOW = "@|yellow %s|@";
+	private static final String GREEN = "@|green %s|@";
 	
 	private boolean complete;
 	
@@ -53,7 +55,11 @@ public class FloatingTask extends Event {
 	 */
 	@Override
 	public String toString() {
-		return this.getEventIndex() + ". " + this.getEventName() + "\n";
+		if(isDone()) {
+			return String.format(GREEN, this.getEventIndex() + ". " + this.getEventName() + "\n");
+		} else {
+			return String.format(YELLOW, this.getEventIndex() + ". " + this.getEventName() + "\n");
+		}
 	}
 	
 	public String toPrintGroupString() {

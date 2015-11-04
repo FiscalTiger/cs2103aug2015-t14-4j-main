@@ -24,7 +24,9 @@ public class CalendarEvent extends Event {
 	private static final String TIME_OUTPUT_FORMAT = "%02d:%02d";
 	private static final String DATE_AND_TIME_INPUT_FORMAT = "dd.MM.yyyy HH:mm";
 	private static final String MESSAGE_JSON_STRING_ERROR = "Error in toJsonString method, most likely coding error";
-	private static final String MESSAGE_TO_STRING_TEMPLATE = "%d. %s from %s to %s\n";
+	private static final String MESSAGE_TO_STRING_TEMPLATE = "@|yellow %d. %s from %s to %s %s|@\n";
+	private static final String MESSAGE_TO_PRINT_GROUP_STRING_TEMPLATE = "@|yellow %d. %s from %s to %s|@\n";
+	private static final String MESSAGE_REPEATING_ADDITION = " (Repeats %s)";
 	
 	private static final String REPEATING_DAILY = "daily";
 	private static final String REPEATING_WEEKLY = "weekly";
@@ -88,7 +90,11 @@ public class CalendarEvent extends Event {
 		repeating = ((Boolean)jsonObj.get(JSON_REPEAT)).booleanValue();
 		
 		if(repeating) {
-			stopDate = fmt.parseDateTime((String)jsonObj.get(JSON_STOPDATE));
+			if(jsonObj.get(JSON_STOPDATE) != null) {
+				stopDate = fmt.parseDateTime((String)jsonObj.get(JSON_STOPDATE));
+			} else {
+				stopDate = (DateTime)jsonObj.get(JSON_STOPDATE);
+			}
 			frequency = (String) jsonObj.get(JSON_FREQUENCY);
 		}
 		
@@ -240,17 +246,23 @@ public class CalendarEvent extends Event {
 	public String toString() {
 		String startDateString = getFormattedStartDateString();
 		String endDateString = getFormattedEndDateString();
+		String repeatAddition = "";
+		
+		if(repeating) {
+			repeatAddition = String.format(MESSAGE_REPEATING_ADDITION, frequency);
+		}
 		return String.format(
-				MESSAGE_TO_STRING_TEMPLATE, this.getEventIndex(), this.getEventName(), startDateString, endDateString);
+				MESSAGE_TO_STRING_TEMPLATE, this.getEventIndex(), this.getEventName(), 
+				startDateString, endDateString, repeatAddition);
 	}
 	
 	public String toPrintGroupString() {
 		if (this.isSameDay()) {
-			return String.format(MESSAGE_TO_STRING_TEMPLATE, this.getEventIndex(), this.getEventName(),
-					this.getStartTime(), this.getEndTime());
+			return String.format(MESSAGE_TO_PRINT_GROUP_STRING_TEMPLATE, this.getEventIndex(), 
+					this.getEventName(), this.getStartTime(), this.getEndTime());
 		} else {
-			return String.format(MESSAGE_TO_STRING_TEMPLATE, this.getEventIndex(), this.getEventName(),
-					this.getStartTime(), this.getFormattedEndDateString());
+			return String.format(MESSAGE_TO_PRINT_GROUP_STRING_TEMPLATE, this.getEventIndex(), 
+					this.getEventName(), this.getStartTime(), this.getFormattedEndDateString());
 		}
 	}
 
@@ -284,7 +296,11 @@ public class CalendarEvent extends Event {
 		obj.put(JSON_REPEAT, new Boolean(repeating));
 		if(repeating) {
 			obj.put(JSON_FREQUENCY, frequency);
-			obj.put(JSON_STOPDATE, fmt.print(stopDate));
+			if(hasStopDate()) {
+				obj.put(JSON_STOPDATE, fmt.print(stopDate));
+			} else {
+				obj.put(JSON_STOPDATE, null);
+			}
 		}
 		
 		StringWriter out = new StringWriter();

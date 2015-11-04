@@ -30,12 +30,12 @@ public class ToDoEvent extends Event {
 	private static final String REPEATING_YEARLY = "yearly";
 	
 	private static final String MESSAGE_JSON_STRING_ERROR = "Error in toJsonString method, most likely coding error";
-	private static final String MESSAGE_TO_STRING_TEMPLATE_IS_NOT_COMPLETE = "%d. %s due on %s\n";
-	private static final String MESSAGE_TO_STRING_TEMPLATE_IS_COMPLETE = "%d. %s due on %s is complete\n";
+	private static final String MESSAGE_TO_STRING_TEMPLATE_IS_NOT_COMPLETE = "@|red %d. %s due on %s %s|@\n";
+	private static final String MESSAGE_TO_STRING_TEMPLATE_IS_COMPLETE = "@|green %d. %s due on %s is complete %s|@\n";
 	private static final String MESSAGE_REPEATING_ADDITION = " (Repeats %s)";
 	
-	private static final String MESSAGE_TO_PRINT_GROUP_STRING_TEMPLATE_IS_NOT_COMPLETE = "%d. %s due at %s\n";
-	private static final String MESSAGE_TO_PRINT_GROUP_STRING_TEMPLATE_IS_COMPLETE = "%d. %s due at %s is complete\n";
+	private static final String MESSAGE_TO_PRINT_GROUP_STRING_TEMPLATE_IS_NOT_COMPLETE = "@|red %d. %s due at %s|@\n";
+	private static final String MESSAGE_TO_PRINT_GROUP_STRING_TEMPLATE_IS_COMPLETE = "@|yellow %d. %s due at %s is complete|@\n";
 	
 	private static final String JSON_TYPE = "type";
 	private static final String JSON_EVENT_INDEX = "index";
@@ -91,7 +91,11 @@ public class ToDoEvent extends Event {
 		repeating = ((Boolean)jsonObj.get(JSON_REPEAT)).booleanValue();
 		
 		if(repeating) {
-			stopDate = fmt.parseDateTime((String)jsonObj.get(JSON_STOPDATE));
+			if(jsonObj.get(JSON_STOPDATE) != null) {
+				stopDate = fmt.parseDateTime((String)jsonObj.get(JSON_STOPDATE));
+			} else {
+				stopDate = (DateTime)jsonObj.get(JSON_STOPDATE);
+			}
 			frequency = (String) jsonObj.get(JSON_FREQUENCY);
 		}
 		
@@ -215,10 +219,10 @@ public class ToDoEvent extends Event {
 		
 		if(complete) {
 			return String.format(
-					MESSAGE_TO_STRING_TEMPLATE_IS_COMPLETE, this.getEventIndex(), this.getEventName(), deadlineString) + repeatAddition;
+					MESSAGE_TO_STRING_TEMPLATE_IS_COMPLETE, this.getEventIndex(), this.getEventName(), deadlineString, repeatAddition);
 		} else {
 			return String.format(
-					MESSAGE_TO_STRING_TEMPLATE_IS_NOT_COMPLETE, this.getEventIndex(), this.getEventName(), deadlineString) + repeatAddition;
+					MESSAGE_TO_STRING_TEMPLATE_IS_NOT_COMPLETE, this.getEventIndex(), this.getEventName(), deadlineString, repeatAddition);
 		}
 	}
 	
@@ -248,7 +252,11 @@ public class ToDoEvent extends Event {
 		obj.put(JSON_REPEAT, new Boolean(repeating));
 		if(repeating) {
 			obj.put(JSON_FREQUENCY, frequency);
-			obj.put(JSON_STOPDATE, fmt.print(stopDate));
+			if(hasStopDate()) {
+				obj.put(JSON_STOPDATE, fmt.print(stopDate));
+			} else {
+				obj.put(JSON_STOPDATE, null);
+			}
 		}
 		
 		StringWriter out = new StringWriter();

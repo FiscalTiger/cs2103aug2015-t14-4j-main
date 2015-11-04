@@ -2,12 +2,16 @@ package easycheck.logicController;
 
 import java.util.ArrayList;
 
+import static org.fusesource.jansi.Ansi.*;
+import static org.fusesource.jansi.Ansi.Color.*;
+
 import easycheck.eventlist.Event;
 
 public class PrintGroup {
 	public static final String NEWLINE = "\n";
 	public static final String TAB = "\t";
 	public static final String COLON = ":";
+	public static final String HEADING_COLOR = "@|cyan %s|@";
 	
 	private String heading;
 	private ArrayList<Event> eventList;
@@ -31,7 +35,7 @@ public class PrintGroup {
 	}
 
 	public String toString() {
-		String printGroup = heading + COLON + NEWLINE;
+		String printGroup = String.format(HEADING_COLOR, heading + COLON + NEWLINE);
 		for(Event e: eventList) {
 			printGroup += TAB + e.toPrintGroupString();
 		}

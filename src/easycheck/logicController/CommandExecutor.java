@@ -8,6 +8,8 @@ import java.util.Stack;
 import org.joda.time.DateTime;
 import org.joda.time.Period;
 
+import org.fusesource.jansi.AnsiConsole;
+
 import easycheck.commandParser.Command;
 import easycheck.commandParser.CommandTypes.Add;
 import easycheck.commandParser.CommandTypes.Delete;
@@ -122,7 +124,16 @@ public class CommandExecutor {
 		if (cmd.hasStart() && cmd.hasEnd()) {
 			if (CalendarEvent.areValidDates(cmd.getStart(), cmd.getEnd())) {
 				int eventIndex = eventList.size() + 1;
-				newEvent = new CalendarEvent(eventIndex, cmd.getTaskName(), cmd.getStart(), cmd.getEnd());
+				if (cmd.isRepeating() && cmd.hasStopDate()) {
+					newEvent = new CalendarEvent(eventIndex, cmd.getTaskName(), cmd.getStart(), 
+							cmd.getEnd(), true, cmd.getFrequency(), cmd.getStopDate());
+				} else if(cmd.isRepeating()) {
+					newEvent = new CalendarEvent(eventIndex, cmd.getTaskName(), cmd.getStart(), 
+							cmd.getEnd(), true, cmd.getFrequency());
+				} else {
+					newEvent = new CalendarEvent(eventIndex, cmd.getTaskName(), cmd.getStart(), 
+							cmd.getEnd());
+				}
 				undoStack.push(new ArrayList<Event>(eventList));
 				eventList.add(newEvent);
 				sort();
@@ -134,7 +145,13 @@ public class CommandExecutor {
 		} else if (!cmd.hasStart() && cmd.hasEnd()) {
 			if (ToDoEvent.isValidDate(cmd.getEnd())) {
 				int eventIndex = eventList.size() + 1;
-				newEvent = new ToDoEvent(eventIndex, cmd.getTaskName(), cmd.getEnd());
+				if (cmd.isRepeating() && cmd.hasStopDate()) {
+					newEvent = new ToDoEvent(eventIndex, cmd.getTaskName(), cmd.getEnd(), true, cmd.getFrequency(), cmd.getStopDate());
+				} else if(cmd.isRepeating()) {
+					newEvent = new ToDoEvent(eventIndex, cmd.getTaskName(), cmd.getEnd(), true, cmd.getFrequency());
+				} else {
+					newEvent = new ToDoEvent(eventIndex, cmd.getTaskName(), cmd.getEnd());
+				}
 				undoStack.push(new ArrayList<Event>(eventList));
 				eventList.add(newEvent);
 				sort();
@@ -783,6 +800,7 @@ public class CommandExecutor {
 	}
 
 	private String exit(Exit cmd) {
+		AnsiConsole.systemUninstall();
 		System.exit(1);
 		return "";
 	}

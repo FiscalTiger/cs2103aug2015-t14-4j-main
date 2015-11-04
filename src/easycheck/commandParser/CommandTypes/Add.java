@@ -15,17 +15,19 @@ import easycheck.commandParser.Command;
 
 public class Add extends Command {
 	//@author A0145668R
+	private static final String REPEATING_DAILY = "daily";
+	private static final String REPEATING_WEEKLY = "weekly";
+	private static final String REPEATING_BIWEEKLY = "biweekly";
+	private static final String REPEATING_MONTHLY = "monthly";
+	private static final String REPEATING_YEARLY = "yearly";
+	
 	private String taskName; 
 	private DateTime start;
 	private DateTime end;
 	private boolean isRepeating;
-	private boolean isDaily;
-    private boolean isWeekly;
-    private boolean isBiweekly;
-    private boolean isMonthly;
-    private boolean isYearly;
-	//end @author A0145668R
-	
+	private String frequency;
+    private DateTime stopDate = null;
+    
 	public Add(String taskName) {
 		this.setTaskName(taskName);
 	};
@@ -92,49 +94,34 @@ public class Add extends Command {
 	public void setRepeating(boolean isRepeating) {
 		this.isRepeating = isRepeating;
 	}
-
-	public void isDaily() {
-        // only one of the booleans can be true
-        isDaily = true;
-        isWeekly = false;
-        isBiweekly = false;
-        isMonthly = false;
-        isYearly = false;
-    }
-
-    public void isWeekly() {
-        // only one of the booleans can be true
-        isDaily = false;
-        isWeekly = true;
-        isBiweekly = false;
-        isMonthly = false;
-        isYearly = false;
-    }
     
-    public void isBiweekly() {
-    	// only one of the booleans can be true
-    	isDaily = false;
-        isWeekly = false;
-        isBiweekly = true;
-        isMonthly = false;
-        isYearly = false;
+    public boolean hasStopDate() {
+    	return stopDate != null;
     }
 
-    public void isMonthly() {
-        // only one of the booleans can be true
-        isDaily = false;
-        isWeekly = false;
-        isBiweekly = false;
-        isMonthly = true;
-        isYearly = false;
-    }
-    
-    public void isYearly() {
-        // only one of the booleans can be true
-        isDaily = false;
-        isWeekly = false;
-        isBiweekly = false;
-        isMonthly = false;
-        isYearly = true;
-    }
+	public DateTime getStopDate() {
+		return stopDate;
+	}
+
+	public void setStopDate(DateTime stopDate) {
+		this.stopDate = stopDate;
+	}
+	
+	public static boolean isValidFrequency(String frequency) {
+		if(frequency.equals(REPEATING_DAILY) || frequency.equals(REPEATING_WEEKLY) ||
+				frequency.equals(REPEATING_BIWEEKLY) || frequency.equals(REPEATING_MONTHLY) ||
+				frequency.equals(REPEATING_YEARLY)) {
+			return true;
+		} else {
+			return false;
+		}
+	}
+
+	public String getFrequency() {
+		return frequency;
+	}
+
+	public void setFrequency(String frequency) {
+		this.frequency = frequency;
+	}
 }
