@@ -63,6 +63,16 @@ public class ToDoEvent extends Event {
 		this.stopDate = null;
 	}
 	
+	public ToDoEvent(ToDoEvent e) {
+		this.setEventIndex(e.getEventIndex());
+		this.setEventName(e.getEventName());
+		this.deadline = e.getDeadline();
+		this.complete = e.isDone();
+		this.setRepeating(e.isRepeating());
+		this.setFrequency(e.getFrequency());
+		this.stopDate = e.stopDate;
+	}
+	
 	public ToDoEvent(int eventIndex, String eventName, DateTime dueDateAndTime, boolean repeating, String frequency) {
 		this.setEventIndex(eventIndex);
 		this.setEventName(eventName);
@@ -323,6 +333,10 @@ public class ToDoEvent extends Event {
 	public boolean hasStopDate() {
 		return stopDate != null;
 	}
+	
+	public DateTime getStopDate() {
+		return stopDate;
+	}
 
 	public void setStopDate(DateTime stopDate) {
 		this.stopDate = stopDate;
@@ -336,7 +350,12 @@ public class ToDoEvent extends Event {
 		this.frequency = frequency;
 	}
 	
+	public Event createCopy() {
+		return new ToDoEvent(this);
+	}
+	
 	public static boolean isValidDate(DateTime date) {
 		return date.isAfterNow();
 	}
+	
 }

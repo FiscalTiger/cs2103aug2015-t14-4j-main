@@ -143,7 +143,7 @@ public class CommandExecutor {
 					newEvent = new CalendarEvent(eventIndex, cmd.getTaskName(), cmd.getStart(), 
 							cmd.getEnd());
 				}
-				undoStack.push(new ArrayList<Event>(eventList));
+				undoStack.push(cloneEventList());
 				eventList.add(newEvent);
 				sort();
 				response = String.format(MESSAGE_ADD_CMD_RESPONSE, newEvent);
@@ -161,7 +161,7 @@ public class CommandExecutor {
 				} else {
 					newEvent = new ToDoEvent(eventIndex, cmd.getTaskName(), cmd.getEnd());
 				}
-				undoStack.push(new ArrayList<Event>(eventList));
+				undoStack.push(cloneEventList());
 				eventList.add(newEvent);
 				sort();
 				response = String.format(MESSAGE_ADD_CMD_RESPONSE, newEvent);
@@ -172,7 +172,7 @@ public class CommandExecutor {
 		} else if (!cmd.hasStart() && !cmd.hasEnd()) {
 			int eventIndex = eventList.size() + 1;
 			newEvent = new FloatingTask(eventIndex, cmd.getTaskName());
-			undoStack.push(new ArrayList<Event>(eventList));
+			undoStack.push(cloneEventList());
 			eventList.add(newEvent);
 			sort();
 			response = String.format(MESSAGE_ADD_CMD_RESPONSE, newEvent);
@@ -455,7 +455,7 @@ public class CommandExecutor {
 		String doneEvent = "";
 		for (int i = 0; i < eventList.size(); i++) {
 			if (eventList.get(i).getEventName().toLowerCase().contains(arguments.toLowerCase())) {
-				undoStack.push(new ArrayList<Event>(eventList));
+				undoStack.push(cloneEventList());
 				eventList.get(i).setDone();
 				doneEvent = eventList.get(i).getEventName();
 				break;
@@ -471,13 +471,13 @@ public class CommandExecutor {
 		String arguments = cmd.getTaskName();
 		String doneEvent = "";
 		if (arguments.equals(MESSAGE_MARKDONE_CMD_SPECIALCOMMAND.trim())) {
-			undoStack.push(new ArrayList<Event>(eventList));
+			undoStack.push(cloneEventList());
 			for (int i = 0; i < eventList.size(); i++) {
 				eventList.get(i).setDone();
 			}
 			return MESSAGE_MARKDONE_CMD_ALL;
 		} else {
-			undoStack.push(new ArrayList<Event>(eventList));
+			undoStack.push(cloneEventList());
 			for (int i = 0; i < eventList.size(); i++) {
 				if (eventList.get(i).getEventName().toLowerCase().contains(cmd.getTaskNameAll())) {
 					eventList.get(i).setDone();
@@ -499,7 +499,7 @@ public class CommandExecutor {
 		if (eventList.size() < index || index < 1) {
 			return MESSAGE_MARKDONE_CMD_NOTFOUND;
 		} else if (eventList.size() != 0) {
-			undoStack.push(new ArrayList<Event>(eventList));
+			undoStack.push(cloneEventList());
 			eventList.get(index - ZERO_OFFSET).setDone();
 			doneEvent = eventList.get(index - ZERO_OFFSET).getEventName();
 			return String.format(MESSAGE_MARKDONE_CMD_RESPONSE, doneEvent);
@@ -511,7 +511,7 @@ public class CommandExecutor {
 	private String doneFirst(Markdone cmd) {
 		String doneEvent = "";
 		if (eventList.size() != 0) {
-			undoStack.push(new ArrayList<Event>(eventList));
+			undoStack.push(cloneEventList());
 			eventList.get(0).setDone();
 			doneEvent = eventList.get(0).getEventName();
 			return String.format(MESSAGE_MARKDONE_CMD_RESPONSE, doneEvent);
@@ -552,7 +552,7 @@ public class CommandExecutor {
 
 	// To be Implemented
 	private String deleteDone(Delete cmd) {
-		undoStack.push(new ArrayList<Event>(eventList));
+		undoStack.push(cloneEventList());
 		for (int i = 0; i < eventList.size(); i++) {
 			if (eventList.get(i).isDone()) {
 				eventList.remove(i);
@@ -568,7 +568,7 @@ public class CommandExecutor {
 		String removeEvent = "";
 		for (int i = 0; i < eventList.size(); i++) {
 			if (eventList.get(i).getEventName().toLowerCase().contains(arguments)) {
-				undoStack.push(new ArrayList<Event>(eventList));
+				undoStack.push(cloneEventList());
 				removeEvent = eventList.remove(i).getEventName();
 				reIndex();
 				break;
@@ -584,11 +584,11 @@ public class CommandExecutor {
 		String arguments = cmd.getTaskName();
 		String removeEvent = "";
 		if (arguments.equals(MESSAGE_DELETE_CMD_SPECIALCOMMAND.trim())) {
-			undoStack.push(new ArrayList<Event>(eventList));
+			undoStack.push(cloneEventList());
 			eventList.clear();
 			return MESSAGE_DELETE_CMD_ALL;
 		} else {
-			undoStack.push(new ArrayList<Event>(eventList));
+			undoStack.push(cloneEventList());
 			for (int i = 0; i < eventList.size(); i++) {
 				if (eventList.get(i).getEventName().toLowerCase().contains(cmd.getTaskNameAll())) {
 					eventList.remove(i).getEventName();
@@ -611,7 +611,7 @@ public class CommandExecutor {
 		if (eventList.size() < index || index < 1) {
 			return MESSAGE_DELETE_CMD_NOTFOUND;
 		} else if (eventList.size() != 0) {
-			undoStack.push(new ArrayList<Event>(eventList));
+			undoStack.push(cloneEventList());
 			removeEvent = eventList.remove(index - ZERO_OFFSET).getEventName();
 			reIndex();
 			return String.format(MESSAGE_DELETE_CMD_RESPONSE, removeEvent);
@@ -624,7 +624,7 @@ public class CommandExecutor {
 	private String deleteFirst(Delete cmd) {
 		String removeEvent = "";
 		if (eventList.size() != 0) {
-			undoStack.push(new ArrayList<Event>(eventList));
+			undoStack.push(cloneEventList());
 			removeEvent = eventList.remove(0).getEventName();
 			reIndex();
 			return String.format(MESSAGE_DELETE_CMD_RESPONSE, removeEvent);
@@ -640,6 +640,14 @@ public class CommandExecutor {
 		for (int i = 0; i < eventList.size(); i++) {
 			eventList.get(i).setEventIndex(i + 1);
 		}
+	}
+	
+	public ArrayList<Event> cloneEventList() {
+		ArrayList<Event> temp = new ArrayList<Event>();
+		for(Event e: eventList) {
+			temp.add(e.createCopy());
+		}
+		return temp;
 	}
 
 	// @@author A0126989H
@@ -660,9 +668,8 @@ public class CommandExecutor {
 			return MESSAGE_UNDO_EMPTY_STACK;
 		} else {
 			redoStack.clear();
-			redoStack.push(new ArrayList<Event>(eventList));
+			redoStack.push(cloneEventList());
 			eventList = undoStack.pop();
-			reIndex();
 		}
 		Display disp = new Display();
 		disp.setDefaultFlag(true);
@@ -676,9 +683,8 @@ public class CommandExecutor {
 		if (redoStack.isEmpty()) {
 			return MESSAGE_REDO_EMPTY_STACK;
 		} else {
-			undoStack.push(new ArrayList<Event>(eventList));
+			undoStack.push(cloneEventList());
 			eventList = redoStack.pop();
-			reIndex();
 		}
 
 		Display disp = new Display();

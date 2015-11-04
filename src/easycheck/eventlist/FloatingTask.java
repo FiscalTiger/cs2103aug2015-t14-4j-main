@@ -30,6 +30,12 @@ public class FloatingTask extends Event {
 		this.complete = false;
 	}
 	
+	public FloatingTask(FloatingTask e) {
+		this.setEventIndex(e.getEventIndex());
+		this.setEventName(e.getEventName());
+		this.complete = e.isDone();
+	}
+	
 	public FloatingTask(JSONObject jsonObj){
 		Long eventIndex = (Long) jsonObj.get(JSON_EVENT_INDEX);
 		String eventName = (String) jsonObj.get(JSON_EVENT_NAME);
@@ -99,6 +105,10 @@ public class FloatingTask extends Event {
 	    return out.toString();
 	}
 	
+	public Event createCopy() {
+		return new FloatingTask(this);
+	}
+	
 	// @author A0126989H
 	public void setDone(){
 		this.complete = true;
@@ -107,4 +117,6 @@ public class FloatingTask extends Event {
 	public void setUndone(){
 		this.complete = false;
 	}
+	
+	
 }

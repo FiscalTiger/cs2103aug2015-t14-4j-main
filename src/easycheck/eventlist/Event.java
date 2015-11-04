@@ -94,6 +94,8 @@ public abstract class Event implements Comparable<Event> {
 	@Override
 	public abstract boolean equals(Object obj);
 	
+	public abstract Event createCopy();
+	
 	public void setDone(){
 		complete = true;
 	}

@@ -60,6 +60,16 @@ public class CalendarEvent extends Event {
 		this.setStopDate(null);
 	}
 	
+	public CalendarEvent(CalendarEvent e) {
+		this.setEventIndex(e.getEventIndex());
+		this.setEventName(e.getEventName());
+		this.setStartDateAndTime(e.getStartDateAndTime());
+		this.setEndDateAndTime(e.getEndDateAndTime());
+		this.setRepeating(e.isRepeating());
+		this.setFrequency(e.getFrequency());
+		this.stopDate = e.stopDate;
+	}
+	
 	public CalendarEvent(int eventIndex, String eventName, DateTime startDateAndTime, DateTime endDateAndTime,
 			boolean repeating, String frequency) {
 		this.setEventIndex(eventIndex);
@@ -368,6 +378,10 @@ public class CalendarEvent extends Event {
 	public boolean hasStopDate() {
 		return stopDate != null;
 	}
+	
+	public DateTime getStopDate() {
+		return stopDate;
+	}
 
 	public void setStopDate(DateTime stopDate) {
 		this.stopDate = stopDate;
@@ -387,5 +401,9 @@ public class CalendarEvent extends Event {
 
 	public void setFrequency(String frequency) {
 		this.frequency = frequency;
+	}
+	
+	public Event createCopy() {
+		return new CalendarEvent(this);
 	}
 }
