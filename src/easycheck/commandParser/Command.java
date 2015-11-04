@@ -63,7 +63,7 @@ public class Command {
 	        case SEARCH:
 	            return new Search(commandType,arguments);
 	        case SAVE_AT:
-	            return new SaveAt(commandType,arguments);
+	            return new SaveAt(arguments[0]);
 	        case INVALID: 
 //	        	return new Invalid(commandType);
 	        default:

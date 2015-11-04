@@ -1,9 +1,11 @@
+// @@author A0121560W
 package easycheck.logicController;
 
 import java.io.IOException;
 
 import easycheck.commandParser.Command;
 import easycheck.commandParser.CommandParser;
+import easycheck.commandParser.CommandTypes.ReadFrom;
 import easycheck.storage.StorageManager;
 
 
@@ -11,7 +13,7 @@ public class LogicController {
     private CommandParser commandParser;
     private CommandExecutor commandExecutor;
 	private StorageManager storageManager;
-	
+	private static String MESSAGE_READ_TARGET_SWITCHED = "Now reading from %s \n";
 	/**
 	 * This operation is used to instantiate dependencies
 	 * 
@@ -34,14 +36,19 @@ public class LogicController {
 	public String executeCommand(String userInput){
 		Command command = commandParser.parseCommand(userInput);
 		String responseString = commandExecutor.executeCommand(command);
-		
-		try {
-			storageManager.writeDataToEasyCheckFile(commandExecutor.getEventList());
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
+		if (command instanceof ReadFrom){
+			storageManager = new StorageManager(responseString);
+			commandExecutor = new CommandExecutor(storageManager.readDataFromEasyCheckFile());
+			return String.format(MESSAGE_READ_TARGET_SWITCHED, responseString);
+		} else {
+			try {
+				storageManager.writeDataToEasyCheckFile(commandExecutor.getEventList());
+			} catch (IOException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			return responseString;
 		}
-		return responseString;
 	}
 	
 	
