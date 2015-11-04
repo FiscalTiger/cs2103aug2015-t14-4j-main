@@ -23,6 +23,7 @@ import easycheck.commandParser.CommandTypes.Exit;
 import easycheck.commandParser.CommandTypes.Invalid;
 import easycheck.commandParser.CommandTypes.Redo;
 import easycheck.commandParser.CommandTypes.Repeat;
+import easycheck.commandParser.CommandTypes.SaveAt;
 import easycheck.commandParser.CommandTypes.Undo;
 import easycheck.commandParser.CommandTypes.Update;
 import easycheck.commandParser.CommandTypes.Markdone;
@@ -52,6 +53,7 @@ public class CommandParser {
     private final String COMMAND_TYPE_UNDO = "undo";
     private final String COMMAND_TYPE_REDO = "redo";
     private final String COMMAND_TYPE_EXIT = "exit";
+    private final String COMMAND_TYPE_SAVE_AT ="save_at";
 
     private final String MESSAGE_INVALID_COMMAND = "Invalid Command\n";
     private final String MESSAGE_INVALID_LESS_ARGS = "Too little arguments for command type \"%s\" \n";
@@ -75,6 +77,7 @@ public class CommandParser {
     // expected number of parameters for all other commands
     private final int NUM_ARGUMENTS_DELETE = 1;
     private final int NUM_ARGUMENTS_SEARCH = 1;
+    private final int NUM_ARGUMENTS_SAVE_AT = 1;
 
     // Date Time Formats accepted
     private static final String DATE_SPLITTER_SLASH = "/";
@@ -155,7 +158,11 @@ public class CommandParser {
             } else if (commandType.equalsIgnoreCase(COMMAND_TYPE_DISPLAY)) {
                 arguments = getDisplayArguments(commandArguments);
                 command = createDisplayCommand(arguments);
+            } else if (commandType.equalsIgnoreCase(COMMAND_TYPE_SAVE_AT)){
+            	arguments = getArguments(commandArguments, NUM_ARGUMENTS_SAVE_AT);
+            	command = createSaveAtCommand(arguments);
             } else {
+            
                 // if command type not recognized
                 command = new Invalid(MESSAGE_INVALID_COMMAND);
             }
@@ -169,7 +176,10 @@ public class CommandParser {
         return command;
     }
 
-    // get arguments for add type - supports flexi commands
+    
+	
+
+	// get arguments for add type - supports flexi commands
     private String[] getArgumentsAdd(String commandArguments) {
         // check arguments for flexi commands, then trim them.
         String[] arguments = trimArguments(checkFlexi(commandArguments));
@@ -449,4 +459,11 @@ public class CommandParser {
                 .split(FLEXI_KEYWORD_EVENT_SPLITTER));
         return dateStrings;
     }
+    
+    // @@author A0121560W
+    // only one argument expected, handled by getArguments
+    private Command createSaveAtCommand(String[] target) {
+		return new SaveAt(target[0]);
+	}
+
 }

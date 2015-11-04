@@ -1,5 +1,6 @@
 package easycheck.logicController;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -25,6 +26,7 @@ import easycheck.eventlist.CalendarEvent;
 import easycheck.eventlist.Event;
 import easycheck.eventlist.FloatingTask;
 import easycheck.eventlist.ToDoEvent;
+import easycheck.storage.StorageManager;
 
 public class CommandExecutor {
 	private static int ZERO_OFFSET = 1;
@@ -58,6 +60,10 @@ public class CommandExecutor {
 	private static final String MESSAGE_MARKDONE_CMD_ALL = "Congratulations on finishing all tasks! :)\n";
 	private static final String WHITESPACE_DELIMITER = "\\s+";
 		
+	// @@author A0121560W
+	private static final String MESSAGE_SAVE_AT_SUCCESS = "File has been save at %s successfully! \n";
+	private static final String MESSAGE_SAVE_AT_IO_EXCEPTION = "File could not be saved at %s! \n";
+	
 	private ArrayList<Event> eventList;
 	private Stack<ArrayList<Event>> undoStack;
 	private Stack<ArrayList<Event>> redoStack;
@@ -772,11 +778,7 @@ public class CommandExecutor {
 		return response;
 	}
 
-	// TODO
-	private String saveAt(SaveAt cmd) {
-		return "Successfully Saved";
-	}
-
+	
 	// TODO
 	private String repeat(Repeat cmd) {
 		return null;
@@ -790,5 +792,18 @@ public class CommandExecutor {
 	public ArrayList<Event> getEventList() {
 		return eventList;
 	}
+	
+	// @@author A0121560W
+		private String saveAt(SaveAt cmd) {
+			String target = cmd.getTarget();
+			StorageManager saveTarget = new StorageManager(target);
+			try {
+				saveTarget.writeDataToEasyCheckFile(this.getEventList());
+			} catch (IOException e) {
+				return String.format(MESSAGE_SAVE_AT_IO_EXCEPTION, target);
+			}
+			return String.format(MESSAGE_SAVE_AT_SUCCESS, target);
+		}
+
 
 }
