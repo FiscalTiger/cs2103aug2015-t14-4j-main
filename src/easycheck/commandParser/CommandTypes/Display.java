@@ -17,7 +17,7 @@ public class Display extends Command {
 	private boolean floatingFlag = false;
 	private boolean defaultFlag = false;
 	private boolean indexFlag = false;
-	private boolean notDoneFlag = false;
+	private boolean overDueFlag = false;
 	private boolean doneFlag = false;
 	
 	private int eventIndex;
@@ -58,12 +58,12 @@ public class Display extends Command {
 		this.indexFlag = indexFlag;
 	}
 
-	public boolean isNotDone() {
-		return notDoneFlag;
+	public boolean isOverDue() {
+		return overDueFlag;
 	}
 
-	public void setNotDoneFlag(boolean notDoneFlag) {
-		this.notDoneFlag = notDoneFlag;
+	public void setOverDueFlag(boolean overDueFlag) {
+		this.overDueFlag = overDueFlag;
 	}
 
 	public boolean isDone() {

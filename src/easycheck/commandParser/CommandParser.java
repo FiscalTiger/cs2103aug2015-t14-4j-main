@@ -68,7 +68,7 @@ public class CommandParser {
     private static final String MESSAGE_INVALID_UPDATE_NUM_OF_ARGS = "Update: too many arguments\n";
     private static final String DISPLAY_FLAG_FLOATING = "f";
     private static final String DISPLAY_FLAG_DONE = "done";
-    private static final String DISPLAY_FLAG_DUE = "due";
+    private static final String DISPLAY_FLAG_OVER_DUE = "overdue";
     private static final String DISPLAY_FLAG_DATE = "d";
     private static final String DISPLAY_FLAG_INDEX = "i";
 
@@ -89,7 +89,7 @@ public class CommandParser {
             .forPattern(DATE_AND_TIME_INPUT_FORMAT);
 
     // flexi command keywords
-    private final String[] FLEXI_KEYWORDS = { " by ", " at ", " on " };
+    private final String[] FLEXI_KEYWORDS = { " by ", " at ", " on ", " due " };
     private final String FLEXI_KEYWORD_EVENT_SPLITTER = " to ";
     private final String DUMMY_TIME = " 23:59";
     // parses the arguments and calls the appropriate create command.
@@ -304,8 +304,8 @@ public class CommandParser {
             } else if (arguments.length == 1) {
                 if (arguments[0].equals(DISPLAY_FLAG_FLOATING)) {
                     disp.setFloatingFlag(true);
-                } else if (arguments[0].equals(DISPLAY_FLAG_DUE)) {
-                    disp.setNotDoneFlag(true);
+                } else if (arguments[0].equals(DISPLAY_FLAG_OVER_DUE)) {
+                    disp.setOverDueFlag(true);
                 } else if (arguments[0].equals(DISPLAY_FLAG_DONE)) {
                     disp.setDoneFlag(true);
                 } else {

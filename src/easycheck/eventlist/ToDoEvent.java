@@ -32,6 +32,7 @@ public class ToDoEvent extends Event {
 	private static final String MESSAGE_JSON_STRING_ERROR = "Error in toJsonString method, most likely coding error";
 	private static final String MESSAGE_TO_STRING_TEMPLATE_IS_NOT_COMPLETE = "%d. %s due on %s\n";
 	private static final String MESSAGE_TO_STRING_TEMPLATE_IS_COMPLETE = "%d. %s due on %s is complete\n";
+	private static final String MESSAGE_REPEATING_ADDITION = " (Repeats %s)";
 	
 	private static final String MESSAGE_TO_PRINT_GROUP_STRING_TEMPLATE_IS_NOT_COMPLETE = "%d. %s due at %s\n";
 	private static final String MESSAGE_TO_PRINT_GROUP_STRING_TEMPLATE_IS_COMPLETE = "%d. %s due at %s is complete\n";
@@ -180,8 +181,12 @@ public class ToDoEvent extends Event {
 		return complete;
 	}
 	
+	public boolean isOverDue() {
+		return !complete && deadline.isBeforeNow();
+	}
+	
 	public boolean isUpdated() {
-		return deadline.isAfterNow() || !complete;
+		return deadline.isAfterNow() && !complete;
 	}
 	
 	public boolean isSameDay(DateTime date){
@@ -196,18 +201,24 @@ public class ToDoEvent extends Event {
 	 * Returns the string form of this calendar event
 	 */
 	public String toString() {
+		String repeatAddition = "";
 		DateTime.Property pDayOfTheWeek = this.getDeadline().dayOfWeek();
 		DateTime.Property pMonthOfYear = this.getDeadline().monthOfYear();
 		String deadlineString = String.format(DATE_AND_TIME_OUTPUT_FORMAT, pDayOfTheWeek.getAsShortText(),
 				this.getDeadline().getDayOfMonth(), pMonthOfYear.getAsShortText(), 
 				this.getDeadline().getYear(), this.getDeadline().getHourOfDay(), 
 				this.getDeadline().getMinuteOfHour());
+		
+		if(repeating) {
+			repeatAddition = String.format(MESSAGE_REPEATING_ADDITION, frequency);
+		}
+		
 		if(complete) {
 			return String.format(
-					MESSAGE_TO_STRING_TEMPLATE_IS_COMPLETE, this.getEventIndex(), this.getEventName(), deadlineString);
+					MESSAGE_TO_STRING_TEMPLATE_IS_COMPLETE, this.getEventIndex(), this.getEventName(), deadlineString) + repeatAddition;
 		} else {
 			return String.format(
-					MESSAGE_TO_STRING_TEMPLATE_IS_NOT_COMPLETE, this.getEventIndex(), this.getEventName(), deadlineString);
+					MESSAGE_TO_STRING_TEMPLATE_IS_NOT_COMPLETE, this.getEventIndex(), this.getEventName(), deadlineString) + repeatAddition;
 		}
 	}
 	

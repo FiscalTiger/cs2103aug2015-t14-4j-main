@@ -176,6 +176,8 @@ public class CommandExecutor {
 			response = getDisplayDoneString();
 		} else if (cmd.isDate()) {
 			response = getDisplayDateString(cmd.getDisplayDate());
+		} else if (cmd.isOverDue()) {
+			response = getDisplayOverDueString();
 		} else {
 			response = getDefaultDisplayString();
 		}
@@ -183,7 +185,7 @@ public class CommandExecutor {
 		assert(!response.equals(""));
 		return response;
 	}
-	
+
 	// Get Floating tasks for display string
 	// @author A0145668R
 	private String getDisplayFloatingString() {
@@ -266,6 +268,37 @@ public class CommandExecutor {
 		}
 
 		response += floatingGroup.toString();
+		for (PrintGroup dateGroup : dateGroups) {
+			response += dateGroup.toString();
+		}
+		return response;
+	}
+	
+	private String getDisplayOverDueString() {
+		String response = "";
+		ArrayList<PrintGroup> dateGroups = new ArrayList<PrintGroup>();
+		for (Event e : eventList) {
+			if (e instanceof ToDoEvent) {
+				ToDoEvent todo = (ToDoEvent) e;
+				if (todo.isOverDue()) {
+					boolean isAdded = false;
+					for (PrintGroup dateGroup : dateGroups) {
+						if (dateGroup.getHeading().equals(todo.getDeadlineDate())) {
+							dateGroup.addEntry(todo);
+							isAdded = true;
+							break;
+						}
+					}
+	
+					if (!isAdded) {
+						PrintGroup temp = new PrintGroup(todo.getDeadlineDate());
+						dateGroups.add(temp);
+						temp.addEntry(todo);
+					}
+				}
+			}
+		}
+
 		for (PrintGroup dateGroup : dateGroups) {
 			response += dateGroup.toString();
 		}
