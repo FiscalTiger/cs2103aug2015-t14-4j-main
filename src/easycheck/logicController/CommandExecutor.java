@@ -461,10 +461,13 @@ public class CommandExecutor {
 				break;
 			}
 		}
-		if (doneEvent.equals(""))
+		if (doneEvent.equals("")) {
 			return MESSAGE_MARKDONE_CMD_NOTFOUND;
-		else
+		}
+		else {
+			sort();
 			return String.format(MESSAGE_MARKDONE_CMD_RESPONSE, doneEvent);
+		}
 	}
 
 	private String doneSpecial(Markdone cmd) {
@@ -489,6 +492,7 @@ public class CommandExecutor {
 			}
 			doneEvent = MESSAGE_MARKDONE_CMD_SPECIALCOMMAND + doneEvent;
 		}
+		sort();
 		return String.format(MESSAGE_MARKDONE_CMD_RESPONSE, doneEvent);
 	}
 
@@ -502,6 +506,7 @@ public class CommandExecutor {
 			undoStack.push(cloneEventList());
 			eventList.get(index - ZERO_OFFSET).setDone();
 			doneEvent = eventList.get(index - ZERO_OFFSET).getEventName();
+			sort();
 			return String.format(MESSAGE_MARKDONE_CMD_RESPONSE, doneEvent);
 		} else {
 			return MESSAGE_MARDONE_CMD_EMPTY;
@@ -514,6 +519,7 @@ public class CommandExecutor {
 			undoStack.push(cloneEventList());
 			eventList.get(0).setDone();
 			doneEvent = eventList.get(0).getEventName();
+			sort();
 			return String.format(MESSAGE_MARKDONE_CMD_RESPONSE, doneEvent);
 		} else {
 			return MESSAGE_MARDONE_CMD_EMPTY;

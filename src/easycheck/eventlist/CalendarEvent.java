@@ -218,24 +218,24 @@ public class CalendarEvent extends Event {
 		Duration dur = getDuration();
 		switch(frequency) {
 			case REPEATING_DAILY:
-				startDateAndTime.plusDays(1);
-				endDateAndTime.plus(dur);
+				startDateAndTime = startDateAndTime.plusDays(1);
+				endDateAndTime = endDateAndTime.plus(dur);
 				break;
 			case REPEATING_WEEKLY:
-				startDateAndTime.plusWeeks(1);
-				endDateAndTime.plus(dur);
+				startDateAndTime = startDateAndTime.plusWeeks(1);
+				endDateAndTime = endDateAndTime.plus(dur);
 				break;
 			case REPEATING_BIWEEKLY:
-				startDateAndTime.plusWeeks(2);
-				endDateAndTime.plus(dur);
+				startDateAndTime = startDateAndTime.plusWeeks(2);
+				endDateAndTime = endDateAndTime.plus(dur);
 				break;
 			case REPEATING_MONTHLY:
-				startDateAndTime.plusMonths(1);
-				endDateAndTime.plus(dur);
+				startDateAndTime = startDateAndTime.plusMonths(1);
+				endDateAndTime = endDateAndTime.plus(dur);
 				break;
 			case REPEATING_YEARLY:
-				startDateAndTime.plusYears(1);
-				endDateAndTime.plus(dur);
+				startDateAndTime = startDateAndTime.plusYears(1);
+				endDateAndTime = endDateAndTime.plus(dur);
 				break;
 			default:
 				try {
