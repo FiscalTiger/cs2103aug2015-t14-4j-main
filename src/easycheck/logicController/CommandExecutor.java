@@ -443,7 +443,6 @@ public class CommandExecutor {
 
 	private String doneSpecial(Markdone cmd) {
 		String arguments = cmd.getTaskName();
-		System.out.println("arguments: " + arguments);
 		String doneEvent = "";
 		if (arguments.equals(MESSAGE_MARKDONE_CMD_SPECIALCOMMAND.trim())) {
 			undoStack.push(new ArrayList<Event>(eventList));
