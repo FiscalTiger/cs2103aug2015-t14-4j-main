@@ -16,9 +16,14 @@ import easycheck.commandParser.Command;
 public class Add extends Command {
 	//@author A0145668R
 	private String taskName; 
-
 	private DateTime start;
 	private DateTime end;
+	private boolean isRepeating;
+	private boolean isDaily;
+    private boolean isWeekly;
+    private boolean isBiweekly;
+    private boolean isMonthly;
+    private boolean isYearly;
 	//end @author A0145668R
 	
 	public Add(String taskName) {
@@ -79,4 +84,57 @@ public class Add extends Command {
 	public void setEnd(DateTime end) {
 		this.end = end;
 	}
+
+	public boolean isRepeating() {
+		return isRepeating;
+	}
+
+	public void setRepeating(boolean isRepeating) {
+		this.isRepeating = isRepeating;
+	}
+
+	public void isDaily() {
+        // only one of the booleans can be true
+        isDaily = true;
+        isWeekly = false;
+        isBiweekly = false;
+        isMonthly = false;
+        isYearly = false;
+    }
+
+    public void isWeekly() {
+        // only one of the booleans can be true
+        isDaily = false;
+        isWeekly = true;
+        isBiweekly = false;
+        isMonthly = false;
+        isYearly = false;
+    }
+    
+    public void isBiweekly() {
+    	// only one of the booleans can be true
+    	isDaily = false;
+        isWeekly = false;
+        isBiweekly = true;
+        isMonthly = false;
+        isYearly = false;
+    }
+
+    public void isMonthly() {
+        // only one of the booleans can be true
+        isDaily = false;
+        isWeekly = false;
+        isBiweekly = false;
+        isMonthly = true;
+        isYearly = false;
+    }
+    
+    public void isYearly() {
+        // only one of the booleans can be true
+        isDaily = false;
+        isWeekly = false;
+        isBiweekly = false;
+        isMonthly = false;
+        isYearly = true;
+    }
 }

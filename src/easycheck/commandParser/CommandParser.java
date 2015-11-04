@@ -21,11 +21,11 @@ import easycheck.commandParser.CommandTypes.Delete;
 import easycheck.commandParser.CommandTypes.Display;
 import easycheck.commandParser.CommandTypes.Exit;
 import easycheck.commandParser.CommandTypes.Invalid;
+import easycheck.commandParser.CommandTypes.Markdone;
 import easycheck.commandParser.CommandTypes.Redo;
 import easycheck.commandParser.CommandTypes.Repeat;
 import easycheck.commandParser.CommandTypes.Undo;
 import easycheck.commandParser.CommandTypes.Update;
-import easycheck.commandParser.CommandTypes.Markdone;
 
 public class CommandParser {
     private final String COMMAND_SPLITTER = " ";
@@ -62,7 +62,19 @@ public class CommandParser {
     private static final String MESSAGE_INVALID_DISPLAY_NUM_OF_ARGS = "Display: too many arguments\n";
 
     private static final String MESSAGE_INVALID_ADD_DATE = "Add: Couldn't parse the date \"%s\"s\n";
+    private static final String MESSAGE_INVALID_ADD_DATES = "Add: Couldn't parse the date text.\n";
     private static final String MESSAGE_INVALID_ADD_NUM_OF_ARGS = "Add: too many arguments\n";
+    private static final String MESSAGE_INVALID_ADD_FREQUENCY = "Add: You have used the Repeat flag but entered an invalid frequency.\n";
+    
+    private static final String ADD_FLAG_REPEAT = " repeat ";
+    private static final String ADD_FLAG_STOP = " stop ";
+    private static final String REPEATING_DAILY = "daily";
+	private static final String REPEATING_WEEKLY = "weekly";
+	private static final String REPEATING_BIWEEKLY = "biweekly";
+	private static final String REPEATING_MONTHLY = "monthly";
+	private static final String REPEATING_YEARLY = "yearly";
+    private static final boolean NOT_REPEATING = false;
+    private static final boolean REPEATING = true;
 
     private static final String MESSAGE_INVALID_UPDATE_DATE = "Update: Couldn't parse the date \"%s\"s\n";
     private static final String MESSAGE_INVALID_UPDATE_NUM_OF_ARGS = "Update: too many arguments\n";
@@ -171,6 +183,8 @@ public class CommandParser {
 
     // get arguments for add type - supports flexi commands
     private String[] getArgumentsAdd(String commandArguments) {
+    	commandArguments = commandArguments.replace(ADD_FLAG_REPEAT, ARGUMENT_SPLITTER);
+    	commandArguments = commandArguments.replace(ADD_FLAG_STOP, ARGUMENT_SPLITTER);
         // check arguments for flexi commands, then trim them.
         String[] arguments = trimArguments(checkFlexi(commandArguments));
         return arguments;
@@ -184,46 +198,105 @@ public class CommandParser {
 
     // @@author A0145668R
     private Command createAddCommand(String[] arguments) {
-        Command cmd = null;
-        String taskName = arguments[0];
+        Add cmd = null;
+        String taskName;
         DateTime start;
         DateTime end;
         DateTime[] parsedDates;
         try {
 
             if (arguments.length == 1) {
+            	taskName = arguments[0];
                 cmd = new Add(taskName);
             } else if (arguments.length == 2) {
+            	taskName = arguments[0];
                 parsedDates = parseDateText(arguments[1]);
                 if (parsedDates.length == 1) {
-                    end = parsedDates[FIRST_PARSED_DATE_TEXT];
-                    if (end != null) {
-                        cmd = new Add(taskName, end);
-                    } else {
-                        cmd = new Invalid(String.format(
-                                MESSAGE_INVALID_ADD_DATE, arguments[1]));
-                    }
-                } else if (parsedDates.length == 2) {
-                    start = parsedDates[FIRST_PARSED_DATE_TEXT];
-                    end = parsedDates[SECOND_PARSED_DATE_TEXT];
-                    if (start != null && end != null) {
-                        cmd = new Add(taskName, start, end);
-                    } else {
-                        if (start == null) {
-                            cmd = new Invalid(String.format(
-                                    MESSAGE_INVALID_ADD_DATE, arguments[1]));
-                        }
-                        if (end == null) {
-                            cmd = new Invalid(String.format(
-                                    MESSAGE_INVALID_ADD_DATE, arguments[2]));
-                        }
-                    }
-                }
-            } else {
-                cmd = new Invalid(MESSAGE_INVALID_ADD_NUM_OF_ARGS);
+        		    end = parsedDates[FIRST_PARSED_DATE_TEXT];
+        		    if (end != null) {
+        		        cmd = new Add(taskName, end);
+        		    } else {
+        		        return new Invalid(String.format(
+        		                MESSAGE_INVALID_ADD_DATE, arguments[1]));
+        		    }
+        		} else if (parsedDates.length == 2) {
+        		    start = parsedDates[FIRST_PARSED_DATE_TEXT];
+        		    end = parsedDates[SECOND_PARSED_DATE_TEXT];
+        		    if (start != null && end != null) {
+        		        cmd = new Add(taskName, start, end);
+        		    } else {
+        		        if (start == null) {
+        		            return new Invalid(String.format(
+        		                    MESSAGE_INVALID_ADD_DATE, arguments[1]));
+        		        }
+        		        if (end == null) {
+        		            return new Invalid(String.format(
+        		                    MESSAGE_INVALID_ADD_DATE, arguments[2]));
+        		        }
+        		    }
+        		} else {
+        			return new Invalid(MESSAGE_INVALID_ADD_DATES);
+        		}
+            } else if (arguments.length == 3) {
+            	String frequency = arguments[2];
+            	taskName = arguments[0];
+                parsedDates = parseDateText(arguments[1]);
+                if (parsedDates.length == 1) {
+        		    end = parsedDates[FIRST_PARSED_DATE_TEXT];
+        		    if (end != null) {
+        		        cmd = new Add(taskName, end);
+        		    } else {
+        		        return new Invalid(String.format(
+        		                MESSAGE_INVALID_ADD_DATE, arguments[1]));
+        		    }
+        		} else if (parsedDates.length == 2) {
+        		    start = parsedDates[FIRST_PARSED_DATE_TEXT];
+        		    end = parsedDates[SECOND_PARSED_DATE_TEXT];
+        		    if (start != null && end != null) {
+        		        cmd = new Add(taskName, start, end);
+        		    } else {
+        		        if (start == null) {
+        		            return new Invalid(String.format(
+        		                    MESSAGE_INVALID_ADD_DATE, arguments[1]));
+        		        }
+        		        if (end == null) {
+        		            return new Invalid(String.format(
+        		                    MESSAGE_INVALID_ADD_DATE, arguments[2]));
+        		        }
+        		    }
+        		} else {
+        			return new Invalid(MESSAGE_INVALID_ADD_DATES);
+        		}
+                
+            	switch (frequency) {
+	            	case REPEATING_DAILY:
+	            		cmd.setRepeating(REPEATING);
+	            		cmd.isDaily();
+	    				break;
+	    			case REPEATING_WEEKLY:
+	    				cmd.setRepeating(REPEATING);
+	            		cmd.isWeekly();
+	    				break;
+	    			case REPEATING_BIWEEKLY:
+	    				cmd.setRepeating(REPEATING);
+	            		cmd.isBiweekly();
+	    				break;
+	    			case REPEATING_MONTHLY:
+	    				cmd.setRepeating(REPEATING);
+	            		cmd.isMonthly();
+	    				break;
+	    			case REPEATING_YEARLY:
+	    				cmd.setRepeating(REPEATING);
+	            		cmd.isYearly();
+	    				break;
+	    			default:
+	    				return new Invalid(MESSAGE_INVALID_ADD_FREQUENCY);
+            	}
+        	} else {
+                return new Invalid(MESSAGE_INVALID_ADD_NUM_OF_ARGS);
             }
         } catch (Exception e) {
-            cmd = new Invalid(String.format(
+            return new Invalid(String.format(
                     MESSAGE_INVALID_ADD_DATE, arguments[1]));
         }
         assert (cmd != null);
