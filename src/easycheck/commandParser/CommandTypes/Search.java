@@ -1,7 +1,7 @@
 package easycheck.commandParser.CommandTypes;
+
 import easycheck.commandParser.CommandParser.*;
 import java.util.List;
-
 
 import org.joda.time.DateTime;
 import org.joda.time.Period;
@@ -11,27 +11,33 @@ import org.joda.time.format.DateTimeFormatter;
 import easycheck.commandParser.Command;
 
 //@author A0126989H
-public class Search extends Command{
-	private static final String SPLIT_REGEXP= "\\s+";
-	private String [] searchTerms;
+public class Search extends Command {
+	private static final int SUBSTRING_COMMAND_START = 4;
+	private static final int ALL_COMMAND_END = 3;
+	private static final int ZERO_CONSTANT = 0;
+	private static final int ARGUMENT_SIZE = 1;
+	private static final String MESSAGE_DELETE_CMD_SPECIALCOMMAND = "all";
+
+	private static final String SPLIT_REGEXP = "\\s+";
+	private String[] searchTerms;
 	private DateTime date;
-	
-	
-	
+
 	public Search(String commandType, String[] arguments) {
 		super(commandType, arguments);
-		assert (arguments != null); // as if the arguments is null, the search command should not exist
+		assert(arguments != null); // as if the arguments is null, the search
+									// command should not exist
 		searchTerms = arguments;
 	}
-	
-	public String getArgument(){
-		return searchTerms[0].toLowerCase();
+
+	public String getArgument() {
+		return searchTerms[ZERO_CONSTANT].toLowerCase();
 	}
-	public boolean isFreetimeSearch(){
+
+	public boolean isFreetimeSearch() {
 		String[] temp = getArgument().split(SPLIT_REGEXP);
-		if (temp.length==1 && temp[0].toLowerCase().equals("freetime")){
+		if (temp.length == ARGUMENT_SIZE && temp[ZERO_CONSTANT].toLowerCase().equals("freetime")) {
 			return true;
-		} else if (temp.length>1 && temp[0].toLowerCase().equals("freetime")){
+		} else if (temp.length > ARGUMENT_SIZE && temp[ZERO_CONSTANT].toLowerCase().equals("freetime")) {
 			DateTimeFormatter formatter = DateTimeFormat.forPattern("dd/MM/yyyy");
 			date = formatter.parseDateTime(temp[1]);
 			return true;
@@ -39,12 +45,25 @@ public class Search extends Command{
 			return false;
 		}
 	}
-	public boolean hasDate(){
-		return date!=null;
+
+	public boolean hasDate() {
+		return date != null;
 	}
-	public DateTime getDate(){
+
+	public DateTime getDate() {
 		return date;
 	}
-	
-	
+
+	public String getTaskNameAll() {
+		if (getArgument().length() >= SUBSTRING_COMMAND_START)
+			return getArgument().substring(SUBSTRING_COMMAND_START);
+		else
+			return "";
+	}
+
+	public boolean isSearchAll() {
+		return getArgument().length() >= ALL_COMMAND_END
+				&& getArgument().substring(ZERO_CONSTANT, ALL_COMMAND_END).equals(MESSAGE_DELETE_CMD_SPECIALCOMMAND);
+	}
+
 }
