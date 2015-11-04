@@ -56,7 +56,8 @@ public class CommandExecutor {
 	private static final String MESSAGE_MARKDONE_CMD_NOTFOUND = "There are no such events!\n";
 	private static final String MESSAGE_MARKDONE_CMD_SPECIALCOMMAND = "all ";
 	private static final String MESSAGE_MARKDONE_CMD_ALL = "Congratulations on finishing all tasks! :)\n";
-
+	private static final String WHITESPACE_DELIMITER = "\\s+";
+		
 	private ArrayList<Event> eventList;
 	private Stack<ArrayList<Event>> undoStack;
 	private Stack<ArrayList<Event>> redoStack;
@@ -412,11 +413,10 @@ public class CommandExecutor {
 		} else if (isNumeric(arguments)) {
 			return doneIndex(cmd);
 			/*
-			 * Case 2: Special Command : " done all" done Multiple matching
-			 * String and "done all + eventName"
+			 * Case 2: Special Command : " done all" done Multiple matching String 
+			 * and "done all + eventName"
 			 */
-		} else if (arguments.length() >= 3
-				&& arguments.substring(0, 3).equals(MESSAGE_MARKDONE_CMD_SPECIALCOMMAND.trim())) {
+		} else if (cmd.isDoneAll()) {
 			return doneSpecial(cmd);
 			// Case 4: When the command is "done + EventName"
 		} else {
@@ -428,7 +428,7 @@ public class CommandExecutor {
 		String arguments = cmd.getTaskName();
 		String doneEvent = "";
 		for (int i = 0; i < eventList.size(); i++) {
-			if (eventList.get(i).getEventName().contains(arguments.toLowerCase())) {
+			if (eventList.get(i).getEventName().toLowerCase().contains(arguments.toLowerCase())) {
 				undoStack.push(new ArrayList<Event>(eventList));
 				eventList.get(i).setDone();
 				doneEvent = eventList.get(i).getEventName();
@@ -443,7 +443,6 @@ public class CommandExecutor {
 
 	private String doneSpecial(Markdone cmd) {
 		String arguments = cmd.getTaskName();
-		System.out.println("arguments: " + arguments);
 		String doneEvent = "";
 		if (arguments.equals(MESSAGE_MARKDONE_CMD_SPECIALCOMMAND.trim())) {
 			undoStack.push(new ArrayList<Event>(eventList));
@@ -454,9 +453,9 @@ public class CommandExecutor {
 		} else {
 			undoStack.push(new ArrayList<Event>(eventList));
 			for (int i = 0; i < eventList.size(); i++) {
-				if (eventList.get(i).getEventName().contains(arguments.substring(4))) {
+				if (eventList.get(i).getEventName().toLowerCase().contains(cmd.getTaskNameAll())) {
 					eventList.get(i).setDone();
-					doneEvent = eventList.get(i).getEventName();
+					doneEvent = cmd.getTaskNameAll();
 				}
 			}
 			if (doneEvent.equals("")) {
@@ -514,10 +513,10 @@ public class CommandExecutor {
 			 * String and "delete all + eventName"
 			 */
 		} else
-			if (arguments.length() >= 3 && arguments.substring(0, 3).equals(MESSAGE_DELETE_CMD_SPECIALCOMMAND.trim())) {
+			if (cmd.isDeleteAll()) {
 			return deleteSpecial(cmd);
 			// Case 4: Delete Done Tasks "delete done"
-		} else if (arguments.length() >= 4 && arguments.equals("done")) {
+		} else if (cmd.isDeleteDone()) {
 			return deleteDone(cmd);
 			// Case 5: When the command is "delete + EventName"
 		} else {
@@ -557,7 +556,7 @@ public class CommandExecutor {
 
 	private String deleteSpecial(Delete cmd) {
 		String arguments = cmd.getTaskName();
-		String removeEvent = arguments;
+		String removeEvent = "";
 		if (arguments.equals(MESSAGE_DELETE_CMD_SPECIALCOMMAND.trim())) {
 			undoStack.push(new ArrayList<Event>(eventList));
 			eventList.clear();
@@ -565,8 +564,9 @@ public class CommandExecutor {
 		} else {
 			undoStack.push(new ArrayList<Event>(eventList));
 			for (int i = 0; i < eventList.size(); i++) {
-				if (eventList.get(i).getEventName().toLowerCase().contains(arguments.substring(4))) {
+				if (eventList.get(i).getEventName().toLowerCase().contains(cmd.getTaskNameAll())) {
 					eventList.remove(i).getEventName();
+					removeEvent = cmd.getTaskNameAll();
 					i--;
 				}
 			}
@@ -664,12 +664,16 @@ public class CommandExecutor {
 	// @@author A0126989H
 	private String search(Search cmd) {
 		String response = "";
+		//Case 1: No Event to search at all;
 		if (eventList.isEmpty()) {
 			response = MESSAGE_SEARCH_CMD_EMPTY;
+		//Case 2: Search freetime;
 		} else if (cmd.isFreetimeSearch() && !cmd.hasDate()) {
 			response = getFreeTime();
+		//Case 3: Search freetime + Date;
 		} else if (cmd.isFreetimeSearch() && cmd.hasDate()){
 			response = getFreeTimeSpec(cmd);
+		//Case 4: Search + EventName;
 		} else {
 			for (Event e : eventList) {
 				if (e.getEventName().toLowerCase().contains(cmd.getArgument().toLowerCase())) {

@@ -12,6 +12,10 @@ import easycheck.commandParser.Command;
  */
 
 public class Delete extends Command{
+	private static final int SUBSTRING_COMMAND_START = 4;
+	private static final int ALL_COMMAND_END = 3;
+	private static final String MESSAGE_DELETE_CMD_SPECIALCOMMAND = "all";
+	private static final String MESSAGE_DELETE_CMD_DONECOMMAND = "done";
 	private String task;
 	
 	public Delete(String[] arguments) {
@@ -28,4 +32,17 @@ public class Delete extends Command{
     		return task.toLowerCase();
     	}
 	}
+    public String getTaskNameAll(){
+    	if (task.length() >= SUBSTRING_COMMAND_START)
+    		return task.substring(SUBSTRING_COMMAND_START );
+    	else
+    		return "";
+    }
+    public boolean isDeleteAll(){
+    	return task.length() >= ALL_COMMAND_END
+		&& task.substring(0, ALL_COMMAND_END).equals(MESSAGE_DELETE_CMD_SPECIALCOMMAND);
+    }
+    public boolean isDeleteDone(){
+    	return task.length() >= SUBSTRING_COMMAND_START && task.equals(MESSAGE_DELETE_CMD_DONECOMMAND);
+    }
 }
