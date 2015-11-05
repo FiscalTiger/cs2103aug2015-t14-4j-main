@@ -77,7 +77,7 @@ public class CommandExecutor {
     private static final String MESSAGE_UPDATE_INVALID_CAST = "@|red %s task type cannot be changed to %s task type!|@ \n";
     private static final String MESSAGE_UPDATE_INVALID_TYPE = "@|red %s is not a valid type! |@ \n";
     private static final String MESSAGE_UPDATE_INVALID_START = "@|red A task cannot just have a start date/time! |@ \n";
-    private static final String MESSAGE_UPDATE_NAME_RESPONSE = "Task %s has been renamed to %s \n";
+    private static final String MESSAGE_UPDATE_NAME_RESPONSE = "@|green Task %s has been renamed to %s |@ \n";
 	
 	private ArrayList<Event> eventList;
 	private Stack<ArrayList<Event>> undoStack;
