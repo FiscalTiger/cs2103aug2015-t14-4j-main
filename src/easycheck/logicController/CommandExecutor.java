@@ -40,6 +40,7 @@ public class CommandExecutor {
 	private static final String MESSAGE_UPDATE_FLOAT_RESPONSE = "@|green Updated %s to %s successfully|@\n";
 	private static final String MESSAGE_UPDATE_TODO_RESPONSE = "@|green Updated %s successfully|@\n";
 	private static final String MESSAGE_UPDATE_CAL_RESPONSE = "@|green Updated %s successfully|@\n";
+	private static final String MESSAGE_UPDATE_TYPE_RESPONSE ="@|green %s is now a %s type task! |@ \n";
 	private static final String MESSAGE_INVALID_CALENDAR_DATES = "@|red The start date must be before the end date and after the current date and time.|@\n";
 	private static final String MESSAGE_INVALID_TODO_DEADLINE = "@|red The deadline must be after the current date and time.|@\n";
 	private static final String MESSAGE_UNDO_EMPTY_STACK = "@|red There is nothing to undo|@\n";
@@ -66,6 +67,16 @@ public class CommandExecutor {
 	// @@author A0121560W
 	private static final String MESSAGE_SAVE_AT_SUCCESS = "@|green File has been save at %s successfully!|@ \n";
 	private static final String MESSAGE_SAVE_AT_IO_EXCEPTION = "@|red File could not be saved at %s!|@ \n";
+	private static final String UPDATE_COMMAND_TYPE_START = "start";
+    private static final String UPDATE_COMMAND_TYPE_END = "end";
+    private static final String UPDATE_COMMAND_TYPE_NAME = "name";
+    private static final String UPDATE_COMMAND_TYPE_TYPE = "type";
+    private static final String UPDATE_EVENT_TYPE_TODO = "todo";	
+    private static final String UPDATE_EVENT_TYPE_CALENDAR = "calendar";	
+    private static final String UPDATE_EVENT_TYPE_FLOATING = "floating";
+    private static final String MESSAGE_UPDATE_INVALID_CAST = "@|red %s task type cannot be changed to %s task type!|@ \n";
+    private static final String MESSAGE_UPDATE_INVALID_TYPE = "@|red %s is not a valid type! |@ \n";
+    private static final String MESSAGE_UPDATE_INVALID_START = "@|red A task cannot just have a start date/time! |@ \n";
 	
 	private ArrayList<Event> eventList;
 	private Stack<ArrayList<Event>> undoStack;
@@ -384,13 +395,16 @@ public class CommandExecutor {
 	}
 
 	/*
-	 * UPDATE requires arguments to be of "Event name" + "to" + "Updated Event"
-	 * 
-	 * @@author A0126989H
+	 * @@author A0121560W
 	 */
 	private String update(Update cmd) {
 		String idx = cmd.getTaskIdx();
 		String newName = cmd.getNewName();
+		DateTime start = cmd.getStart();
+		DateTime end = cmd.getEnd();
+		String type = cmd.getType();
+		String taskType = null;
+		Event task;
 		String response = "";
 		Event newEvent;
 		int intIdx = 0;
@@ -402,7 +416,104 @@ public class CommandExecutor {
 		}
 		if (intIdx > eventList.size() || intIdx <= 0) {
 			response = String.format(MESSAGE_UPDATE_INVALID_IDX, idx);
-		} else if (cmd.hasStart() && cmd.hasEnd()) {
+		} 
+		
+		task = eventList.get(intIdx-1);
+		if ( task instanceof ToDoEvent)	{
+			taskType = UPDATE_EVENT_TYPE_TODO;
+		} else if (task instanceof CalendarEvent){
+			taskType = UPDATE_EVENT_TYPE_CALENDAR;
+		} else if (task instanceof FloatingTask){
+			taskType = UPDATE_EVENT_TYPE_FLOATING;
+		}
+		
+		if (cmd.hasType()){
+			if (type.equalsIgnoreCase(UPDATE_COMMAND_TYPE_NAME)){
+				eventList.get(intIdx-1).setEventName(newName);
+			} else if (type.equalsIgnoreCase(UPDATE_COMMAND_TYPE_TYPE)){
+				if (taskType.equalsIgnoreCase(UPDATE_EVENT_TYPE_FLOATING) || taskType.equalsIgnoreCase(UPDATE_EVENT_TYPE_TODO) 
+						||newName.equalsIgnoreCase(UPDATE_EVENT_TYPE_CALENDAR)){
+					response = String.format(MESSAGE_UPDATE_INVALID_CAST, taskType, newName);
+				} else if (newName.equalsIgnoreCase(UPDATE_EVENT_TYPE_TODO)){
+					if (taskType.equalsIgnoreCase(UPDATE_EVENT_TYPE_FLOATING) || taskType.equalsIgnoreCase(UPDATE_EVENT_TYPE_TODO)){
+						response = String.format(MESSAGE_UPDATE_INVALID_CAST, taskType, newName);
+					} else {
+						end = ((CalendarEvent) task).getEndDateAndTime();
+						newName = task.getEventName();
+						int taskIdx = task.getEventIndex();
+						eventList.set(intIdx-1, new ToDoEvent(taskIdx, newName, end));
+						response = String.format(MESSAGE_UPDATE_TYPE_RESPONSE, newName, UPDATE_EVENT_TYPE_TODO);
+					}
+				} else if (newName.equalsIgnoreCase(UPDATE_EVENT_TYPE_FLOATING)){
+					if (taskType.equalsIgnoreCase(UPDATE_EVENT_TYPE_FLOATING)){
+						response = String.format(MESSAGE_UPDATE_INVALID_CAST, taskType, newName);
+					} else {
+						newName = task.getEventName();
+						int taskIdx = task.getEventIndex();
+						eventList.set(intIdx-1, new FloatingTask(taskIdx, newName));
+						response = String.format(MESSAGE_UPDATE_TYPE_RESPONSE, newName, UPDATE_EVENT_TYPE_FLOATING);
+					}
+				} else {
+					response = String.format(MESSAGE_UPDATE_INVALID_TYPE, newName);
+				}
+				
+			} else if (type.equalsIgnoreCase(UPDATE_COMMAND_TYPE_END)){
+				if (taskType.equalsIgnoreCase(UPDATE_EVENT_TYPE_FLOATING)){
+					newName = task.getEventName();
+					int taskIdx = task.getEventIndex();
+					if (!cmd.hasEnd() || !ToDoEvent.isValidDate(end)){
+						response = MESSAGE_INVALID_TODO_DEADLINE;
+					} else {
+						eventList.set(intIdx-1, new ToDoEvent(taskIdx, newName, end));
+						response = String.format(MESSAGE_UPDATE_TODO_RESPONSE, newName);
+					}
+				} else {
+					newName = task.getEventName();
+					//int taskIdx = task.getEventIndex();
+					if (!cmd.hasEnd() || !ToDoEvent.isValidDate(end)){
+						response = MESSAGE_INVALID_TODO_DEADLINE;
+					} else {
+						if (taskType.equalsIgnoreCase(UPDATE_EVENT_TYPE_CALENDAR)){
+							start = ((CalendarEvent) task).getStartDateAndTime();
+							if (!CalendarEvent.areValidDates(start, end)){
+								response = MESSAGE_INVALID_CALENDAR_DATES;
+							} else {
+								((CalendarEvent) eventList.get(intIdx-1)).setEndDateAndTime(end);
+								response = String.format(MESSAGE_UPDATE_CAL_RESPONSE, newName);
+							}
+						} else {
+							((ToDoEvent) eventList.get(intIdx-1)).setDueDateAndTime(end);
+							response = String.format(MESSAGE_UPDATE_TODO_RESPONSE, newName);
+						}
+					}
+				}
+			} else if (type.equalsIgnoreCase(UPDATE_COMMAND_TYPE_START)){
+				if (taskType.equalsIgnoreCase(UPDATE_EVENT_TYPE_FLOATING)){
+					response = MESSAGE_UPDATE_INVALID_START;
+				} else if (taskType.equalsIgnoreCase(UPDATE_EVENT_TYPE_TODO)){
+					end = ((ToDoEvent) task).getDeadline();
+					if (!cmd.hasStart() || !CalendarEvent.areValidDates(start,end) ) {
+						response = MESSAGE_INVALID_CALENDAR_DATES;
+					} else {
+						newName = task.getEventName();
+						int taskIdx = task.getEventIndex();
+						eventList.set(intIdx-1, new CalendarEvent(taskIdx, newName, start, end));
+						response = String.format(MESSAGE_UPDATE_CAL_RESPONSE, newName);
+					}
+				} else if (taskType.equalsIgnoreCase(UPDATE_EVENT_TYPE_CALENDAR)){
+					end = ((CalendarEvent) task).getEndDateAndTime();
+					if (!cmd.hasStart() || !CalendarEvent.areValidDates(start,end) ) {
+						response = MESSAGE_INVALID_CALENDAR_DATES;
+					} else {
+						((CalendarEvent) eventList.get(intIdx-1)).setStartDateAndTime(start);
+						response = String.format(MESSAGE_UPDATE_CAL_RESPONSE, newName);
+					}
+				}
+			}
+		}
+		
+
+		else if (cmd.hasStart() && cmd.hasEnd()) {
 			if (CalendarEvent.areValidDates(cmd.getStart(), cmd.getEnd())) {
 				newEvent = new CalendarEvent(intIdx, newName, cmd.getStart(), cmd.getEnd());
 				eventList.set(intIdx - 1, newEvent);
@@ -411,7 +522,7 @@ public class CommandExecutor {
 				response = MESSAGE_INVALID_CALENDAR_DATES;
 			}
 		} else if (!cmd.hasStart() && cmd.hasEnd()) {
-			if (ToDoEvent.isValidDate(cmd.getEnd())) {
+			if (!ToDoEvent.isValidDate(cmd.getEnd())) {
 				newEvent = new ToDoEvent(intIdx, newName, cmd.getEnd());
 				eventList.set(intIdx - 1, newEvent);
 				response = String.format(MESSAGE_UPDATE_TODO_RESPONSE, newName);

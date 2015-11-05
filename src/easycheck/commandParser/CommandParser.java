@@ -105,6 +105,16 @@ public class CommandParser {
             .length();
     private DateTimeFormatter timeFormatter = DateTimeFormat
             .forPattern(DATE_AND_TIME_INPUT_FORMAT);
+    
+    //@@author A0121560W
+    // Update command parsing 
+    private static final String UPDATE_COMMAND_TYPE_START = "start";
+    private static final String UPDATE_COMMAND_TYPE_END = "end";
+    private static final String UPDATE_COMMAND_TYPE_NAME = "name";
+    private static final String UPDATE_COMMAND_TYPE_TYPE = "type";
+	private static final String MESSAGE_UPDATE_INVALID_ARGS = "Invalid number of arguments for update command";
+    
+    
 
     // flexi command keywords
     private final String[] FLEXI_KEYWORDS = { " by ", " at ", " on ", " due " };
@@ -326,60 +336,109 @@ public class CommandParser {
 
         return cmd;
     }
-
+    //@@author A0121560W
     private Command createUpdateCommand(String[] arguments) {
         Command cmd = null;
+        String idx = null;
+        String newName = null;
+        DateTime start;
+        DateTime end;
+        String type = null;
+        
         if (arguments.length < 2) {
             cmd = new Invalid(
                     String.format(MESSAGE_INVALID_LESS_ARGS, "update"));
             return cmd;
         }
-
-        String idx = arguments[0];
-        String newName = arguments[1];
-        DateTime start;
-        DateTime end;
-
-        if (arguments.length == 2) {
-            cmd = new Update(idx, newName);
-        } else if (arguments.length == 3) {
-            try {
-                end = parseDateText(arguments[2])[FIRST_PARSED_DATE_TEXT];
-                if (end != null) {
-                    cmd = new Update(idx, newName, end);
-                } else {
-                    cmd = new Invalid(String.format(
-                            MESSAGE_INVALID_UPDATE_DATE, arguments[2]));
-                }
-            } catch (Exception e) {
-                cmd = new Invalid(MESSAGE_INVALID_UPDATE_NUM_OF_ARGS);
-            }
-
-        } else if (arguments.length == ADD_ARGS_NUM_FLOATING_EVENT_WITH_STOP) {
-            try {
-                start = parseDateText(arguments[2])[FIRST_PARSED_DATE_TEXT];
-                end = parseDateText(arguments[3])[SECOND_PARSED_DATE_TEXT];
-
-                if (start != null && end != null) {
-                    cmd = new Update(idx, newName, start, end);
-                } else {
-                    if (start == null) {
+        
+        idx = arguments[0];
+        
+        if (arguments[1].equalsIgnoreCase(UPDATE_COMMAND_TYPE_END) || arguments[1].equalsIgnoreCase(UPDATE_COMMAND_TYPE_START)){
+        	type = arguments[1];
+        	if (arguments.length != 3){
+        		cmd = new Invalid(MESSAGE_UPDATE_INVALID_ARGS);
+        		return cmd;
+        	} else {
+        		if (arguments[1].equalsIgnoreCase(UPDATE_COMMAND_TYPE_END)){
+        			try {
+						end = parseDateText(arguments[2])[FIRST_PARSED_DATE_TEXT];
+						if (end != null) {
+		                    cmd = new Update(idx, end, type);
+		                } else {
+		                    cmd = new Invalid(String.format(
+		                            MESSAGE_INVALID_UPDATE_DATE, arguments[2]));
+		                }
+					} catch (Exception e) {
+						cmd = new Invalid(String.format(
+	                            MESSAGE_INVALID_UPDATE_DATE, arguments[2]));
+					}
+        		} else {
+        			try {
+						start = parseDateText(arguments[2])[FIRST_PARSED_DATE_TEXT];
+						if (start != null) {
+		                    cmd = new Update(idx, start, type);
+		                } else {
+		                    cmd = new Invalid(String.format(
+		                            MESSAGE_INVALID_UPDATE_DATE, arguments[2]));
+		                }
+					} catch (Exception e) {
+						cmd = new Invalid(String.format(
+	                            MESSAGE_INVALID_UPDATE_DATE, arguments[2]));
+					}
+        		}
+        	}
+        } else if (arguments[1].equalsIgnoreCase(UPDATE_COMMAND_TYPE_NAME) || arguments[1].equalsIgnoreCase(UPDATE_COMMAND_TYPE_TYPE)){
+        	type = arguments[1];
+        	if (arguments.length != 3){
+        		cmd = new Invalid(MESSAGE_UPDATE_INVALID_ARGS);
+        		return cmd;
+        	}
+        	newName = arguments[2];
+        	cmd = new Update(idx, type, newName);
+        } else {
+            newName = arguments[1];
+  
+            if (arguments.length == 2) {
+                cmd = new Update(idx, newName);
+            } else if (arguments.length == 3) {
+                try {
+                    end = parseDateText(arguments[2])[FIRST_PARSED_DATE_TEXT];
+                    if (end != null) {
+                        cmd = new Update(idx, newName, end);
+                    } else {
                         cmd = new Invalid(String.format(
                                 MESSAGE_INVALID_UPDATE_DATE, arguments[2]));
                     }
-                    if (end == null) {
-                        cmd = new Invalid(String.format(
-                                MESSAGE_INVALID_UPDATE_DATE, arguments[3]));
-                    }
+                } catch (Exception e) {
+                    cmd = new Invalid(MESSAGE_INVALID_UPDATE_NUM_OF_ARGS);
                 }
-            } catch (Exception e) {
-                cmd = new Invalid(MESSAGE_INVALID_UPDATE_NUM_OF_ARGS);
-            }
-        } else {
-            cmd = new Invalid(MESSAGE_INVALID_DISPLAY_DATE);
-        }
-        assert (cmd != null);
 
+            } else if (arguments.length == ADD_ARGS_NUM_FLOATING_EVENT_WITH_STOP) {
+                try {
+                    start = parseDateText(arguments[2])[FIRST_PARSED_DATE_TEXT];
+                    end = parseDateText(arguments[3])[SECOND_PARSED_DATE_TEXT];
+
+                    if (start != null && end != null) {
+                        cmd = new Update(idx, newName, start, end);
+                    } else {
+                        if (start == null) {
+                            cmd = new Invalid(String.format(
+                                    MESSAGE_INVALID_UPDATE_DATE, arguments[2]));
+                        }
+                        if (end == null) {
+                            cmd = new Invalid(String.format(
+                                    MESSAGE_INVALID_UPDATE_DATE, arguments[3]));
+                        }
+                    }
+                } catch (Exception e) {
+                    cmd = new Invalid(MESSAGE_INVALID_UPDATE_NUM_OF_ARGS);
+                }
+            } else {
+                cmd = new Invalid(MESSAGE_INVALID_DISPLAY_DATE);
+            }
+        }
+        
+        assert (cmd != null);
         return cmd;
     }
 
