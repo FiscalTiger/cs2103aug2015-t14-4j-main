@@ -25,7 +25,7 @@ public class Invalid extends Command {
 	}
 	
 	public String toString() {
-		return getInvalidMessage();
+		return "@|red " + getInvalidMessage() +"|@";
 	}
 
 }

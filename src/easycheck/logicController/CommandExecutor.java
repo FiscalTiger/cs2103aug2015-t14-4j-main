@@ -34,38 +34,38 @@ import easycheck.storage.StorageManager;
 public class CommandExecutor {
 	private static int ZERO_OFFSET = 1;
 
-	private static final String MESSAGE_ADD_CMD_RESPONSE = "Added %s\n";
-	private static final String MESSAGE_DELETE_CMD_EMPTY = "There aren't any events!\n";
-	private static final String MESSAGE_DELETE_CMD_RESPONSE = "Deleted \"%s\" successfully\n";
-	private static final String MESSAGE_UPDATE_FLOAT_RESPONSE = "Updated %s to %s successfully\n";
-	private static final String MESSAGE_UPDATE_TODO_RESPONSE = "Updated %s successfully\n";
-	private static final String MESSAGE_UPDATE_CAL_RESPONSE = "Updated %s successfully\n";
-	private static final String MESSAGE_INVALID_CALENDAR_DATES = "The start date must be before the end date and after the current date and time.\n";
-	private static final String MESSAGE_INVALID_TODO_DEADLINE = "The deadline must be after the current date and time.\n";
-	private static final String MESSAGE_UNDO_EMPTY_STACK = "There is nothing to undo\n";
-	private static final String MESSAGE_REDO_EMPTY_STACK = "There is nothing to redo\n";
-	private static final String MESSAGE_UPDATE_INVALID_IDX = "%s is an invalid index.\n";
+	private static final String MESSAGE_ADD_CMD_RESPONSE = "@|green Added|@ %s\n";
+	private static final String MESSAGE_DELETE_CMD_EMPTY = "@|red There aren't any events!|@\n";
+	private static final String MESSAGE_DELETE_CMD_RESPONSE = "@|green Deleted \"%s\" successfully|@\n";
+	private static final String MESSAGE_UPDATE_FLOAT_RESPONSE = "@|green Updated %s to %s successfully|@\n";
+	private static final String MESSAGE_UPDATE_TODO_RESPONSE = "@|green Updated %s successfully|@\n";
+	private static final String MESSAGE_UPDATE_CAL_RESPONSE = "@|green Updated %s successfully|@\n";
+	private static final String MESSAGE_INVALID_CALENDAR_DATES = "@|red The start date must be before the end date and after the current date and time.|@\n";
+	private static final String MESSAGE_INVALID_TODO_DEADLINE = "@|red The deadline must be after the current date and time.|@\n";
+	private static final String MESSAGE_UNDO_EMPTY_STACK = "@|red There is nothing to undo|@\n";
+	private static final String MESSAGE_REDO_EMPTY_STACK = "@|red There is nothing to redo|@\n";
+	private static final String MESSAGE_UPDATE_INVALID_IDX = "@|red%s is an invalid index.|@\n";
 	private static final String PRINT_GROUP_HEADING_FLOATING = "To Do";
 
 	// @@author A0126989H
-	private static final String MESSAGE_SEARCH_CMD_EMPTY = "There aren't any events to search!\n";
-	private static final String MESSAGE_SEARCH_CMD_NOTFOUND = "There are no such events!\n";
-	private static final String MESSAGE_DELETE_CMD_NOTFOUND = "There are no such events!\n";
-	private static final String MESSAGE_DELETE_CMD_ALL = "Congratulations on completing all task! :)\n";
+	private static final String MESSAGE_SEARCH_CMD_EMPTY = "@|red There aren't any events to search!|@\n";
+	private static final String MESSAGE_SEARCH_CMD_NOTFOUND = "@|red There are no such events!|@\n";
+	private static final String MESSAGE_DELETE_CMD_NOTFOUND = "@|red There are no such events!|@\n";
+	private static final String MESSAGE_DELETE_CMD_ALL = "@|green Congratulations on completing all task! :)|@\n";
 	private static final String MESSAGE_DELETE_CMD_SPECIALCOMMAND = "all ";
-	private static final String MESSAGE_DELETE_CMD_DONETASK = "Deleted all done tasks successfully\n";
-	private static final String MESSAGE_DELETE_CMD_ALLTASKS = "Deleted \"%s\" related tasks successfully\n";
+	private static final String MESSAGE_DELETE_CMD_DONETASK = "@|green Deleted all done tasks successfully|@\n";
+	private static final String MESSAGE_DELETE_CMD_ALLTASKS = "@|green Deleted \"%s\" related tasks successfully|@\n";
 
-	private static final String MESSAGE_MARKDONE_CMD_RESPONSE = "Successfully mark %s as Done!\n";
-	private static final String MESSAGE_MARDONE_CMD_EMPTY = "Your todoList is currently empty!\n";
-	private static final String MESSAGE_MARKDONE_CMD_NOTFOUND = "There are no such events!\n";
+	private static final String MESSAGE_MARKDONE_CMD_RESPONSE = "@|green Successfully mark %s as Done!|@\n";
+	private static final String MESSAGE_MARDONE_CMD_EMPTY = "@|green Your todoList is currently empty!|@\n";
+	private static final String MESSAGE_MARKDONE_CMD_NOTFOUND = "@|red There are no such events!|@\n";
 	private static final String MESSAGE_MARKDONE_CMD_SPECIALCOMMAND = "all ";
-	private static final String MESSAGE_MARKDONE_CMD_ALL = "Congratulations on finishing all tasks! :)\n";
+	private static final String MESSAGE_MARKDONE_CMD_ALL = "@|green Congratulations on finishing all tasks! :)|@\n";
 	private static final String WHITESPACE_DELIMITER = "\\s+";
 		
 	// @@author A0121560W
-	private static final String MESSAGE_SAVE_AT_SUCCESS = "File has been save at %s successfully! \n";
-	private static final String MESSAGE_SAVE_AT_IO_EXCEPTION = "File could not be saved at %s! \n";
+	private static final String MESSAGE_SAVE_AT_SUCCESS = "@|green File has been save at %s successfully!|@ \n";
+	private static final String MESSAGE_SAVE_AT_IO_EXCEPTION = "@|red File could not be saved at %s!|@ \n";
 	
 	private ArrayList<Event> eventList;
 	private Stack<ArrayList<Event>> undoStack;
