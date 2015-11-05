@@ -13,8 +13,8 @@ import easycheck.logicController.LogicController;
 */
 
 public class UserInterface {
-	private static final String MESSAGE_ENTER_COMMAND = "enter command: ";
-	private static final String MESSAGE_WELCOME = "Welcome to Easy Check!\nHere are your current events and tasks.\n";
+	private static final String MESSAGE_ENTER_COMMAND = "@|magenta enter command: |@";
+	private static final String MESSAGE_WELCOME = "@|green Welcome to Easy Check!\nHere are your current events and tasks.|@\n";
 	public String userName;
 	
 	private Scanner sc = new Scanner(System.in);

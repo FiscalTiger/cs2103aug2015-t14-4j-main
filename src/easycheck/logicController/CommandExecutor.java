@@ -116,7 +116,7 @@ public class CommandExecutor {
 	}
 
 	private String Invalid(Invalid command) {
-		return command.getInvalidMessage();
+		return command.toString();
 	}
 
 	/**
