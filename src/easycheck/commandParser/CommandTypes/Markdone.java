@@ -8,7 +8,8 @@ import easycheck.commandParser.Command;
 public class Markdone extends Command{
 	private static final int SUBSTRING_COMMAND_START = 4;
 	private static final int ALL_COMMAND_END = 3;
-	private static final String MESSAGE_MARKDONE_CMD_SPECIALCOMMAND = "all ";
+	private static final int ZERO_CONSTANT = 0;
+	private static final String MESSAGE_MARKDONE_CMD_SPECIALCOMMAND = "all";
 	private String task;
 	
 	
@@ -30,6 +31,6 @@ public class Markdone extends Command{
     }
     public boolean isDoneAll(){
     	return task.length() >= ALL_COMMAND_END
-		&& task.substring(0, ALL_COMMAND_END).equals(MESSAGE_MARKDONE_CMD_SPECIALCOMMAND);
+		&& task.substring(ZERO_CONSTANT, ALL_COMMAND_END).equals(MESSAGE_MARKDONE_CMD_SPECIALCOMMAND);
     }
 }
