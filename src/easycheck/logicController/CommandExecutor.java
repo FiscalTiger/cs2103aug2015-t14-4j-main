@@ -77,6 +77,7 @@ public class CommandExecutor {
     private static final String MESSAGE_UPDATE_INVALID_CAST = "@|red %s task type cannot be changed to %s task type!|@ \n";
     private static final String MESSAGE_UPDATE_INVALID_TYPE = "@|red %s is not a valid type! |@ \n";
     private static final String MESSAGE_UPDATE_INVALID_START = "@|red A task cannot just have a start date/time! |@ \n";
+    private static final String MESSAGE_UPDATE_NAME_RESPONSE = "Task %s has been renamed to %s \n";
 	
 	private ArrayList<Event> eventList;
 	private Stack<ArrayList<Event>> undoStack;
@@ -429,7 +430,9 @@ public class CommandExecutor {
 		
 		if (cmd.hasType()){
 			if (type.equalsIgnoreCase(UPDATE_COMMAND_TYPE_NAME)){
+				int taskIdx = task.getEventIndex();
 				eventList.get(intIdx-1).setEventName(newName);
+				response = String.format(MESSAGE_UPDATE_NAME_RESPONSE,taskIdx,newName);
 			} else if (type.equalsIgnoreCase(UPDATE_COMMAND_TYPE_TYPE)){
 				if (taskType.equalsIgnoreCase(UPDATE_EVENT_TYPE_FLOATING) || taskType.equalsIgnoreCase(UPDATE_EVENT_TYPE_TODO) 
 						||newName.equalsIgnoreCase(UPDATE_EVENT_TYPE_CALENDAR)){
