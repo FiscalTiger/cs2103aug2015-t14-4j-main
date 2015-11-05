@@ -52,12 +52,13 @@ public class CommandParser {
     private final String COMMAND_TYPE_MARKDONE = "done";
     // private final String COMMAND_TYPE_STORE_LOCATION = "storeLocation";
     private final String COMMAND_TYPE_UNDO = "undo";
+    private final String COMMAND_TYPE_EMPTY = "";
     private final String COMMAND_TYPE_REDO = "redo";
     private final String COMMAND_TYPE_EXIT = "exit";
     private final String COMMAND_TYPE_SAVE_AT = "save_at";
     private final String COMMAND_TYPE_READ_FROM = "read_from";
     
-
+    private final String MESSAGE_INVALID_EMPTY = "";
     private final String MESSAGE_INVALID_COMMAND = "Invalid Command\n";
     private final String MESSAGE_INVALID_LESS_ARGS = "Too little arguments for command type \"%s\" \n";
 
@@ -154,6 +155,8 @@ public class CommandParser {
             command = new Undo();
         } else if (commandType.equalsIgnoreCase(COMMAND_TYPE_REDO)) {
             command = new Redo();
+        } else if (commandType.equalsIgnoreCase(COMMAND_TYPE_EMPTY)) {
+        	command = new Invalid(MESSAGE_INVALID_EMPTY);
         } else {
             command = new Invalid(MESSAGE_INVALID_COMMAND);
         }
