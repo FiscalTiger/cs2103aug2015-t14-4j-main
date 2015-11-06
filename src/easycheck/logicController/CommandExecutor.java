@@ -50,13 +50,16 @@ public class CommandExecutor {
 
 	// @@author A0126989H
 	private static final String NEWLINE = "\n";
-	private static final String INVALID_DATE_EXCEPTION = "@|red Please use date format as DD/MM/YYYY\n";
+	private static final String EMPTY_STRING ="";
+	private static final String INVALID_DATE_EXCEPTION = "@|red Please use date format as DD/MM/YYYY|@\n";
 
 	private static final String MESSAGE_SEARCH_CMD_EMPTY = "@|red There aren't any events to search!|@\n";
 	private static final String MESSAGE_SEARCH_CMD_NOTFOUND = "@|red There are no such events!|@\n";
-	private static final String MESSAGE_SEARCH_CMD_RESPONSE = "@|green Here is your search result: \n";
-	private static final String MESSAGE_SEARCH_CMD_FREESLOT = "@|green Free from %s to %s \n";
-
+	private static final String MESSAGE_SEARCH_CMD_RESPONSE = "@|green Here is your search result: |@\n";
+	private static final String MESSAGE_SEARCH_CMD_FREESLOT = "@|green Free from %s to %s |@\n";
+	private static final String MESSAGE_SEARCH_CMD_TASK_IN_DAY = "@|red Work to be done today: |@\n";
+	private static final String MESSAGE_SEARCH_CMD_NO_TASK = "@| None |@\n";
+	
 	private static final String MESSAGE_DELETE_CMD_NOTFOUND = "@|red There are no such events!|@\n";
 	private static final String MESSAGE_DELETE_CMD_ALL = "@|green Congratulations on completing all task! :)|@\n";
 	private static final String MESSAGE_DELETE_CMD_SPECIALCOMMAND = "all ";
@@ -628,7 +631,7 @@ public class CommandExecutor {
 
 	private String doneEvent(Markdone cmd) {
 		String arguments = cmd.getTaskName();
-		String doneEvent = "";
+		String doneEvent = EMPTY_STRING;
 		for (int i = 0; i < eventList.size(); i++) {
 			if (eventList.get(i).getEventName().toLowerCase().contains(arguments.toLowerCase())) {
 				undoStack.push(cloneEventList());
@@ -637,7 +640,7 @@ public class CommandExecutor {
 				break;
 			}
 		}
-		if (doneEvent.equals("")) {
+		if (doneEvent.equals(EMPTY_STRING)) {
 			return MESSAGE_MARKDONE_CMD_NOTFOUND;
 		} else {
 			sort();
@@ -647,7 +650,7 @@ public class CommandExecutor {
 
 	private String doneSpecial(Markdone cmd) {
 		String arguments = cmd.getTaskName();
-		String doneEvent = "";
+		String doneEvent = EMPTY_STRING;
 		if (arguments.equals(MESSAGE_MARKDONE_CMD_SPECIALCOMMAND.trim())) {
 			undoStack.push(cloneEventList());
 			for (int i = 0; i < eventList.size(); i++) {
@@ -662,7 +665,7 @@ public class CommandExecutor {
 					doneEvent = cmd.getTaskNameAll();
 				}
 			}
-			if (doneEvent.equals("")) {
+			if (doneEvent.equals(EMPTY_STRING)) {
 				return MESSAGE_MARKDONE_CMD_NOTFOUND;
 			}
 			doneEvent = MESSAGE_MARKDONE_CMD_SPECIALCOMMAND + doneEvent;
@@ -673,7 +676,7 @@ public class CommandExecutor {
 
 	private String doneIndex(Markdone cmd) {
 		String arguments = cmd.getTaskName();
-		String doneEvent = "";
+		String doneEvent = EMPTY_STRING;
 		int index = Integer.parseInt(arguments);
 		if (eventList.size() < index || index < 1) {
 			return MESSAGE_MARKDONE_CMD_NOTFOUND;
@@ -689,7 +692,7 @@ public class CommandExecutor {
 	}
 
 	private String doneFirst(Markdone cmd) {
-		String doneEvent = "";
+		String doneEvent = EMPTY_STRING;
 		if (eventList.size() != 0) {
 			undoStack.push(cloneEventList());
 			eventList.get(0).setDone();
@@ -748,7 +751,7 @@ public class CommandExecutor {
 
 	private String deleteEvent(Delete cmd) {
 		String arguments = cmd.getTaskName();
-		String removeEvent = "";
+		String removeEvent = EMPTY_STRING;
 		for (int i = 0; i < eventList.size(); i++) {
 			if (eventList.get(i).getEventName().toLowerCase().contains(arguments)) {
 				undoStack.push(cloneEventList());
@@ -757,7 +760,7 @@ public class CommandExecutor {
 				break;
 			}
 		}
-		if (removeEvent.equals(""))
+		if (removeEvent.equals(EMPTY_STRING))
 			return MESSAGE_DELETE_CMD_NOTFOUND;
 		else
 			return String.format(MESSAGE_DELETE_CMD_RESPONSE, removeEvent);
@@ -765,7 +768,7 @@ public class CommandExecutor {
 
 	private String deleteSpecial(Delete cmd) {
 		String arguments = cmd.getTaskName();
-		String removeEvent = "";
+		String removeEvent = EMPTY_STRING;
 		if (arguments.equals(MESSAGE_DELETE_CMD_SPECIALCOMMAND.trim())) {
 			undoStack.push(cloneEventList());
 			eventList.clear();
@@ -779,7 +782,7 @@ public class CommandExecutor {
 					i--;
 				}
 			}
-			if (removeEvent.equals("")) {
+			if (removeEvent.equals(EMPTY_STRING)) {
 				return MESSAGE_DELETE_CMD_NOTFOUND;
 			}
 			reIndex();
@@ -789,7 +792,7 @@ public class CommandExecutor {
 
 	private String deleteIndex(Delete cmd) {
 		String arguments = cmd.getTaskName();
-		String removeEvent = "";
+		String removeEvent = EMPTY_STRING;
 		int index = Integer.parseInt(arguments);
 		if (eventList.size() < index || index < 1) {
 			return MESSAGE_DELETE_CMD_NOTFOUND;
@@ -805,7 +808,7 @@ public class CommandExecutor {
 	}
 
 	private String deleteFirst(Delete cmd) {
-		String removeEvent = "";
+		String removeEvent = EMPTY_STRING;
 		if (eventList.size() != 0) {
 			undoStack.push(cloneEventList());
 			removeEvent = eventList.remove(0).getEventName();
@@ -904,12 +907,12 @@ public class CommandExecutor {
 		if (response.equals(MESSAGE_SEARCH_CMD_RESPONSE)) {
 			response = MESSAGE_SEARCH_CMD_NOTFOUND;
 		}
-		assert(!response.equals(""));
+		assert(!response.equals(EMPTY_STRING));
 		return response;
 	}
 
 	private String searchEvent(Search cmd) {
-		String response = "";
+		String response = EMPTY_STRING;
 		for (Event e : eventList) {
 			if (e.getEventName().toLowerCase().contains(cmd.getArgument().toLowerCase())) {
 				response += e;
@@ -938,9 +941,9 @@ public class CommandExecutor {
 	private String searchFreeTimeSpec(Search cmd) {
 		boolean[] freetime = new boolean[24];
 		Arrays.fill(freetime, true);
-		String indayEvent = "";
-		String freeSlots = "";
-		String response = "";
+		String indayEvent = EMPTY_STRING;
+		String freeSlots = EMPTY_STRING;
+		String response = EMPTY_STRING;
 
 		DateTime date = cmd.getDate();
 
@@ -961,16 +964,16 @@ public class CommandExecutor {
 			}
 		}
 		freeSlots = computFreeSlot(freetime, freeSlots);
-		response = indayEvent + NEWLINE + freeSlots + NEWLINE;
+		response = MESSAGE_SEARCH_CMD_TASK_IN_DAY + indayEvent + NEWLINE + freeSlots + NEWLINE;
 		return response;
 	}
 
 	private String searchFreeTime() {
 		boolean[] freetime = new boolean[24];
 		Arrays.fill(freetime, true);
-		String indayEvent = "";
-		String freeSlots = "";
-		String response = "";
+		String indayEvent = EMPTY_STRING;
+		String freeSlots = EMPTY_STRING;
+		String response = EMPTY_STRING;
 		DateTime today = new DateTime();
 		DateTime tomorrow = today.plus(Period.days(1));
 
@@ -992,7 +995,7 @@ public class CommandExecutor {
 		}
 
 		freeSlots = computFreeSlot(freetime, freeSlots);
-		response = indayEvent + NEWLINE + freeSlots + NEWLINE;
+		response = MESSAGE_SEARCH_CMD_TASK_IN_DAY + indayEvent + NEWLINE + freeSlots + NEWLINE;
 		return response;
 	}
 
@@ -1004,7 +1007,7 @@ public class CommandExecutor {
 	private String exit(Exit cmd) {
 		AnsiConsole.systemUninstall();
 		System.exit(1);
-		return "";
+		return EMPTY_STRING;
 	}
 
 	public ArrayList<Event> getEventList() {
