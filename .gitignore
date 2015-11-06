@@ -13,7 +13,7 @@
 hs_err_pid*
 /bin/
 myeasycheck.txt
-*.txt
+
 CommandExecutorTest.java
 DeleteCommandUnitTest.java
 build.xml
