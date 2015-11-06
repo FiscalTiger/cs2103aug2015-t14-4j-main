@@ -704,7 +704,7 @@ public class CommandExecutor {
 		}
 	}
 
-	// @ author A0126989H
+	// @@ author A0126989H
 	/*
 	 * DELETE requires arguments to be of "Event name" or "part of event name"
 	 * 
@@ -736,7 +736,6 @@ public class CommandExecutor {
 		}
 	}
 
-	// To be Implemented
 	private String deleteDone(Delete cmd) {
 		undoStack.push(cloneEventList());
 		for (int i = 0; i < eventList.size(); i++) {
@@ -837,7 +836,7 @@ public class CommandExecutor {
 	}
 
 	// @@author A0126989H
-	// Checking if the argument of DeleteCommand is an Index number
+	// Checking if the argument of DeleteCommand and Markdone is an Index number
 	public static boolean isNumeric(String str) {
 		try {
 			double d = Double.parseDouble(str);
