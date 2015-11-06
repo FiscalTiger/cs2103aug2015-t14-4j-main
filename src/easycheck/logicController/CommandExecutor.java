@@ -98,14 +98,18 @@ public class CommandExecutor {
 	 */
 	public String executeCommand(Command command) {
 		if (command instanceof Add) {
+			redoStack.clear();
 			return add((Add) command);
 		} else if (command instanceof Display) {
 			return display((Display) command);
 		} else if (command instanceof Update) {
+			redoStack.clear();
 			return update((Update) command);
 		} else if (command instanceof Delete) {
+			redoStack.clear();
 			return delete((Delete) command);
 		} else if (command instanceof Markdone) {
+			redoStack.clear();
 			return markdone((Markdone) command);
 		} else if (command instanceof Undo) {
 			return undo((Undo) command);
@@ -216,6 +220,8 @@ public class CommandExecutor {
 			response = getDisplayDateString(cmd.getDisplayDate());
 		} else if (cmd.isOverDue()) {
 			response = getDisplayOverDueString();
+		} else if (cmd.isAllFlag()){
+			response = getDisplayAllString();
 		} else {
 			response = getDefaultDisplayString();
 		}
@@ -337,6 +343,55 @@ public class CommandExecutor {
 			}
 		}
 
+		for (PrintGroup dateGroup : dateGroups) {
+			response += dateGroup.toString();
+		}
+		return response;
+	}
+	
+	private String getDisplayAllString() {
+		String response = "";
+		PrintGroup floatingGroup = new PrintGroup(PRINT_GROUP_HEADING_FLOATING);
+		ArrayList<PrintGroup> dateGroups = new ArrayList<PrintGroup>();
+		for (Event e : eventList) {
+			if (e instanceof FloatingTask) {
+				floatingGroup.addEntry(e);
+			} else if (e instanceof CalendarEvent) {
+				boolean isAdded = false;
+				CalendarEvent cal = (CalendarEvent) e;
+				for (PrintGroup dateGroup : dateGroups) {
+					if (dateGroup.getHeading().equals(cal.getStartDate())) {
+						dateGroup.addEntry(cal);
+						isAdded = true;
+						break;
+					}
+				}
+
+				if (!isAdded) {
+					PrintGroup temp = new PrintGroup(cal.getStartDate());
+					dateGroups.add(temp);
+					temp.addEntry(cal);
+				}
+			} else if (e instanceof ToDoEvent) {
+				boolean isAdded = false;
+				ToDoEvent todo = (ToDoEvent) e;
+				for (PrintGroup dateGroup : dateGroups) {
+					if (dateGroup.getHeading().equals(todo.getDeadlineDate())) {
+						dateGroup.addEntry(todo);
+						isAdded = true;
+						break;
+					}
+				}
+
+				if (!isAdded) {
+					PrintGroup temp = new PrintGroup(todo.getDeadlineDate());
+					dateGroups.add(temp);
+					temp.addEntry(todo);
+				}
+			}
+		}
+
+		response += floatingGroup.toString();
 		for (PrintGroup dateGroup : dateGroups) {
 			response += dateGroup.toString();
 		}
@@ -784,7 +839,6 @@ public class CommandExecutor {
 		if (undoStack.isEmpty()) {
 			return MESSAGE_UNDO_EMPTY_STACK;
 		} else {
-			redoStack.clear();
 			redoStack.push(cloneEventList());
 			eventList = undoStack.pop();
 		}
