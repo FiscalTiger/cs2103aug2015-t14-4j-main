@@ -614,11 +614,11 @@ public class CommandExecutor {
 		// Case 1: When the command is "done"
 		if (arguments == null) {
 			return doneFirst(cmd);
-			// Case 3: When the command is "done + index"
+			// Case 2: When the command is "done + index"
 		} else if (isNumeric(arguments)) {
 			return doneIndex(cmd);
 			/*
-			 * Case 2: Special Command : " done all" done Multiple matching
+			 * Case 3: Special Command : " done all" done Multiple matching
 			 * String Or "done all + eventName"
 			 */
 		} else if (cmd.isDoneAll()) {
