@@ -2,21 +2,25 @@ package easycheck.commandParser.CommandTypes;
 import easycheck.commandParser.Command;
 
 /**
+ * @@author A0126989H
  * DELETE Command Type represents a parsed command for Easy Check application.
  * Delete can have 0 arguments (delete first argument) or 1 argument (delete
  * task containing argument) 
  * 
  * To be called: getTaskName()
  * 
- * @author A0126989H
+ * 
  */
 
 public class Delete extends Command{
 	private static final int SUBSTRING_COMMAND_START = 4;
 	private static final int ALL_COMMAND_END = 3;
 	private static final int ZERO_CONSTANT = 0;
+	
 	private static final String MESSAGE_DELETE_CMD_SPECIALCOMMAND = "all";
 	private static final String MESSAGE_DELETE_CMD_DONECOMMAND = "done";
+	private static final String EMPTY_STRING = "";
+	
 	private String task;
 	
 	public Delete(String[] arguments) {
@@ -37,7 +41,7 @@ public class Delete extends Command{
     	if (task.length() >= SUBSTRING_COMMAND_START)
     		return task.substring(SUBSTRING_COMMAND_START );
     	else
-    		return "";
+    		return EMPTY_STRING;
     }
     public boolean isDeleteAll(){
     	return task.length() >= ALL_COMMAND_END
