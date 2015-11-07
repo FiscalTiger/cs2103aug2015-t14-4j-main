@@ -13,15 +13,15 @@ import easycheck.commandParser.CommandTypes.Invalid;
 
 /**
  * Simple JUnit Test for CommandParser
+ * 
  * @@author A0124206W
- *
  */
 public class ParserTest {
     public static DateTimeFormatter formatter = DateTimeFormat
             .forPattern("MM/dd/yyyy HH:mm");
     public static DateTime testStartDate = formatter
             .parseDateTime("11/12/2015 13:30");
-    
+
     @Test
     public void init() {
         CommandParser parser = new CommandParser();
@@ -30,8 +30,8 @@ public class ParserTest {
     @Test
     public void addTask() {
         CommandParser parser = new CommandParser();
-        Add add = (Add) parser.parseCommand("add task name without due date");
-        assertEquals("task name without due date", add.getTaskName());
+        Add add = (Add) parser.parseCommand("add task name without end date");
+        assertEquals("task name without end date", add.getTaskName());
         assertEquals(false, add.hasStart());
         assertEquals(false, add.hasEnd());
     }

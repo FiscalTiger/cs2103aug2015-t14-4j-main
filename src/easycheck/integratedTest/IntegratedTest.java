@@ -18,16 +18,18 @@ public class IntegratedTest {
     UserInterface ui = new UserInterface(fileName);
     String commandResponse;
 
-    // debugging code
+    // debugging code to print display message from application.
     public void printResponse() {
         System.out.println(commandResponse);
     }
 
+    // debugging code to display all tasks.
     public void display() {
         String disp = ui.executeCommand("display");
         System.out.println(disp);
     }
 
+    // clears all tasks before each test to ensure correctness.
     @Before
     public void clearFile() {
         commandResponse = ui.executeCommand("display");
@@ -39,6 +41,7 @@ public class IntegratedTest {
         commandResponse = null;
     }
 
+    // test adding of a to-do/floating type task
     @Test
     public void testAddToDo() {
         commandResponse = ui.executeCommand("add Plan Christmas Party");
@@ -46,30 +49,34 @@ public class IntegratedTest {
                 commandResponse);
     }
 
+    // test adding of a task with deadline
     @Test
     public void testAddDeadline() {
         commandResponse = ui
                 .executeCommand("add buy Christmas presents, 25 Dec 12:00");
         assertEquals(
-                "@|green Added|@ @|red 1. buy Christmas presents due on Fri 25 Dec 2015 at 12:00 |@\n\n",
+                "@|green Added|@ @|red 1. buy Christmas presents due on Fri 25 Dec 2015 at 12:00|@\n\n",
                 commandResponse);
     }
 
+    // test adding of an event with a start and end time
     @Test
     public void testAddEvent() {
         commandResponse = ui
                 .executeCommand("add Christmas Party, 25 Dec 12:00 to 26 Dec 13:00");
         assertEquals(
-                "@|green Added|@ @|yellow 1. Christmas Party from Fri 25 Dec 2015 at 12:00 to Sat 26 Dec 2015 at 13:00 |@\n\n",
+                "@|green Added|@ @|yellow 1. Christmas Party from Fri 25 Dec 2015 at 12:00 to Sat 26 Dec 2015 at 13:00|@\n\n",
                 commandResponse);
     }
 
+    // test display when there are no tasks
     @Test
     public void testDisplayEmpty() {
         commandResponse = ui.executeCommand("display");
         assertEquals("@|cyan To Do:\n|@\n", commandResponse);
     }
 
+    // test display when there is at least 1 task of each type
     @Test
     public void testDisplayDifferentTasks() {
         String expectedResponse = "@|cyan To Do:\n|@\t@|yellow 1. Plan Christmas Party\n|@\n@|cyan Fri 25 Dec 2015:\n|@\t@|yellow 2. Christmas Party from 12:00 to Sat 26 Dec 2015 at 13:00|@\n\t@|red 3. buy Christmas presents due at 12:00|@\n\n";
@@ -80,6 +87,7 @@ public class IntegratedTest {
         assertEquals(expectedResponse, commandResponse);
     }
 
+    // test display of floating type tasks only
     @Test
     public void testDisplayFloat() {
         String expectedResponse = "@|cyan To Do:\n|@\t@|yellow 1. Plan Christmas Party\n|@\n";
@@ -90,6 +98,7 @@ public class IntegratedTest {
         assertEquals(expectedResponse, commandResponse);
     }
 
+    // test display of deadline type tasks only
     @Test
     public void testDisplayDate() {
         String expectedResponse = "@|cyan Fri 25 Dec 2015:\n|@\t@|yellow 2. Christmas Party from 12:00 to Sat 26 Dec 2015 at 13:00|@\n\t@|red 3. buy Christmas presents due at 12:00|@\n\n";
@@ -100,6 +109,7 @@ public class IntegratedTest {
         assertEquals(expectedResponse, commandResponse);
     }
 
+    // test display of completed tasks only
     @Test
     public void testDisplayDone() {
         ui.executeCommand("add plan Christmas Party");
@@ -110,6 +120,7 @@ public class IntegratedTest {
                 commandResponse);
     }
 
+    // test deletion when task to delete not specified
     @Test
     public void testDeleteNotSpecified() {
         ui.executeCommand("add Plan Christmas Party");
@@ -121,6 +132,7 @@ public class IntegratedTest {
         assertEquals("@|cyan To Do:\n|@\n", commandResponse);
     }
 
+    // test deletion when task to delete is specified
     @Test
     public void testDeleteSpecifiedKeyword() {
         ui.executeCommand("add Plan Christmas Party");
@@ -135,6 +147,7 @@ public class IntegratedTest {
                 commandResponse);
     }
 
+    // test deletion of all tasks
     @Test
     public void testDeleteAll() {
         ui.executeCommand("add Plan Christmas Party");
@@ -146,6 +159,7 @@ public class IntegratedTest {
         assertEquals("@|cyan To Do:\n|@\n", commandResponse);
     }
 
+    // test deletion of multiple tasks with a common keyword
     @Test
     public void testDeleteMultipleKeyword() {
         ui.executeCommand("add Plan Christmas Party");
@@ -161,6 +175,7 @@ public class IntegratedTest {
                 commandResponse);
     }
 
+    // test erroneous use of delete, deleting non existent task
     // 4 is a boundary value for a to do list with 3 tasks
     @Test
     public void testDeleteOverBounds() {
@@ -171,6 +186,7 @@ public class IntegratedTest {
         assertEquals("@|red There are no such events!|@\n", commandResponse);
     }
 
+    // test erroneous use of delete, deleting non existent task 0
     // 0 is a boundary value for all to do lists as we use 1-indexing
     @Test
     public void testDeleteUnderBounds() {
@@ -181,6 +197,7 @@ public class IntegratedTest {
         assertEquals("@|red There are no such events!|@\n", commandResponse);
     }
 
+    // test marking an event type as done
     @Test
     public void testMarkDone() {
         ui.executeCommand("add plan Christmas Party");
@@ -189,6 +206,7 @@ public class IntegratedTest {
         assertEquals("@|cyan To Do:\n|@\n", commandResponse);
     }
 
+    // test undoing of add command
     @Test
     public void testUndoAdd() {
         ui.executeCommand("add Plan Christmas Party");
@@ -197,6 +215,7 @@ public class IntegratedTest {
         assertEquals("@|cyan To Do:\n|@\n", commandResponse);
     }
 
+    // test redoing of add command
     @Test
     public void testRedoAdd() {
         ui.executeCommand("add Plan Christmas Party");
@@ -208,6 +227,7 @@ public class IntegratedTest {
                 commandResponse);
     }
 
+    // test undoing of deletion
     @Test
     public void testUndoDelete() {
         ui.executeCommand("add Plan Christmas Party");
@@ -219,6 +239,7 @@ public class IntegratedTest {
                 commandResponse);
     }
 
+    // test redoing of deletion
     @Test
     public void testRedoDelete() {
         ui.executeCommand("add Plan Christmas Party");
