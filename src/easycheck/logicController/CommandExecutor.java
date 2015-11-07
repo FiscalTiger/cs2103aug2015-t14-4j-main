@@ -96,6 +96,8 @@ public class CommandExecutor {
 	private static final String MESSAGE_UPDATE_INVALID_TYPE = "@|red %s is not a valid type! |@ \n";
 	private static final String MESSAGE_UPDATE_INVALID_START = "@|red A task cannot just have a start date/time! |@ \n";
 	private static final String MESSAGE_UPDATE_NAME_RESPONSE = "@|green Task %s has been renamed to %s |@ \n";
+	private static final String SECURITY_EXCEPTION = "@|red Permission denied |@ \n";
+	private static final String IO_EXCEPTION = "@|red Invalid Input name|@ \n";
 
 	private ArrayList<Event> eventList;
 	private Stack<ArrayList<Event>> undoStack;
@@ -120,13 +122,17 @@ public class CommandExecutor {
 	        logger.info("My CommandExecutor Log:");  
 
 	    } catch (SecurityException e) {  
-	        e.printStackTrace();  
+	        showToUser(SECURITY_EXCEPTION);
 	    } catch (IOException e) {  
-	        e.printStackTrace();  
+	        showToUser(IO_EXCEPTION);
 	    }  
 		logger.setLevel(Level.INFO); 
 		logger.log(Level.INFO, "Going to start CommandExecutor");
 		//@@author
+	}
+
+	private void showToUser(String message) {
+		System.out.println(message);
 	}
 
 	/**
@@ -866,6 +872,7 @@ public class CommandExecutor {
 	// @@author A0126989H
 	// ReIndexing all the event in the EventList
 	public void reIndex() {
+		assert(!eventList.isEmpty());
 		for (int i = 0; i < eventList.size(); i++) {
 			eventList.get(i).setEventIndex(i + 1);
 		}
@@ -931,6 +938,7 @@ public class CommandExecutor {
 
 	// @@author A0126989H
 	private String search(Search cmd) {
+		assert(cmd instanceof Search);
 		logger.log(Level.INFO, "Execute Search Command: ");
 		String response = MESSAGE_SEARCH_CMD_RESPONSE;
 		// Case 1: No Event to search at all;
