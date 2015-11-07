@@ -108,24 +108,7 @@ public class CommandExecutor {
 		undoStack = new Stack<ArrayList<Event>>();
 		redoStack = new Stack<ArrayList<Event>>();
 		//@@author A0126989H
-	    FileHandler fh;  
-
-	    try {  
-
-	        // This block configure the logger with handler and formatter  
-	        fh = new FileHandler(LOGGERNAME);  
-	        logger.addHandler(fh);
-	        SimpleFormatter formatter = new SimpleFormatter();  
-	        fh.setFormatter(formatter);  
-
-	        // the following statement is used to log any messages  
-	        logger.fine("My CommandExecutor Log:");  
-
-	    } catch (SecurityException e) {  
-	        showToUser(SECURITY_EXCEPTION);
-	    } catch (IOException e) {  
-	        showToUser(IO_EXCEPTION);
-	    }  
+		logger.setUseParentHandlers(false);
 		logger.setLevel(Level.FINE); 
 		logger.log(Level.FINE, "Going to start CommandExecutor");
 		//@@author
