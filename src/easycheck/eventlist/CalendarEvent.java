@@ -170,7 +170,12 @@ public class CalendarEvent extends Event {
 	 * See Documentation for java.text.SimpleDateFormat
 	 */
 	public void setStartDateAndTime(DateTime newDate) {
-		assert(newDate.isBefore(endDateAndTime));
+		// If end date is not set yet we can't assert
+		// this is true but the other assert in
+		// setEndDateAndTime will pick it up
+		if(endDateAndTime != null) {
+			assert(newDate.isBefore(endDateAndTime));
+		}
 		startDateAndTime = newDate;
 	}
 	

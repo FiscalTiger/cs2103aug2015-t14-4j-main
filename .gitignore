@@ -17,3 +17,4 @@ myeasycheck.txt
 CommandExecutorTest.java
 DeleteCommandUnitTest.java
 build.xml
+*.log*
