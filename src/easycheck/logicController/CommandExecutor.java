@@ -41,6 +41,7 @@ public class CommandExecutor {
 	//@@author
 
 	private static final String MESSAGE_ADD_CMD_RESPONSE = "@|green Added|@ %s\n";
+	private static final String MESSAGE_DISPLAY_CMD_EMPTY = "@|red There aren't any events to display!|@\n";
 	private static final String MESSAGE_DELETE_CMD_EMPTY = "@|red There aren't any events!|@\n";
 	private static final String MESSAGE_DELETE_CMD_RESPONSE = "@|green Deleted \"%s\" successfully|@\n";
 	private static final String MESSAGE_UPDATE_FLOAT_RESPONSE = "@|green Updated %s to %s successfully|@\n";
@@ -177,8 +178,8 @@ public class CommandExecutor {
 
 	/**
 	 * Creates the correct type of event and adds it to eventList
-	 * 
-	 * @@@author A0145668R
+	 * @return String with the action that took place
+	 * @@author A0145668R
 	 */
 	private String add(Add cmd) {
 		assert(cmd.getTaskName() != null);
@@ -259,13 +260,15 @@ public class CommandExecutor {
 	}
 
 	/**
-	 * Displays all events
+	 * Displays events according to flags set by user
 	 * 
 	 * @@author A0145668R
 	 */
 	private String display(Display cmd) {
 		String response = "";
-		if (cmd.isIndex()) {
+		if(eventList.isEmpty()) {
+			response = MESSAGE_DISPLAY_CMD_EMPTY;
+		} else if (cmd.isIndex()) {
 			response += eventList.get(cmd.getEventIndex() - 1);
 		} else if (cmd.isFloating()) {
 			response = getDisplayFloatingString();

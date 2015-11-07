@@ -34,7 +34,7 @@ public class IntegratedTest {
     public void clearFile() {
         commandResponse = ui.executeCommand("display");
         display();
-        while (!commandResponse.equals("@|cyan To Do:\n|@\n")) {
+        while (!commandResponse.equals("@|red There aren't any events to display!|@\n")) {
             ui.executeCommand("delete");
             commandResponse = ui.executeCommand("display");
         }
@@ -85,7 +85,7 @@ public class IntegratedTest {
     @Test
     public void testDisplayEmpty() {
         commandResponse = ui.executeCommand("display");
-        assertEquals("@|cyan To Do:\n|@\n", commandResponse);
+        assertEquals("@|red There aren't any events to display!|@\n", commandResponse);
     }
 
     // test display when there is at least 1 task of each type
@@ -155,7 +155,7 @@ public class IntegratedTest {
                 "@|green Deleted \"Plan Christmas Party\" successfully|@\n",
                 commandResponse);
         commandResponse = ui.executeCommand("display");
-        assertEquals("@|cyan To Do:\n|@\n", commandResponse);
+        assertEquals("@|red There aren't any events to display!|@\n", commandResponse);
     }
 
     // test deletion when task to delete is specified
@@ -182,7 +182,7 @@ public class IntegratedTest {
         assertEquals("@|green Congratulations on completing all task! :)|@\n",
                 commandResponse);
         commandResponse = ui.executeCommand("display");
-        assertEquals("@|cyan To Do:\n|@\n", commandResponse);
+        assertEquals("@|red There aren't any events to display!|@\n", commandResponse);
     }
 
     // test deletion of multiple tasks with a common keyword
@@ -238,7 +238,7 @@ public class IntegratedTest {
         ui.executeCommand("add Plan Christmas Party");
         ui.executeCommand("undo");
         commandResponse = ui.executeCommand("display");
-        assertEquals("@|cyan To Do:\n|@\n", commandResponse);
+        assertEquals("@|red There aren't any events to display!|@\n", commandResponse);
     }
 
     // test redoing of add command
@@ -273,7 +273,7 @@ public class IntegratedTest {
         ui.executeCommand("undo");
         ui.executeCommand("redo");
         commandResponse = ui.executeCommand("display");
-        assertEquals("@|cyan To Do:\n|@\n", commandResponse);
+        assertEquals("@|red There aren't any events to display!|@\n", commandResponse);
     }
     
     // test making an event repeat
