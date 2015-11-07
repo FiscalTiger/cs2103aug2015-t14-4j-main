@@ -1,12 +1,5 @@
 package easycheck.commandParser;
 
-/**
- * Command Parser for Easy Check application. Takes in a user command and parses
- * it into a Command type Object for use by Storage.
- * 
- * @@author A0124206W
- */
-
 import java.util.List;
 
 import org.joda.time.DateTime;
@@ -28,39 +21,42 @@ import easycheck.commandParser.CommandTypes.Repeat;
 import easycheck.commandParser.CommandTypes.SaveAt;
 import easycheck.commandParser.CommandTypes.Undo;
 import easycheck.commandParser.CommandTypes.Update;
-
+/**
+ * Command Parser for Easy Check application. Takes in a user command and parses
+ * it into a Command type Object for use by Logic.
+ * 
+ * @@author A0124206W
+ */
 public class CommandParser {
     private final String COMMAND_SPLITTER = " ";
     private final String ARGUMENT_SPLITTER = ",";
     private final int COMMAND_ARRAY_LENGTH = 2;
     private final int PARAM_POSITION_COMMAND_TYPE = 0;
     private final int PARAM_POSITION_COMMAND_ARGUMENT = 1;
-
+    
     private final int DATE_GROUP_ONE_DATE = 1;
     private final int DATE_GROUP_TWO_DATES = 2;
     private final int FIRST_PARSED_DATE_TEXT = 0;
     private final int SECOND_PARSED_DATE_TEXT = 1;
 
-    // command types
+    // command types supported
     private final String COMMAND_TYPE_ADD = "add";
     private final String COMMAND_TYPE_UPDATE = "update";
-    // private final String COMMAND_TYPE_UPDATE_SPECIFIC = "updateSpecific";
     private final String COMMAND_TYPE_DELETE = "delete";
     private final String COMMAND_TYPE_REPEAT = "repeat";
     private final String COMMAND_TYPE_SEARCH = "search";
     private final String COMMAND_TYPE_DISPLAY = "display";
     private final String COMMAND_TYPE_MARKDONE = "done";
-    // private final String COMMAND_TYPE_STORE_LOCATION = "storeLocation";
     private final String COMMAND_TYPE_UNDO = "undo";
     private final String COMMAND_TYPE_REDO = "redo";
     private final String COMMAND_TYPE_EXIT = "exit";
     private final String COMMAND_TYPE_SAVE_AT = "save_at";
     private final String COMMAND_TYPE_READ_FROM = "read_from";
     
-
+    // display messages for invalid commands
     private final String MESSAGE_INVALID_COMMAND = "Invalid Command\n";
     private final String MESSAGE_INVALID_LESS_ARGS = "Too little arguments for command type \"%s\" \n";
-
+    //@@author
     private static final String MESSAGE_INVALID_DISPLAY_ARGS = "Display: Invalid flag \"%s\"\n";
     private static final String MESSAGE_INVALID_DISPLAY_DATE = "Display: Couldn't parse the date \"%s\"\n";
     private static final String MESSAGE_INVALID_DISPLAY_INDEX = "Display: Invalid index \"%s\"\n";
@@ -68,7 +64,6 @@ public class CommandParser {
 
     private static final String MESSAGE_INVALID_ADD_DATE = "Add: Couldn't parse the date \"%s\"s\n";
     private static final String MESSAGE_INVALID_ADD_DATES = "Add: Couldn't parse the date text.\n";
-    private static final String MESSAGE_INVALID_ADD_NUM_OF_ARGS = "Add: too many arguments\n";
     private static final String MESSAGE_INVALID_ADD_FREQUENCY = "Add: You have used the Repeat flag but entered an invalid frequency.\n";
     
     private static final String MESSAGE_INVALID_REPEAT_NUM_OF_ARGS = "Repeat: too many arguments\n";
@@ -97,12 +92,13 @@ public class CommandParser {
     private static final String DISPLAY_FLAG_INDEX = "i";
 
     // expected number of parameters for all other commands
+    private final int NUM_ARGUMENTS_EMPTY_COMMAND_ARRAY = 1;
     private final int NUM_ARGUMENTS_DELETE = 1;
     private final int NUM_ARGUMENTS_SEARCH = 1;
     private final int NUM_ARGUMENTS_SAVE_AT = 1;
     private final int NUM_ARGUMENTS_READ_FROM = 1;
-
-    // Date Time Formats accepted
+    // @@author A0124206W
+    // Date Time Formats accepted for parsing and validation
     private static final String DATE_SPLITTER_SLASH = "/";
     private static final String DATE_SPLITTER_DOT = ".";
     private static final String DATE_SPLITTER_COLON = ":";
@@ -122,26 +118,32 @@ public class CommandParser {
     private static final String UPDATE_COMMAND_TYPE_TYPE = "type";
 	private static final String MESSAGE_UPDATE_INVALID_ARGS = "Invalid number of arguments for update command";
     
-    
-
     // flexi command keywords
     private final String[] FLEXI_KEYWORDS = { " by ", " at ", " on ", " due ", " for " };
     private final String FLEXI_KEYWORD_EVENT_SPLITTER = " to ";
     private final String DUMMY_TIME = " 23:59";
+    //@@author A0124206W
     // parses the arguments and calls the appropriate create command.
     public Command parseCommand(String userCommand) {
         String[] commandArray = splitCommand(userCommand);
-        if (commandArray.length == 1) {
+        if (commandArray.length == NUM_ARGUMENTS_EMPTY_COMMAND_ARRAY) {
+            // command array has no arguments
             Command command = createCommand(commandArray[PARAM_POSITION_COMMAND_TYPE]);
+            // at this point, a command should have been created.
+            assert (command instanceof Command);
             return command;
         } else {
+            // command array has at least 1 argument
             Command command = createCommand(
                     commandArray[PARAM_POSITION_COMMAND_TYPE],
                     commandArray[PARAM_POSITION_COMMAND_ARGUMENT]);
+            // at this point, command should have been created.
+            assert (command instanceof Command);
             return command;
         }
     }
-
+    
+    //splits the user-input string into an array of command type and arguments
     private String[] splitCommand(String userCommand) {
         return userCommand.split(COMMAND_SPLITTER, COMMAND_ARRAY_LENGTH);
     }
@@ -165,6 +167,8 @@ public class CommandParser {
         } else {
             command = new Invalid(MESSAGE_INVALID_COMMAND);
         }
+        // at this point, command should already have been created.
+        assert (command != null);
         return command;
     }
 
@@ -201,23 +205,24 @@ public class CommandParser {
             	arguments = getArguments(commandArguments, NUM_ARGUMENTS_READ_FROM);
             	command = createReadFromCommand(arguments);
             } else {
-            
                 // if command type not recognized
                 command = new Invalid(MESSAGE_INVALID_COMMAND);
             }
         } catch (Exception e) {
             // catch any exceptions thrown by creation of commands
+            // and create an invalid command 
             command = new Invalid(MESSAGE_INVALID_COMMAND);
         }
-        // at this point, arguments should have been pulled out.
+        // at this point, arguments should have been parsed
         assert (arguments != null);
+        // at this point, command should have been created already
         assert (command != null);
         return command;
     }
 
     
 	
-
+    //@@author
 	// get arguments for add type - supports flexi commands
     private String[] getArgumentsAdd(String commandArguments) {
     	commandArguments = commandArguments.replace(ADD_FLAG_REPEAT, ARGUMENT_SPLITTER);
@@ -529,9 +534,7 @@ public class CommandParser {
         return new Markdone(arguments);
     }
 
-    // @@author
-    // feel free to change it haha
-    // @author A0145668R
+    // @@author A0145668R
     private Command createRepeatCommand(String[] arguments) {
     	if(!Repeat.isValidFrequency(arguments[REPEAT_ARGS_FREQUENCY])) {
     		return new Invalid(MESSAGE_INVALID_REPEAT_FREQUENCY);
@@ -554,9 +557,8 @@ public class CommandParser {
     		return new Invalid(MESSAGE_INVALID_REPEAT_NUM_OF_ARGS);
     	}
     }
-    // @@author A0145668R
     
-    // @author A0145668R
+    // @@author A0145668R
     public DateTime[] parseDateText(String dateString) throws Exception {
         isValidExplicitDate(dateString);
         Parser dateParser = new Parser();
@@ -582,8 +584,9 @@ public class CommandParser {
         }
         return parsedDates;
     }
-    // @@author A0145668R
 
+    // @@author A0124206W
+    // gets and trims arguments from a user-inputed string
     private String[] getArguments(String commandArguments, int expectedArguments)
             throws Exception {
         // split arguments and then trim them.
@@ -596,6 +599,7 @@ public class CommandParser {
         return arguments;
     }
 
+    // @@author A0124206W
     // removes leading and trailing whitespace from arguments
     private String[] trimArguments(String[] arguments) {
         String[] trimmedArguments = new String[arguments.length];
@@ -605,7 +609,8 @@ public class CommandParser {
         return trimmedArguments;
     }
 
-    // replaces the flexi keywords with ',' for parsing.
+    // @@author A0124206W
+    // replaces the flexi keywords with ',' for argument parsing.
     private String[] checkFlexi(String commandArguments) {
         for (int i = 0; i < FLEXI_KEYWORDS.length; i++) {
             commandArguments = commandArguments.replace(FLEXI_KEYWORDS[i],
@@ -614,7 +619,9 @@ public class CommandParser {
         return commandArguments.split(ARGUMENT_SPLITTER);
     }
 
-    // checks if explicit dates (MM/dd/yyyy and MM/dd/yyyy HH:mm) are valid.
+    // @@author A0124206W
+    // checks if explicit mentioned dates in the form of MM/dd/yyyy and
+    // MM/dd/yyyy HH:mm are valid.
     private boolean isValidExplicitDate(String dateString) throws Exception {
         dateString = dateString.replace(DATE_SPLITTER_SLASH, DATE_SPLITTER_DOT);
         if (!dateString.contains(DATE_SPLITTER_DOT)) {
@@ -630,7 +637,7 @@ public class CommandParser {
         } else {
             // there is more than 1 date (should be 2)
             String[] dateStringArray = splitDates(dateString);
-            if (dateStringArray.length != 2) {
+            if (dateStringArray.length != DATE_GROUP_TWO_DATES) {
                 throw new Exception();
             } else {
                 isValidExplicitDate(dateStringArray[FIRST_PARSED_DATE_TEXT]);
@@ -639,8 +646,9 @@ public class CommandParser {
         }
         return true;
     }
-    
-    // splits and trims date strings in the form of "date to date"
+    // @@author A0124206W
+    // splits and trims dates from user-inputed strings in the form of
+    // "start date TO end date"
     private String[] splitDates(String dateString) {
         String[] dateStrings = trimArguments(dateString
                 .split(FLEXI_KEYWORD_EVENT_SPLITTER));

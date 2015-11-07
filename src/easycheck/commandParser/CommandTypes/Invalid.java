@@ -3,10 +3,10 @@ package easycheck.commandParser.CommandTypes;
 import easycheck.commandParser.Command;
 
 /**
- * Invalid Command Type represents an invalid command for Easy Check
- * application. (Error is handled by command executor, not parser.)
+ * @@author A0124206W 
  * 
- * @@author A0124206W
+ * Invalid Command Type represents an invalid command for
+ * Easy Check application.
  */
 
 public class Invalid extends Command {

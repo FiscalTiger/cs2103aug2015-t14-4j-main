@@ -19,3 +19,4 @@ DeleteCommandUnitTest.java
 build.xml
 *.log*
 integratedtestingfile.txt.rej
+*.log
