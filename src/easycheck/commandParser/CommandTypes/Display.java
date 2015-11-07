@@ -19,6 +19,7 @@ public class Display extends Command {
 	private boolean indexFlag = false;
 	private boolean overDueFlag = false;
 	private boolean doneFlag = false;
+	private boolean allFlag = false;
 	
 	private int eventIndex;
 	private DateTime displayDate;
@@ -93,4 +94,13 @@ public class Display extends Command {
 	public void setDisplayDate(DateTime displayDate) {
 		this.displayDate = displayDate;
 	}
+
+	public boolean isAllFlag() {
+		return allFlag;
+	}
+
+	public void setAllFlag(boolean allFlag) {
+		this.allFlag = allFlag;
+	}
+	// @@author A0145668R
 }

@@ -1,19 +1,6 @@
-package easycheck.commandParser;
-
-import java.util.ArrayList;
-
-import easycheck.commandParser.CommandTypes.Add;
-import easycheck.commandParser.CommandTypes.Delete;
-import easycheck.commandParser.CommandTypes.Display;
-import easycheck.commandParser.CommandTypes.Update;
-import easycheck.commandParser.CommandTypes.Exit;
-import easycheck.commandParser.CommandTypes.Invalid;
-import easycheck.commandParser.CommandTypes.SaveAt;
-import easycheck.commandParser.CommandTypes.Search;
-import easycheck.commandParser.CommandTypes.Undo;
-
-/**
- * @@author A0126989H Command Type represents a parsed command for Easy Check
+# A0126989H Command Type represents a parsed command for Easy Check
+###### src\easycheck\commandParser\Command.java
+``` java
  *          application. To be called: Command.excecuteCommand(commandType,
  *          arguments) which return string In order to pass data into Storage,
  *          please call method, getCachedFile() which returns the ArrayList
@@ -97,3 +84,4 @@ public class Command {
 		}
 	}
 }
+```

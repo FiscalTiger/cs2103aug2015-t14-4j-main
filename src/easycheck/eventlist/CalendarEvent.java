@@ -24,8 +24,8 @@ public class CalendarEvent extends Event {
 	private static final String TIME_OUTPUT_FORMAT = "%02d:%02d";
 	private static final String DATE_AND_TIME_INPUT_FORMAT = "dd.MM.yyyy HH:mm";
 	private static final String MESSAGE_JSON_STRING_ERROR = "Error in toJsonString method, most likely coding error";
-	private static final String MESSAGE_TO_STRING_TEMPLATE = "@|yellow %d. %s from %s to %s %s|@\n";
-	private static final String MESSAGE_TO_PRINT_GROUP_STRING_TEMPLATE = "@|yellow %d. %s from %s to %s|@\n";
+	private static final String MESSAGE_TO_STRING_TEMPLATE = "@|yellow %d. %s from %s to %s%s|@\n";
+	private static final String MESSAGE_TO_PRINT_GROUP_STRING_TEMPLATE = "@|yellow %d. %s from %s to %s%s|@\n";
 	private static final String MESSAGE_REPEATING_ADDITION = " (Repeats %s)";
 	
 	private static final String REPEATING_DAILY = "daily";
@@ -135,7 +135,7 @@ public class CalendarEvent extends Event {
 	}
 	
 	public Duration getDuration() {
-		return new Duration(getStartDateAndTime(), getEndDateAndTime());
+		return new Duration(startDateAndTime, endDateAndTime);
 	}
 	
 	public String getStartDate() {
@@ -170,7 +170,12 @@ public class CalendarEvent extends Event {
 	 * See Documentation for java.text.SimpleDateFormat
 	 */
 	public void setStartDateAndTime(DateTime newDate) {
-		assert(newDate.isBefore(endDateAndTime));
+		// If end date is not set yet we can't assert
+		// this is true but the other assert in
+		// setEndDateAndTime will pick it up
+		if(endDateAndTime != null) {
+			assert(newDate.isBefore(endDateAndTime));
+		}
 		startDateAndTime = newDate;
 	}
 	
@@ -209,33 +214,32 @@ public class CalendarEvent extends Event {
 			if(repeating && !isUpdated()) {
 				update();
 			}
-			return stopDate.isAfter(endDateAndTime);
+			return stopDate.isBefore(endDateAndTime);
 		}
-		return endDateAndTime.isBeforeNow();
+		return getEndDateAndTime().isBeforeNow();
 	}
 	
 	private void update() {
-		Duration dur = getDuration();
 		switch(frequency) {
 			case REPEATING_DAILY:
 				startDateAndTime = startDateAndTime.plusDays(1);
-				endDateAndTime = endDateAndTime.plus(dur);
+				endDateAndTime = endDateAndTime.plusDays(1);
 				break;
 			case REPEATING_WEEKLY:
 				startDateAndTime = startDateAndTime.plusWeeks(1);
-				endDateAndTime = endDateAndTime.plus(dur);
+				endDateAndTime = endDateAndTime.plusWeeks(1);
 				break;
 			case REPEATING_BIWEEKLY:
 				startDateAndTime = startDateAndTime.plusWeeks(2);
-				endDateAndTime = endDateAndTime.plus(dur);
+				endDateAndTime = endDateAndTime.plusWeeks(2);
 				break;
 			case REPEATING_MONTHLY:
 				startDateAndTime = startDateAndTime.plusMonths(1);
-				endDateAndTime = endDateAndTime.plus(dur);
+				endDateAndTime = endDateAndTime.plusMonths(1);
 				break;
 			case REPEATING_YEARLY:
 				startDateAndTime = startDateAndTime.plusYears(1);
-				endDateAndTime = endDateAndTime.plus(dur);
+				endDateAndTime = endDateAndTime.plusYears(1);
 				break;
 			default:
 				try {
@@ -267,12 +271,17 @@ public class CalendarEvent extends Event {
 	}
 	
 	public String toPrintGroupString() {
+		String repeatAddition = "";
+		
+		if(repeating) {
+			repeatAddition = String.format(MESSAGE_REPEATING_ADDITION, frequency);
+		}
 		if (this.isSameDay()) {
 			return String.format(MESSAGE_TO_PRINT_GROUP_STRING_TEMPLATE, this.getEventIndex(), 
-					this.getEventName(), this.getStartTime(), this.getEndTime());
+					this.getEventName(), this.getStartTime(), this.getEndTime(), repeatAddition);
 		} else {
 			return String.format(MESSAGE_TO_PRINT_GROUP_STRING_TEMPLATE, this.getEventIndex(), 
-					this.getEventName(), this.getStartTime(), this.getFormattedEndDateString());
+					this.getEventName(), this.getStartTime(), this.getFormattedEndDateString(), repeatAddition);
 		}
 	}
 
@@ -369,6 +378,7 @@ public class CalendarEvent extends Event {
 	public static boolean areValidDates(DateTime start, DateTime end) {
 		return (start.isBefore(end) && start.isAfterNow());
 	}
+	// @@author A0145668R
 	
 	public void setDone(){
 		//method stub for polymorthism
@@ -406,4 +416,5 @@ public class CalendarEvent extends Event {
 	public Event createCopy() {
 		return new CalendarEvent(this);
 	}
+	// @@author A0145668R
 }

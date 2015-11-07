@@ -1,9 +1,0 @@
-{"type":"floating","index":1,"name":"CS2103 Dev Guide Touch up"}
-{"type":"floating","index":2,"name":"Print ACC2002"}
-{"type":"floating","index":3,"name":"Read CS2103"}
-{"type":"todo","index":4,"name":"Mom's Birthday","due":"12.11.2015 14:39","completed":false,"repeating":false}
-{"type":"todo","index":5,"name":"ACC2002 Final starts","due":"26.11.2015 19:00","completed":false,"repeating":false}
-{"type":"todo","index":6,"name":"internship starts","due":"02.12.2015 14:39","completed":false,"repeating":false}
-{"type":"todo","index":7,"name":"Presentation for CS2103","due":"11.12.2015 14:39","completed":false,"repeating":false}
-{"type":"todo","index":8,"name":"Flight","due":"23.12.2015 09:00","completed":false,"repeating":false}
-{"type":"todo","index":9,"name":"buy Christmas 1","due":"23.12.2015 14:00","completed":false,"repeating":false}

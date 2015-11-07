@@ -124,4 +124,5 @@ public class Add extends Command {
 	public void setFrequency(String frequency) {
 		this.frequency = frequency;
 	}
+	// @@author A0145668R
 }
