@@ -68,6 +68,18 @@ public class IntegratedTest {
                 "@|green Added|@ @|yellow 1. Christmas Party from Fri 25 Dec 2015 at 12:00 to Sat 26 Dec 2015 at 13:00|@\n\n",
                 commandResponse);
     }
+    
+    // test adding of an event with a start and end time that repeats
+    // @@author A0145668R
+    @Test
+    public void testAddRepeatingEvent() {
+        commandResponse = ui
+                .executeCommand("add Christmas Party, 25 Dec 12:00 to 26 Dec 13:00 repeat yearly");
+        assertEquals(
+                "@|green Added|@ @|yellow 1. Christmas Party from Fri 25 Dec 2015 at 12:00 to Sat 26 Dec 2015 at 13:00 (Repeats yearly)|@\n\n",
+                commandResponse);
+    }
+    //@@author
 
     // test display when there are no tasks
     @Test
@@ -119,6 +131,20 @@ public class IntegratedTest {
                 "@|cyan To Do:\n|@\t@|green 1. plan Christmas Party\n|@\n",
                 commandResponse);
     }
+    
+    // test display all command (should display tasks regardless of completion status)
+    // @@author A0145668R
+    @Test
+    public void testDisplayAll() {
+    	ui.executeCommand("add plan party at on 25th Dec 12:00");
+    	ui.executeCommand("add lunch at 1 pm 25th Dec to 2 pm 25th Dec");
+    	ui.executeCommand("done plan");
+    	commandResponse = ui.executeCommand("display all");
+    	assertEquals(
+                "@|cyan To Do:\n|@\n@|cyan Fri 25 Dec 2015:\n|@\t@|green 1. plan party due at 12:00 is complete|@\n\t@|yellow 2. lunch from 13:00 to 14:00|@\n\n",
+                commandResponse);
+    }
+    // @@author
 
     // test deletion when task to delete not specified
     @Test
@@ -249,5 +275,38 @@ public class IntegratedTest {
         commandResponse = ui.executeCommand("display");
         assertEquals("@|cyan To Do:\n|@\n", commandResponse);
     }
-
+    
+    // test making an event repeat
+    // @@author A0145668R
+    @Test
+    public void testRepeatGoodFrequency() {
+    	ui.executeCommand("add Plan Christmas Party at noon Dec 25th");
+    	commandResponse = ui.executeCommand("repeat Plan Christmas Party, yearly");
+    	assertEquals("@|green Successfully made Plan Christmas Party repeat yearly|@\n", commandResponse);
+    }
+    
+    // test repeat with bad frequency
+    @Test
+    public void testRepeatBadFrequency() {
+    	ui.executeCommand("add Plan Christmas Party at noon Dec 25th");
+    	commandResponse = ui.executeCommand("repeat Plan Christmas Party, sdfsdf");
+    	assertEquals("@|red Repeat: You have an invalid frequency.\n|@", commandResponse);
+    }
+    
+    // test repeat with bad event name
+    @Test
+    public void testRepeatBadName() {
+    	ui.executeCommand("add Plan Christmas Party at noon Dec 25th");
+    	commandResponse = ui.executeCommand("repeat Plan Wrong Party, weekly");
+    	assertEquals("@|red Repeat: There aren't any events with the name Plan Wrong Party|@\n", commandResponse);
+    }
+    
+    // test repeat with incorrect index
+    @Test
+    public void testRepeatBadIndex() {
+    	ui.executeCommand("add Plan Christmas Party at noon Dec 25th");
+    	commandResponse = ui.executeCommand("repeat 2, weekly");
+    	assertEquals("@|red Repeat: invalid event index 2.|@\n", commandResponse);
+    }
+    //@@author
 }

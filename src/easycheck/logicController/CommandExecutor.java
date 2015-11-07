@@ -52,8 +52,10 @@ public class CommandExecutor {
 	private static final String MESSAGE_UNDO_EMPTY_STACK = "@|red There is nothing to undo|@\n";
 	private static final String MESSAGE_REDO_EMPTY_STACK = "@|red There is nothing to redo|@\n";
 	private static final String MESSAGE_UPDATE_INVALID_IDX = "@|red%s is an invalid index.|@\n";
-	private static final String MESSAGE_REPEAT_INVALID_EVENT_NAME = "@|red There aren't any events with the name %s|@";
+	private static final String MESSAGE_REPEAT_INVALID_EVENT_NAME = "@|red Repeat: There aren't any events with the name %s|@\n";
 	private static final String MESSAGE_REPEAT_SUCCESS = "@|green Successfully made %s repeat %s|@\n";
+	private static final String MESSAGE_STOP_REPEAT_SUCCESS = "@|green Successfully made %s stop repeating|@\n";
+	private static final String MESSAGE_REPEAT_INVALID_INDEX = "@|red Repeat: invalid event index %d.|@\n";
 	private static final String PRINT_GROUP_HEADING_FLOATING = "To Do";
 
 	// @@author A0126989H
@@ -1056,8 +1058,7 @@ public class CommandExecutor {
 		return response;
 	}
 
-	// TODO
-	@SuppressWarnings("unused")
+	// @@author A0145668R
 	private String repeat(Repeat cmd) {
 		int eventId;
 		String eventName;
@@ -1065,25 +1066,44 @@ public class CommandExecutor {
 		
 		if(isNumeric(cmd.getTask())) {
 			eventId = Integer.parseInt(cmd.getTask());
+			if(eventId < 1 || eventId > eventList.size()) {
+				return String.format(MESSAGE_REPEAT_INVALID_INDEX, eventId);
+			}
 			e = eventList.get(eventId - 1);
 			eventName = e.getEventName();
-			e.setFrequency(cmd.getFrequency());
-			e.setStopDate(cmd.getEndDate());
-			return String.format(MESSAGE_REPEAT_SUCCESS,
-					eventName, e.getFrequency());
+			undoStack.push(cloneEventList());
+			if(cmd.getFrequency().equals("none")) {
+				e.setRepeating(false);
+				e.setFrequency(null);
+				e.setStopDate(null);
+				return String.format(MESSAGE_STOP_REPEAT_SUCCESS,
+						eventName);
+			} else {
+				e.setRepeating(true);
+				e.setFrequency(cmd.getFrequency());
+				e.setStopDate(cmd.getEndDate());
+				return String.format(MESSAGE_REPEAT_SUCCESS,
+						eventName, e.getFrequency());
+			}
 		} else {
 			eventName = cmd.getTask();
-			for (int i = 0; i < eventList.size(); i++) {
-				if (eventList.get(i).getEventName().toLowerCase().contains(eventName)) {
-					undoStack.push(cloneEventList());
-					e = eventList.get(i);
-					reIndex();
+			for (Event temp: eventList) {
+				if (temp.getEventName().toLowerCase().contains(eventName.toLowerCase())) {
+					e = temp;
 					break;
 				}
 			}
 			if(e != null) {
-				e.setFrequency(cmd.getFrequency());
-				e.setStopDate(cmd.getEndDate());
+				undoStack.push(cloneEventList());
+				if(cmd.getFrequency().equals("none")) {
+					e.setRepeating(false);
+					e.setFrequency(null);
+					e.setStopDate(null);
+				} else {
+					e.setRepeating(true);
+					e.setFrequency(cmd.getFrequency());
+					e.setStopDate(cmd.getEndDate());
+				}
 				return String.format(MESSAGE_REPEAT_SUCCESS,
 						eventName, e.getFrequency());
 			} else {

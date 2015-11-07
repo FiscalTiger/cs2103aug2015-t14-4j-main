@@ -35,7 +35,7 @@ public class ToDoEvent extends Event {
 	private static final String MESSAGE_REPEATING_ADDITION = " (Repeats %s)";
 	
 	private static final String MESSAGE_TO_PRINT_GROUP_STRING_TEMPLATE_IS_NOT_COMPLETE = "@|red %d. %s due at %s%s|@\n";
-	private static final String MESSAGE_TO_PRINT_GROUP_STRING_TEMPLATE_IS_COMPLETE = "@|yellow %d. %s due at %s is complete%s|@\n";
+	private static final String MESSAGE_TO_PRINT_GROUP_STRING_TEMPLATE_IS_COMPLETE = "@|green %d. %s due at %s is complete%s|@\n";
 	
 	private static final String JSON_TYPE = "type";
 	private static final String JSON_EVENT_INDEX = "index";

@@ -6,6 +6,7 @@ import easycheck.commandParser.Command;
 
 public class Repeat extends Command {
 	//@@author A0145668R
+	private static final String REPEATING_NONE = "none";
 	private static final String REPEATING_DAILY = "daily";
 	private static final String REPEATING_WEEKLY = "weekly";
 	private static final String REPEATING_BIWEEKLY = "biweekly";
@@ -20,7 +21,7 @@ public class Repeat extends Command {
     	this(task, frequency, null);
     }
     
-    public Repeat(String taskName, String frequency, DateTime endDate) {
+    public Repeat(String task, String frequency, DateTime endDate) {
     	this.setTask(task);
     	this.setFrequency(frequency);
     	this.setEndDate(endDate);
@@ -54,7 +55,7 @@ public class Repeat extends Command {
 	public static boolean isValidFrequency(String frequency) {
 		if(frequency.equals(REPEATING_DAILY) || frequency.equals(REPEATING_WEEKLY) ||
 				frequency.equals(REPEATING_BIWEEKLY) || frequency.equals(REPEATING_MONTHLY) ||
-				frequency.equals(REPEATING_YEARLY)) {
+				frequency.equals(REPEATING_YEARLY) || frequency.equals("none")) {
 			return true;
 		} else {
 			return false;
