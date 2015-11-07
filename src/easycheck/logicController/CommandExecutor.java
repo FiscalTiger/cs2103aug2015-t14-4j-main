@@ -110,24 +110,7 @@ public class CommandExecutor {
 		undoStack = new Stack<ArrayList<Event>>();
 		redoStack = new Stack<ArrayList<Event>>();
 		//@@author A0126989H
-	    FileHandler fh;  
-
-	    try {  
-
-	        // This block configure the logger with handler and formatter  
-	        fh = new FileHandler(LOGGERNAME);  
-	        logger.addHandler(fh);
-	        SimpleFormatter formatter = new SimpleFormatter();  
-	        fh.setFormatter(formatter);  
-
-	        // the following statement is used to log any messages  
-	        logger.fine("My CommandExecutor Log:");  
-
-	    } catch (SecurityException e) {  
-	        showToUser(SECURITY_EXCEPTION);
-	    } catch (IOException e) {  
-	        showToUser(IO_EXCEPTION);
-	    }  
+		logger.setUseParentHandlers(false);
 		logger.setLevel(Level.FINE); 
 		logger.log(Level.FINE, "Going to start CommandExecutor");
 		//@@author
@@ -680,6 +663,7 @@ public class CommandExecutor {
 	}
 
 	private String doneEvent(Markdone cmd) {
+		assert(cmd.getTaskName()!=null);
 		String arguments = cmd.getTaskName();
 		String doneEvent = EMPTY_STRING;
 		for (int i = 0; i < eventList.size(); i++) {
@@ -699,6 +683,7 @@ public class CommandExecutor {
 	}
 
 	private String doneSpecial(Markdone cmd) {
+		assert(cmd.getTaskName()!=null);
 		String arguments = cmd.getTaskName();
 		String doneEvent = EMPTY_STRING;
 		if (arguments.equals(MESSAGE_MARKDONE_CMD_SPECIALCOMMAND.trim())) {
@@ -725,6 +710,7 @@ public class CommandExecutor {
 	}
 
 	private String doneIndex(Markdone cmd) {
+		assert(cmd.getTaskName()!=null);
 		String arguments = cmd.getTaskName();
 		String doneEvent = EMPTY_STRING;
 		int index = Integer.parseInt(arguments);
@@ -742,6 +728,7 @@ public class CommandExecutor {
 	}
 
 	private String doneFirst(Markdone cmd) {
+		assert(cmd.getTaskName()==null);
 		String doneEvent = EMPTY_STRING;
 		if (eventList.size() != 0) {
 			undoStack.push(cloneEventList());
@@ -767,22 +754,18 @@ public class CommandExecutor {
 			return deleteFirst(cmd);
 			// Case 2: When the command is "delete + index"
 		} else if (isNumeric(arguments)) {
-			assert(!eventList.isEmpty());
 			return deleteIndex(cmd);
 			/*
 			 * Case 3: Special Command : " delete all" Delete Multiple matching
 			 * String and "delete all + eventName"
 			 */
 		} else if (cmd.isDeleteAll()) {
-			assert(!eventList.isEmpty());
 			return deleteSpecial(cmd);
 			// Case 4: Delete Done Tasks "delete done"
 		} else if (cmd.isDeleteDone()) {
-			assert(!eventList.isEmpty());
 			return deleteDone(cmd);
 			// Case 5: When the command is "delete + EventName"
 		} else {
-			assert(!eventList.isEmpty());
 			return deleteEvent(cmd);
 		}
 	}
@@ -800,6 +783,7 @@ public class CommandExecutor {
 	}
 
 	private String deleteEvent(Delete cmd) {
+		assert(cmd.getTaskName()!=null);
 		String arguments = cmd.getTaskName();
 		String removeEvent = EMPTY_STRING;
 		for (int i = 0; i < eventList.size(); i++) {
@@ -873,7 +857,6 @@ public class CommandExecutor {
 	// @@author A0126989H
 	// ReIndexing all the event in the EventList
 	public void reIndex() {
-		assert(!eventList.isEmpty());
 		for (int i = 0; i < eventList.size(); i++) {
 			eventList.get(i).setEventIndex(i + 1);
 		}
