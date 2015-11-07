@@ -872,6 +872,7 @@ public class CommandExecutor {
 	// @@author A0126989H
 	// ReIndexing all the event in the EventList
 	public void reIndex() {
+		assert(!eventList.isEmpty());
 		for (int i = 0; i < eventList.size(); i++) {
 			eventList.get(i).setEventIndex(i + 1);
 		}
@@ -937,6 +938,7 @@ public class CommandExecutor {
 
 	// @@author A0126989H
 	private String search(Search cmd) {
+		assert(cmd instanceof Search);
 		logger.log(Level.INFO, "Execute Search Command: ");
 		String response = MESSAGE_SEARCH_CMD_RESPONSE;
 		// Case 1: No Event to search at all;
