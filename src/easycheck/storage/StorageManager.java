@@ -27,6 +27,7 @@ public class StorageManager {
 	private static final String EVENT_TYPE_TODO_KEY = "todo";
 	private static final String EVENT_TYPE_BASE_KEY = "floating";
 	private static final String JSON_TYPE = "type";
+	private static final String ERROR_IN_CREATING_FILE = "@|red Your file might have been moved@ \n";
 	
 	
 	private File easyCheckFile;
@@ -45,18 +46,24 @@ public class StorageManager {
 		}
 		return false;
 	}
-
+	//@@author A0126989H
 	private void createFile(String easyCheckFileName) {
 		File newEasyCheckFile = new File(easyCheckFileName);
 		try {
 			newEasyCheckFile.createNewFile();
 		} catch (IOException e) {
-			e.printStackTrace();
+			showToUser(ERROR_IN_CREATING_FILE);
 		}
 		
 	}
+	//@@author
 
 	
+	private void showToUser(String message) {
+		System.out.println(message);
+		
+	}
+
 	public ArrayList<Event> readDataFromEasyCheckFile() {
 		Scanner scanner;
 		ArrayList<Event> easyCheckEvents = new ArrayList<Event>();
