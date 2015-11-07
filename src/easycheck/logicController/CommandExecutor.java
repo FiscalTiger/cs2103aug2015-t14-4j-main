@@ -840,6 +840,7 @@ public class CommandExecutor {
 	public static boolean isNumeric(String str) {
 		try {
 			double d = Double.parseDouble(str);
+			assert(d>=0.0);
 		} catch (NumberFormatException nfe) {
 			return false;
 		}
