@@ -33,7 +33,7 @@ import easycheck.commandParser.CommandTypes.Update;
  * @@author A0124206W
  */
 public class CommandParser {
-    // logger
+    // logger created here for logging purposes
     private static final Logger logger = Logger.getLogger("CommandParser");
     private static final String LOGGERNAME = "CommandParser.log";
     // strings that split arguments and commands
@@ -50,6 +50,7 @@ public class CommandParser {
     // number of expected arguments in date arrays
     private static final int DATE_GROUP_ONE_DATE = 1;
     private static final int DATE_GROUP_TWO_DATE = 2;
+
     // locations for the arguments in parsed date arrays
     private static final int PARSED_DATE_TEXT_FIRST = 0;
     private static final int PARSED_DATE_TEXT_SECOND = 1;
@@ -158,14 +159,22 @@ public class CommandParser {
         logger.log(Level.FINE, "parsing: " + userCommand);
         Command command;
         String[] commandArray = splitCommand(userCommand);
-        if (commandArray.length == NUM_ARGUMENTS_EMPTY_COMMAND_ARRAY) {
-            // command array has no arguments
-            command = createCommand(commandArray[PARAM_POSITION_COMMAND_TYPE]);
+        try {
+            if (commandArray.length == NUM_ARGUMENTS_EMPTY_COMMAND_ARRAY) {
+                // command array has no arguments
+                command = createCommand(commandArray[PARAM_POSITION_COMMAND_TYPE]);
 
-        } else {
-            // command array has at least 1 argument
-            command = createCommand(commandArray[PARAM_POSITION_COMMAND_TYPE],
-                    commandArray[PARAM_POSITION_COMMAND_ARGUMENT]);
+            } else {
+                // command array has at least 1 argument
+                command = createCommand(
+                        commandArray[PARAM_POSITION_COMMAND_TYPE],
+                        commandArray[PARAM_POSITION_COMMAND_ARGUMENT]);
+            }
+        } catch (Exception e) {
+            // catch any exceptions thrown by creation of commands
+            // and handle by creating an invalid command
+            logger.log(Level.WARNING, "Invalid command created");
+            return new Invalid(MESSAGE_INVALID_COMMAND);
         }
         // at this point, a command should have been created.
         assert (command instanceof Command);
@@ -653,6 +662,7 @@ public class CommandParser {
                 || arguments.length > expectedArguments) {
             throw new IllegalArgumentException();
         }
+        // number of arguments should be the correct amount here
         assert (arguments.length == expectedArguments);
         return arguments;
     }
@@ -664,6 +674,8 @@ public class CommandParser {
         for (int i = 0; i < arguments.length; i++) {
             trimmedArguments[i] = arguments[i].trim();
         }
+        // number of arguments should remain the same
+        assert (trimmedArguments.length == arguments.length);
         return trimmedArguments;
     }
 
