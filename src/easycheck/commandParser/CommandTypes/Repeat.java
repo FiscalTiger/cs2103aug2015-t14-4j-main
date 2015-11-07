@@ -5,7 +5,7 @@ import org.joda.time.DateTime;
 import easycheck.commandParser.Command;
 
 public class Repeat extends Command {
-	//@author A0145668R
+	//@@author A0145668R
 	private static final String REPEATING_DAILY = "daily";
 	private static final String REPEATING_WEEKLY = "weekly";
 	private static final String REPEATING_BIWEEKLY = "biweekly";
@@ -60,5 +60,5 @@ public class Repeat extends Command {
 			return false;
 		}
 	}
-	// @@author A0145668R
+	// @@author
 }

@@ -7,7 +7,7 @@ import easycheck.commandParser.Command;
  * DISPLAY Command Type represents a parsed command for Easy Check application.
  * 
  * 
- * @author A0145668R
+ * @@author A0145668R
  */
 
 public class Display extends Command {
@@ -102,5 +102,5 @@ public class Display extends Command {
 	public void setAllFlag(boolean allFlag) {
 		this.allFlag = allFlag;
 	}
-	// @@author A0145668R
+	// @@author
 }

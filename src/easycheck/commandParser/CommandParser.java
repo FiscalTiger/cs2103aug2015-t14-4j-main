@@ -238,7 +238,7 @@ public class CommandParser {
         return arguments;
     }
 
-    // @author A0145668R
+    // @@author A0145668R
     private Command createAddCommand(String[] arguments) {
         Add cmd = null;
         String taskName;

@@ -117,15 +117,15 @@ public class CommandExecutor {
 	        fh.setFormatter(formatter);  
 
 	        // the following statement is used to log any messages  
-	        logger.info("My CommandExecutor Log:");  
+	        logger.fine("My CommandExecutor Log:");  
 
 	    } catch (SecurityException e) {  
 	        e.printStackTrace();  
 	    } catch (IOException e) {  
 	        e.printStackTrace();  
 	    }  
-		logger.setLevel(Level.INFO); 
-		logger.log(Level.INFO, "Going to start CommandExecutor");
+		logger.setLevel(Level.FINE); 
+		logger.log(Level.FINE, "Going to start CommandExecutor");
 		//@@author
 	}
 
@@ -135,7 +135,7 @@ public class CommandExecutor {
 	 * 
 	 * @param command
 	 * @return responseString
-	 * @@author A0145668R
+	 * @@@author A0145668R
 	 */
 	public String executeCommand(Command command) {
 		if (command instanceof Add) {
@@ -181,7 +181,7 @@ public class CommandExecutor {
 	/**
 	 * Creates the correct type of event and adds it to eventList
 	 * 
-	 * @author A0145668R
+	 * @@@author A0145668R
 	 */
 	private String add(Add cmd) {
 		assert(cmd.getTaskName() != null);
@@ -257,7 +257,7 @@ public class CommandExecutor {
 	/**
 	 * Displays all events
 	 * 
-	 * @author A0145668R
+	 * @@author A0145668R
 	 */
 	private String display(Display cmd) {
 		String response = "";
@@ -282,7 +282,7 @@ public class CommandExecutor {
 	}
 
 	// Get Floating tasks for display string
-	// @author A0145668R
+	// @@author A0145668R
 	private String getDisplayFloatingString() {
 		String response = "";
 		PrintGroup printGroup = new PrintGroup(PRINT_GROUP_HEADING_FLOATING);
@@ -296,7 +296,7 @@ public class CommandExecutor {
 	}
 
 	// Get the tasks on a specific date for the display command
-	// @author A0145668R
+	// @@author A0145668R
 	private String getDisplayDateString(String dateText) {
 		String response = "";
 		PrintGroup dateGroup = new PrintGroup(dateText);
@@ -319,7 +319,7 @@ public class CommandExecutor {
 	}
 
 	// Get done tasks for display string
-	// @author A0145668R
+	// @@author A0145668R
 	private String getDisplayDoneString() {
 		String response = "";
 		PrintGroup floatingGroup = new PrintGroup(PRINT_GROUP_HEADING_FLOATING);
@@ -450,7 +450,7 @@ public class CommandExecutor {
 	}
 
 	// Get the default text for display string
-	// @author A0145668R
+	// @@author A0145668R
 	private String getDefaultDisplayString() {
 		String response = "";
 		PrintGroup floatingGroup = new PrintGroup(PRINT_GROUP_HEADING_FLOATING);
@@ -499,7 +499,6 @@ public class CommandExecutor {
 		}
 		return response;
 	}
-	// @@author A0145668R
 
 	/*
 	 * @@author A0121560W
@@ -871,7 +870,7 @@ public class CommandExecutor {
 		}
 	}
 	
-	// @author A0145668R
+	// @@author A0145668R
 	public ArrayList<Event> cloneEventList() {
 		ArrayList<Event> temp = new ArrayList<Event>();
 		for (Event e : eventList) {
@@ -879,7 +878,6 @@ public class CommandExecutor {
 		}
 		return temp;
 	}
-	// @@author A0145668R
 
 
 	// @@author A0126989H
@@ -894,10 +892,9 @@ public class CommandExecutor {
 		}
 		return true;
 	}
-	// @@author
 
 	// Executes an Undo command
-	// @author A0145668R
+	// @@author A0145668R
 	private String undo(Undo cmd) {
 		if (undoStack.isEmpty()) {
 			return MESSAGE_UNDO_EMPTY_STACK;
@@ -910,10 +907,9 @@ public class CommandExecutor {
 
 		return display(disp);
 	}
-	// @@author A0145668R
 
 	// Executes an Redo command
-	// @author A0145668R
+	// @@author A0145668R
 	private String redo(Redo cmd) {
 		if (redoStack.isEmpty()) {
 			return MESSAGE_REDO_EMPTY_STACK;
@@ -927,7 +923,6 @@ public class CommandExecutor {
 
 		return display(disp);
 	}
-	// @@author A0145668R
 
 	// @@author A0126989H
 	private String search(Search cmd) {

@@ -3,7 +3,7 @@ package easycheck.eventlist;
 /*
  * This is a subclass of Event that deals with Calendar Events.
  * Calendar events are events with specific start and end times
- * @author A0145668R
+ * @@author A0145668R
  */
 
 import java.io.IOException;
@@ -378,13 +378,12 @@ public class CalendarEvent extends Event {
 	public static boolean areValidDates(DateTime start, DateTime end) {
 		return (start.isBefore(end) && start.isAfterNow());
 	}
-	// @@author A0145668R
 	
 	public void setDone(){
 		//method stub for polymorthism
 	}
 	
-	// @author A0145668R
+	// @@author A0145668R
 	public boolean hasStopDate() {
 		return stopDate != null;
 	}
@@ -416,5 +415,5 @@ public class CalendarEvent extends Event {
 	public Event createCopy() {
 		return new CalendarEvent(this);
 	}
-	// @@author A0145668R
+	// @@@author
 }

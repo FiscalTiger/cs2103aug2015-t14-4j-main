@@ -19,7 +19,7 @@ import easycheck.eventlist.ToDoEvent;
 /*
  * Storage manager for Easy Check application.
  * Handles the storage of application's file storage and cached data
- * @author Andrew Pouleson
+ * @@author A0145668R
  * 
  */
 public class StorageManager {

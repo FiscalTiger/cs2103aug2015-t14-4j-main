@@ -1,4 +1,8 @@
 package easycheck.eventlist;
+/*
+ * Class for tasks that do not have a start or end date
+ * @@author A0145668R
+ */
 
 import java.io.IOException;
 import java.io.StringWriter;
@@ -108,9 +112,8 @@ public class FloatingTask extends Event {
 	public Event createCopy() {
 		return new FloatingTask(this);
 	}
-	// @@author A0145668R
 	
-	// @author A0126989H
+	// @@author A0126989H
 	public void setDone(){
 		this.complete = true;
 	}

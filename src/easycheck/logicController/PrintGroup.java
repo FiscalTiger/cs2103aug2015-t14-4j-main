@@ -1,4 +1,8 @@
 package easycheck.logicController;
+/*
+ * This file helps display the events in a nice format
+ * @@author A0145668R
+ */
 
 import java.util.ArrayList;
 
