@@ -37,6 +37,7 @@ public class CommandExecutor {
 	private static int ZERO_OFFSET = 1;
 	private static Logger logger = Logger.getLogger("CommandExecutor");
 	private static String LOGGERNAME = "CommandExecutor.log";
+	private static ConsoleHandler consoleH = new ConsoleHandler();
 	//@@author
 
 	private static final String MESSAGE_ADD_CMD_RESPONSE = "@|green Added|@ %s\n";
@@ -110,7 +111,9 @@ public class CommandExecutor {
 		undoStack = new Stack<ArrayList<Event>>();
 		redoStack = new Stack<ArrayList<Event>>();
 		//@@author A0126989H
+		consoleH.setLevel(Level.SEVERE);
 		logger.setUseParentHandlers(false);
+		logger.addHandler(consoleH);
 		logger.setLevel(Level.FINE); 
 		logger.log(Level.FINE, "Going to start CommandExecutor");
 		//@@author
