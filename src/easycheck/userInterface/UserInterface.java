@@ -4,7 +4,6 @@ import java.util.Scanner;
 
 import org.fusesource.jansi.AnsiConsole;
 import static org.fusesource.jansi.Ansi.*;
-import static org.fusesource.jansi.Ansi.Color.*;
 
 import easycheck.logicController.LogicController;
 
