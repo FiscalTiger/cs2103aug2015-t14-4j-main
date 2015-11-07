@@ -101,6 +101,9 @@ public class CommandExecutor {
 	private static final String MESSAGE_UPDATE_NAME_RESPONSE = "@|green Task %s has been renamed to %s |@ \n";
 	private static final String SECURITY_EXCEPTION = "@|red Permission denied |@ \n";
 	private static final String IO_EXCEPTION = "@|red Invalid Input name|@ \n";
+	
+	private static final String LOG_ADDING = "Adding %s to List";
+	private static final String LOG_ADD_FAILED = "Add command faile: %s";
 
 	private ArrayList<Event> eventList;
 	private Stack<ArrayList<Event>> undoStack;
@@ -191,6 +194,7 @@ public class CommandExecutor {
 						newEvent = new CalendarEvent(eventIndex, cmd.getTaskName(), cmd.getStart(), 
 								cmd.getEnd(), true, cmd.getFrequency(), cmd.getStopDate());
 					} else {
+						logger.log(Level.FINE, String.format(LOG_ADD_FAILED, cmd));
 						return MESSAGE_INVALID_STOP_DATE;
 					}
 				} else if(cmd.isRepeating()) {
@@ -200,10 +204,12 @@ public class CommandExecutor {
 					newEvent = new CalendarEvent(eventIndex, cmd.getTaskName(), cmd.getStart(), cmd.getEnd());
 				}
 				undoStack.push(cloneEventList());
+				logger.log(Level.FINE, String.format(LOG_ADDING, newEvent));
 				eventList.add(newEvent);
 				sort();
 				response = String.format(MESSAGE_ADD_CMD_RESPONSE, newEvent);
 			} else {
+				logger.log(Level.FINE, String.format(LOG_ADD_FAILED, cmd));
 				response = MESSAGE_INVALID_CALENDAR_DATES;
 			}
 			// has arguments for a to do event
@@ -214,6 +220,7 @@ public class CommandExecutor {
 					if(cmd.getEnd().isBefore(cmd.getStopDate())) {
 						newEvent = new ToDoEvent(eventIndex, cmd.getTaskName(), cmd.getEnd(), true, cmd.getFrequency(), cmd.getStopDate());
 					} else {
+						logger.log(Level.FINE, String.format(LOG_ADD_FAILED, cmd));
 						return MESSAGE_INVALID_STOP_DATE;
 					}
 				} else if(cmd.isRepeating()) {
@@ -222,10 +229,12 @@ public class CommandExecutor {
 					newEvent = new ToDoEvent(eventIndex, cmd.getTaskName(), cmd.getEnd());
 				}
 				undoStack.push(cloneEventList());
+				logger.log(Level.FINE, String.format(LOG_ADDING, newEvent));
 				eventList.add(newEvent);
 				sort();
 				response = String.format(MESSAGE_ADD_CMD_RESPONSE, newEvent);
 			} else {
+				logger.log(Level.FINE, String.format(LOG_ADD_FAILED, cmd));
 				response = MESSAGE_INVALID_TODO_DEADLINE;
 			}
 			// doesn't have time limits so it creates a floating task
@@ -233,6 +242,7 @@ public class CommandExecutor {
 			int eventIndex = eventList.size() + 1;
 			newEvent = new FloatingTask(eventIndex, cmd.getTaskName());
 			undoStack.push(cloneEventList());
+			logger.log(Level.FINE, String.format(LOG_ADDING, newEvent));
 			eventList.add(newEvent);
 			sort();
 			response = String.format(MESSAGE_ADD_CMD_RESPONSE, newEvent);

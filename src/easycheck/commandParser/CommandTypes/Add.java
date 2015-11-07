@@ -18,8 +18,8 @@ public class Add extends Command {
 	private String taskName; 
 	private DateTime start;
 	private DateTime end;
-	private boolean isRepeating;
-	private String frequency;
+	private boolean isRepeating = false;
+	private String frequency = null;
     private DateTime stopDate = null;
     
     // @@author A0145668R
@@ -135,5 +135,16 @@ public class Add extends Command {
 	public void setFrequency(String frequency) {
 		this.frequency = frequency;
 	}
+	
+	public String toString() {
+		return "Event: " + this.taskName + 
+				" Start: " + this.start + 
+				" End: " + this.end + 
+				" Repeating: " + this.isRepeating + 
+				" freqency: " + this.frequency + 
+				" Stop Date: " +this.stopDate;
+	}
 	// @@author
+	
+	
 }
