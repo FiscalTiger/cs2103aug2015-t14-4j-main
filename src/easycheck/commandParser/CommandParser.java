@@ -1,6 +1,10 @@
 package easycheck.commandParser;
 
 import java.util.List;
+import java.util.logging.FileHandler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.logging.SimpleFormatter;
 
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
@@ -29,8 +33,14 @@ import easycheck.commandParser.CommandTypes.Update;
  * @@author A0124206W
  */
 public class CommandParser {
+    // logger
+    private static final Logger logger = Logger.getLogger("CommandParser");
+    private static final String LOGGERNAME = "CommandParser.log";
+    // strings that split arguments and commands
     private static final String COMMAND_SPLITTER = " ";
     private static final String ARGUMENT_SPLITTER = ",";
+    
+    // expected length of command array
     private static final int COMMAND_ARRAY_LENGTH = 2;
 
     // locations for the arguments in command arrays
@@ -57,11 +67,12 @@ public class CommandParser {
     private static final String COMMAND_TYPE_EXIT = "exit";
     private static final String COMMAND_TYPE_SAVE_AT = "save_at";
     private static final String COMMAND_TYPE_READ_FROM = "read_from";
-
+    // @@author
     // display messages for invalid commands
     private static final String MESSAGE_INVALID_COMMAND = "Invalid Command\n";
+    private static final String MESSAGE_INVALID_WRONG_NUM_ARGS = "Wrong amount of arguments!\n";
     private static final String MESSAGE_INVALID_LESS_ARGS = "Too little arguments for command type \"%s\" \n";
-    // @@author
+
     private static final String MESSAGE_INVALID_DISPLAY_ARGS = "Display: Invalid flag \"%s\"\n";
     private static final String MESSAGE_INVALID_DISPLAY_DATE = "Display: Couldn't parse the date \"%s\"\n";
     private static final String MESSAGE_INVALID_DISPLAY_INDEX = "Display: Invalid index \"%s\"\n";
@@ -128,10 +139,23 @@ public class CommandParser {
             " due ", " for " };
     private static final String FLEXI_KEYWORD_EVENT_SPLITTER = " to ";
     private static final String DUMMY_TIME = " 23:59";
-
+    //init logger
+    public CommandParser() {
+        try {
+            FileHandler fileHandler = new FileHandler(LOGGERNAME);
+            logger.addHandler(fileHandler);
+            SimpleFormatter formatter = new SimpleFormatter();  
+            fileHandler.setFormatter(formatter);
+            logger.addHandler(fileHandler);
+        } catch (Exception e) {
+            e.printStackTrace();  
+        }
+        
+    }
     // @@author A0124206W
     // parses the arguments and calls the appropriate create command.
     public Command parseCommand(String userCommand) {
+        logger.log(Level.FINE, "parsing: " + userCommand);
         Command command;
         String[] commandArray = splitCommand(userCommand);
         if (commandArray.length == NUM_ARGUMENTS_EMPTY_COMMAND_ARRAY) {
@@ -151,6 +175,7 @@ public class CommandParser {
     // @@author A0124206W
     // splits the user-input string into an array of command type and arguments
     private String[] splitCommand(String userCommand) {
+        logger.log(Level.FINE, "splitting command: " + userCommand);
         String[] splitArray = userCommand.split(COMMAND_SPLITTER,
                 COMMAND_ARRAY_LENGTH);
         return splitArray;
@@ -159,6 +184,7 @@ public class CommandParser {
     // @@author A0124206W
     // creates a command type object for user commands with no arguments.
     private Command createCommand(String commandType) {
+        logger.log(Level.FINE, "creating command for user input: " + commandType);
         String[] arguments = null;
         Command command;
         try {
@@ -180,7 +206,8 @@ public class CommandParser {
         } catch (Exception e) {
             // catch any exceptions thrown by creation of commands
             // and handle by creating an invalid command
-            command = new Invalid(MESSAGE_INVALID_COMMAND);
+            logger.log(Level.WARNING, "Invalid command");
+            return new Invalid(MESSAGE_INVALID_COMMAND);
         }
         // at this point, command should already have been created.
         assert (command != null);
@@ -190,6 +217,7 @@ public class CommandParser {
     // @@author A0124206W
     // creates Command for commands with >0 arguments.
     private Command createCommand(String commandType, String commandArguments) {
+        logger.log(Level.FINE, "commandType: " + commandType);
         String[] arguments = null;
         Command command = null;
         try {
@@ -226,13 +254,17 @@ public class CommandParser {
                 // if command type not recognized
                 return new Invalid(MESSAGE_INVALID_COMMAND);
             }
-        } catch (Exception e) {
-            // catch any exceptions thrown by creation of commands
+        } catch (IllegalArgumentException e) {
+            // catch illegal argument exceptions thrown by getArgument
             // and handle by creating an invalid command
-            return new Invalid(MESSAGE_INVALID_COMMAND);
+            logger.log(Level.WARNING, "Wrong number of arguments");
+            command = new Invalid(MESSAGE_INVALID_WRONG_NUM_ARGS);
+        } catch (Exception e) {
+            // catch any other general exceptions thrown by creation of commands
+            // and handle by creating an invalid command
+            logger.log(Level.WARNING, "Invalid command");
+            command = new Invalid(MESSAGE_INVALID_COMMAND);
         }
-        // arguments should have been parsed
-        assert (arguments != null);
         // command should have been created
         assert (command != null);
         return command;
@@ -619,8 +651,9 @@ public class CommandParser {
                 .split(ARGUMENT_SPLITTER));
         if (arguments.length < expectedArguments
                 || arguments.length > expectedArguments) {
-            throw new Exception();
+            throw new IllegalArgumentException();
         }
+        assert (arguments.length == expectedArguments);
         return arguments;
     }
 
@@ -648,6 +681,7 @@ public class CommandParser {
     // checks if explicit mentioned dates in the form of MM/dd/yyyy and
     // MM/dd/yyyy HH:mm are valid.
     private boolean isValidExplicitDate(String dateString) throws Exception {
+        logger.log(Level.FINE, "checking date: " + dateString);
         dateString = dateString.replace(DATE_SPLITTER_SLASH, DATE_SPLITTER_DOT);
         if (!dateString.contains(DATE_SPLITTER_DOT)) {
             // is not an explicit date
@@ -676,8 +710,11 @@ public class CommandParser {
     // splits and trims dates from user-inputed strings in the form of
     // "start date TO end date" to two separate dates strings in an array
     private String[] splitDates(String dateString) {
+        logger.log(Level.FINE, "splitting dates: " + dateString);
         String[] dateStrings = trimArguments(dateString
                 .split(FLEXI_KEYWORD_EVENT_SPLITTER));
+        //exactly 2 dates should be created
+        assert (dateStrings.length == DATE_GROUP_TWO_DATE);
         return dateStrings;
     }
 
