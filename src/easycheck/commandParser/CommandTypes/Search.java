@@ -20,8 +20,9 @@ public class Search extends Command {
 	private static final int ZERO_CONSTANT = 0;
 	private static final int ARGUMENT_SIZE = 1;
 	
-	private static final String MESSAGE_DELETE_CMD_SPECIALCOMMAND = "all";
-	private static final String INVALID_DATE_EXCEPTION = "Please use date format as DD/MM/YYYY";
+	private static final String SEARCH_CMD_SPECIALCOMMAND = "all";
+	private static final String SEARCH_CMD_FREETIME_PHRASE = "freetime";
+	private static final String STANDARD_DATE_FORMAT = "dd/MM/yyyy";
 	private static final String SPLIT_REGEXP = "\\s+";
 	private static final String EMPTY_STRING = "";
 	
@@ -41,10 +42,10 @@ public class Search extends Command {
 
 	public boolean isFreetimeSearch() throws IllegalArgumentException {
 		String[] temp = getArgument().split(SPLIT_REGEXP);
-		if (temp.length == ARGUMENT_SIZE && temp[ZERO_CONSTANT].toLowerCase().equals("freetime")) {
+		if (temp.length == ARGUMENT_SIZE && temp[ZERO_CONSTANT].toLowerCase().equals(SEARCH_CMD_FREETIME_PHRASE)) {
 			return true;
-		} else if (temp.length > ARGUMENT_SIZE && temp[ZERO_CONSTANT].toLowerCase().equals("freetime")) {
-			DateTimeFormatter formatter = DateTimeFormat.forPattern("dd/MM/yyyy");
+		} else if (temp.length > ARGUMENT_SIZE && temp[ZERO_CONSTANT].toLowerCase().equals(SEARCH_CMD_FREETIME_PHRASE)) {
+			DateTimeFormatter formatter = DateTimeFormat.forPattern(STANDARD_DATE_FORMAT);
 			date = formatter.parseDateTime(temp[ARGUMENT_SIZE]);
 			return true;
 			
@@ -70,7 +71,7 @@ public class Search extends Command {
 
 	public boolean isSearchAll() {
 		return getArgument().length() >= ALL_COMMAND_END
-				&& getArgument().substring(ZERO_CONSTANT, ALL_COMMAND_END).equals(MESSAGE_DELETE_CMD_SPECIALCOMMAND);
+				&& getArgument().substring(ZERO_CONSTANT, ALL_COMMAND_END).equals(SEARCH_CMD_SPECIALCOMMAND);
 	}
 	public void showToUser(String message){
 		System.out.println(message);

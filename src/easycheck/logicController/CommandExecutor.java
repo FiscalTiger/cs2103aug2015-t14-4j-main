@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Stack;
+import java.util.logging.*;
 
 import org.joda.time.DateTime;
 import org.joda.time.Period;
@@ -32,7 +33,11 @@ import easycheck.eventlist.ToDoEvent;
 import easycheck.storage.StorageManager;
 
 public class CommandExecutor {
+	//@@author A0126989H
 	private static int ZERO_OFFSET = 1;
+	private static Logger logger = Logger.getLogger("CommandExecutor");
+	private static String LOGGERNAME = "CommandExecutor.log";
+	//@@author
 
 	private static final String MESSAGE_ADD_CMD_RESPONSE = "@|green Added|@ %s\n";
 	private static final String MESSAGE_DELETE_CMD_EMPTY = "@|red There aren't any events!|@\n";
@@ -72,6 +77,7 @@ public class CommandExecutor {
 	private static final String MESSAGE_MARKDONE_CMD_SPECIALCOMMAND = "all ";
 	private static final String MESSAGE_MARKDONE_CMD_ALL = "@|green Congratulations on finishing all tasks! :)|@\n";
 	private static final String WHITESPACE_DELIMITER = "\\s+";
+	
 
 	// @@author A0121560W
 	private static final String MESSAGE_SAVE_AT_SUCCESS = "@|green File has been save at %s successfully!|@ \n";
@@ -96,6 +102,28 @@ public class CommandExecutor {
 		eventList = initEventList;
 		undoStack = new Stack<ArrayList<Event>>();
 		redoStack = new Stack<ArrayList<Event>>();
+		//@@author A0126989H
+	    FileHandler fh;  
+
+	    try {  
+
+	        // This block configure the logger with handler and formatter  
+	        fh = new FileHandler(LOGGERNAME);  
+	        logger.addHandler(fh);
+	        SimpleFormatter formatter = new SimpleFormatter();  
+	        fh.setFormatter(formatter);  
+
+	        // the following statement is used to log any messages  
+	        logger.info("My CommandExecutor Log:");  
+
+	    } catch (SecurityException e) {  
+	        e.printStackTrace();  
+	    } catch (IOException e) {  
+	        e.printStackTrace();  
+	    }  
+		logger.setLevel(Level.INFO); 
+		logger.log(Level.INFO, "Going to start CommandExecutor");
+		//@@author
 	}
 
 	/**
@@ -610,6 +638,7 @@ public class CommandExecutor {
 
 	// @@author A0126989H
 	private String markdone(Markdone cmd) {
+		logger.log(Level.INFO, "Execute Markdone command: ");
 		String arguments = cmd.getTaskName();
 		// Case 1: When the command is "done"
 		if (arguments == null) {
@@ -712,6 +741,7 @@ public class CommandExecutor {
 	private String delete(Delete cmd) {
 		String arguments = cmd.getTaskName();
 		// Case 1: When the command is "delete"
+		logger.log(Level.INFO, "Execute Delete Command: ");
 		if (arguments == null) {
 			return deleteFirst(cmd);
 			// Case 2: When the command is "delete + index"
@@ -842,6 +872,7 @@ public class CommandExecutor {
 			double d = Double.parseDouble(str);
 			assert(d>=0.0);
 		} catch (NumberFormatException nfe) {
+			logger.log(Level.WARNING, "Formmating number error ");
 			return false;
 		}
 		return true;
@@ -881,9 +912,11 @@ public class CommandExecutor {
 
 	// @@author A0126989H
 	private String search(Search cmd) {
+		logger.log(Level.INFO, "Execute Search Command: ");
 		String response = MESSAGE_SEARCH_CMD_RESPONSE;
 		// Case 1: No Event to search at all;
 		// return empty search message;
+		assert(cmd.getArgument() != null);
 		try {
 			if (eventList.isEmpty()) {
 				response += MESSAGE_SEARCH_CMD_EMPTY;
@@ -903,6 +936,7 @@ public class CommandExecutor {
 			}
 		} catch (IllegalArgumentException iae) {
 			response = (INVALID_DATE_EXCEPTION);
+			logger.log(Level.WARNING, "Invalid Date Exception throws in search");
 		}
 		if (response.equals(MESSAGE_SEARCH_CMD_RESPONSE)) {
 			response = MESSAGE_SEARCH_CMD_NOTFOUND;
@@ -922,6 +956,7 @@ public class CommandExecutor {
 	}
 
 	private String computFreeSlot(boolean[] freetime, String freeSlots) {
+		logger.log(Level.INFO, "Trying to arrange all freetime in the day");
 		int start = 0;
 		int end = 0;
 		for (int i = 7; i < 24; i++) {
