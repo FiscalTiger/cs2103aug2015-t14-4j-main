@@ -42,10 +42,13 @@ public class CommandExecutor {
 	private static final String MESSAGE_UPDATE_CAL_RESPONSE = "@|green Updated %s successfully|@\n";
 	private static final String MESSAGE_UPDATE_TYPE_RESPONSE ="@|green %s is now a %s type task! |@ \n";
 	private static final String MESSAGE_INVALID_CALENDAR_DATES = "@|red The start date must be before the end date and after the current date and time.|@\n";
+	private static final String MESSAGE_INVALID_STOP_DATE = "@|red The stop date has to be after the end date.|@\n";
 	private static final String MESSAGE_INVALID_TODO_DEADLINE = "@|red The deadline must be after the current date and time.|@\n";
 	private static final String MESSAGE_UNDO_EMPTY_STACK = "@|red There is nothing to undo|@\n";
 	private static final String MESSAGE_REDO_EMPTY_STACK = "@|red There is nothing to redo|@\n";
 	private static final String MESSAGE_UPDATE_INVALID_IDX = "@|red%s is an invalid index.|@\n";
+	private static final String MESSAGE_REPEAT_INVALID_EVENT_NAME = "@|red There aren't any events with the name %s|@";
+	private static final String MESSAGE_REPEAT_SUCCESS = "@|green Successfully made %s repeat %s|@\n";
 	private static final String PRINT_GROUP_HEADING_FLOATING = "To Do";
 
 	// @@author A0126989H
@@ -101,6 +104,9 @@ public class CommandExecutor {
 		if (command instanceof Add) {
 			redoStack.clear();
 			return add((Add) command);
+		} else if (command instanceof Repeat) { 
+			redoStack.clear();
+			return repeat((Repeat)command);
 		} else if (command instanceof Display) {
 			return display((Display) command);
 		} else if (command instanceof Update) {
@@ -138,7 +144,7 @@ public class CommandExecutor {
 	/**
 	 * Creates the correct type of event and adds it to eventList
 	 * 
-	 * @@author A0145668R
+	 * @author A0145668R
 	 */
 	private String add(Add cmd) {
 		assert(cmd.getTaskName() != null);
@@ -150,8 +156,12 @@ public class CommandExecutor {
 			if (CalendarEvent.areValidDates(cmd.getStart(), cmd.getEnd())) {
 				int eventIndex = eventList.size() + 1;
 				if (cmd.isRepeating() && cmd.hasStopDate()) {
-					newEvent = new CalendarEvent(eventIndex, cmd.getTaskName(), cmd.getStart(), 
-							cmd.getEnd(), true, cmd.getFrequency(), cmd.getStopDate());
+					if (CalendarEvent.areValidDates(cmd.getEnd(), cmd.getStopDate())) {
+						newEvent = new CalendarEvent(eventIndex, cmd.getTaskName(), cmd.getStart(), 
+								cmd.getEnd(), true, cmd.getFrequency(), cmd.getStopDate());
+					} else {
+						return MESSAGE_INVALID_STOP_DATE;
+					}
 				} else if(cmd.isRepeating()) {
 					newEvent = new CalendarEvent(eventIndex, cmd.getTaskName(), cmd.getStart(), 
 							cmd.getEnd(), true, cmd.getFrequency());
@@ -171,7 +181,11 @@ public class CommandExecutor {
 			if (ToDoEvent.isValidDate(cmd.getEnd())) {
 				int eventIndex = eventList.size() + 1;
 				if (cmd.isRepeating() && cmd.hasStopDate()) {
-					newEvent = new ToDoEvent(eventIndex, cmd.getTaskName(), cmd.getEnd(), true, cmd.getFrequency(), cmd.getStopDate());
+					if(cmd.getEnd().isBefore(cmd.getStopDate())) {
+						newEvent = new ToDoEvent(eventIndex, cmd.getTaskName(), cmd.getEnd(), true, cmd.getFrequency(), cmd.getStopDate());
+					} else {
+						return MESSAGE_INVALID_STOP_DATE;
+					}
 				} else if(cmd.isRepeating()) {
 					newEvent = new ToDoEvent(eventIndex, cmd.getTaskName(), cmd.getEnd(), true, cmd.getFrequency());
 				} else {
@@ -207,7 +221,7 @@ public class CommandExecutor {
 	/**
 	 * Displays all events
 	 * 
-	 * @@author A0145668R
+	 * @author A0145668R
 	 */
 	private String display(Display cmd) {
 		String response = "";
@@ -449,6 +463,7 @@ public class CommandExecutor {
 		}
 		return response;
 	}
+	// @@author A0145668R
 
 	/*
 	 * @@author A0121560W
@@ -817,6 +832,7 @@ public class CommandExecutor {
 		}
 	}
 	
+	// @author A0145668R
 	public ArrayList<Event> cloneEventList() {
 		ArrayList<Event> temp = new ArrayList<Event>();
 		for(Event e: eventList) {
@@ -824,6 +840,8 @@ public class CommandExecutor {
 		}
 		return temp;
 	}
+	// @@author A0145668R
+
 
 	// @@author A0126989H
 	// Checking if the delete argument is Index number
@@ -850,6 +868,7 @@ public class CommandExecutor {
 
 		return display(disp);
 	}
+	// @@author A0145668R
 	
 	// Executes an Redo command
 	// @author A0145668R
@@ -866,6 +885,7 @@ public class CommandExecutor {
 
 		return display(disp);
 	}
+	// @@author A0145668R
 
 	// @@author A0126989H
 	private String search(Search cmd) {
@@ -980,8 +1000,39 @@ public class CommandExecutor {
 
 	
 	// TODO
+	@SuppressWarnings("unused")
 	private String repeat(Repeat cmd) {
-		return null;
+		int eventId;
+		String eventName;
+		Event e = null;
+		
+		if(isNumeric(cmd.getTask())) {
+			eventId = Integer.parseInt(cmd.getTask());
+			e = eventList.get(eventId - 1);
+			eventName = e.getEventName();
+			e.setFrequency(cmd.getFrequency());
+			e.setStopDate(cmd.getEndDate());
+			return String.format(MESSAGE_REPEAT_SUCCESS,
+					eventName, e.getFrequency());
+		} else {
+			eventName = cmd.getTask();
+			for (int i = 0; i < eventList.size(); i++) {
+				if (eventList.get(i).getEventName().toLowerCase().contains(eventName)) {
+					undoStack.push(cloneEventList());
+					e = eventList.get(i);
+					reIndex();
+					break;
+				}
+			}
+			if(e != null) {
+				e.setFrequency(cmd.getFrequency());
+				e.setStopDate(cmd.getEndDate());
+				return String.format(MESSAGE_REPEAT_SUCCESS,
+						eventName, e.getFrequency());
+			} else {
+				return String.format(MESSAGE_REPEAT_INVALID_EVENT_NAME, eventName);
+			}
+		}
 	}
 
 	private String exit(Exit cmd) {

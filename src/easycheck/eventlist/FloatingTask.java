@@ -108,6 +108,7 @@ public class FloatingTask extends Event {
 	public Event createCopy() {
 		return new FloatingTask(this);
 	}
+	// @@author A0145668R
 	
 	// @author A0126989H
 	public void setDone(){

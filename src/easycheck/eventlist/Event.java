@@ -6,6 +6,7 @@ import java.text.SimpleDateFormat;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
+import org.joda.time.DateTime;
 import org.json.simple.JSONObject;
 import org.json.simple.JSONValue;
 
@@ -107,4 +108,23 @@ public abstract class Event implements Comparable<Event> {
 	public abstract int compareTo(Event e);
 	
 	public abstract String toJsonString();
+	
+	public void setRepeating(boolean repeating) {}
+
+	public boolean hasStopDate() {
+		return false;
+	}
+	
+	public DateTime getStopDate() {
+		return null;
+	}
+
+	public void setStopDate(DateTime stopDate) {}
+
+	public String getFrequency() {
+		return null;
+	}
+
+	public void setFrequency(String frequency) {}
+	
 }

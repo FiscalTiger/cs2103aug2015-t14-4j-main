@@ -46,7 +46,7 @@ public class CommandParser {
     private final String COMMAND_TYPE_UPDATE = "update";
     // private final String COMMAND_TYPE_UPDATE_SPECIFIC = "updateSpecific";
     private final String COMMAND_TYPE_DELETE = "delete";
-    // private final String COMMAND_TYPE_REPEAT = "repeat";
+    private final String COMMAND_TYPE_REPEAT = "repeat";
     private final String COMMAND_TYPE_SEARCH = "search";
     private final String COMMAND_TYPE_DISPLAY = "display";
     private final String COMMAND_TYPE_MARKDONE = "done";
@@ -70,6 +70,13 @@ public class CommandParser {
     private static final String MESSAGE_INVALID_ADD_DATES = "Add: Couldn't parse the date text.\n";
     private static final String MESSAGE_INVALID_ADD_NUM_OF_ARGS = "Add: too many arguments\n";
     private static final String MESSAGE_INVALID_ADD_FREQUENCY = "Add: You have used the Repeat flag but entered an invalid frequency.\n";
+    
+    private static final String MESSAGE_INVALID_REPEAT_NUM_OF_ARGS = "Repeat: too many arguments\n";
+    private static final String MESSAGE_INVALID_REPEAT_FREQUENCY = "Repeat: You have an invalid frequency.\n";
+    private static final String MESSAGE_INVALID_REPEAT_DATE = "Display: Couldn't parse the date \"%s\"\n";
+    private static final int REPEAT_ARGS_EVENT = 0;
+    private static final int REPEAT_ARGS_FREQUENCY = 1;
+    private static final int REPEAT_ARGS_STOP = 2; 
     
     private static final int ADD_ARGS_NUM_FLOATING = 1;
     private static final int ADD_ARGS_NUM_EVENT_WITH_DATES = 2;
@@ -169,6 +176,9 @@ public class CommandParser {
             if (commandType.equalsIgnoreCase(COMMAND_TYPE_ADD)) {
                 arguments = getArgumentsAdd(commandArguments);
                 command = createAddCommand(arguments);
+            } else if(commandType.equalsIgnoreCase(COMMAND_TYPE_REPEAT)) { 
+            	arguments = getArgumentsRepeat(commandArguments);
+            	command = createRepeatCommand(arguments);
             } else if (commandType.equalsIgnoreCase(COMMAND_TYPE_DELETE)) {
                 arguments = getArguments(commandArguments, NUM_ARGUMENTS_DELETE);
                 command = createDeleteCommand(arguments);
@@ -336,6 +346,13 @@ public class CommandParser {
         assert (cmd != null);
 
         return cmd;
+    }
+    
+    private String[] getArgumentsRepeat(String commandArguments) {
+    	// split arguments and then trim them.
+        String[] arguments = trimArguments(commandArguments
+                .split(ARGUMENT_SPLITTER));
+        return arguments;
     }
     //@@author A0121560W
     private Command createUpdateCommand(String[] arguments) {
@@ -514,11 +531,32 @@ public class CommandParser {
 
     // @@author
     // feel free to change it haha
+    // @author A0145668R
     private Command createRepeatCommand(String[] arguments) {
-        return new Repeat(arguments[PARAM_POSITION_COMMAND_ARGUMENT]);
+    	if(!Repeat.isValidFrequency(arguments[REPEAT_ARGS_FREQUENCY])) {
+    		return new Invalid(MESSAGE_INVALID_REPEAT_FREQUENCY);
+    	}
+    	
+    	if(arguments.length == 2) {
+			return new Repeat(arguments[REPEAT_ARGS_EVENT], 
+					arguments[REPEAT_ARGS_FREQUENCY]);
+    	} else if(arguments.length == 3) {
+    		DateTime stop;
+			try {
+				stop = parseDateText(arguments[REPEAT_ARGS_STOP])[FIRST_PARSED_DATE_TEXT];
+				return new Repeat(arguments[REPEAT_ARGS_EVENT], 
+						arguments[REPEAT_ARGS_FREQUENCY], stop);
+			} catch (Exception e) {
+				return new Invalid(String.format(MESSAGE_INVALID_REPEAT_DATE, arguments[REPEAT_ARGS_STOP]));
+			}
+    		
+    	} else {
+    		return new Invalid(MESSAGE_INVALID_REPEAT_NUM_OF_ARGS);
+    	}
     }
-
     // @@author A0145668R
+    
+    // @author A0145668R
     public DateTime[] parseDateText(String dateString) throws Exception {
         isValidExplicitDate(dateString);
         Parser dateParser = new Parser();
@@ -544,6 +582,7 @@ public class CommandParser {
         }
         return parsedDates;
     }
+    // @@author A0145668R
 
     private String[] getArguments(String commandArguments, int expectedArguments)
             throws Exception {
