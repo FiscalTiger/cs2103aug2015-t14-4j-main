@@ -560,7 +560,14 @@ public class CommandExecutor {
 						end = ((CalendarEvent) task).getEndDateAndTime();
 						newName = task.getEventName();
 						int taskIdx = task.getEventIndex();
-						eventList.set(adjustedIdx, new ToDoEvent(taskIdx, newName, end));
+						DateTime stopDate = task.getStopDate();
+						String frequency = task.getFrequency();
+						boolean repeating = ((CalendarEvent) task).isRepeating();
+						ToDoEvent replacement = new ToDoEvent(taskIdx, newName, end);
+						replacement.setStopDate(stopDate);
+						replacement.setFrequency(frequency);
+						replacement.setRepeating(repeating);
+						eventList.set(adjustedIdx, replacement);
 						response = String.format(MESSAGE_UPDATE_TYPE_RESPONSE, newName, UPDATE_EVENT_TYPE_TODO);
 					}
 				} else if (newName.equalsIgnoreCase(UPDATE_EVENT_TYPE_FLOATING)) {
@@ -569,7 +576,11 @@ public class CommandExecutor {
 					} else {
 						newName = task.getEventName();
 						int taskIdx = task.getEventIndex();
-						eventList.set(adjustedIdx, new FloatingTask(taskIdx, newName));
+						FloatingTask replacement = new FloatingTask(taskIdx, newName);
+						if (task.isDone()){
+							replacement.markComplete();
+						}
+						eventList.set(adjustedIdx, replacement);
 						response = String.format(MESSAGE_UPDATE_TYPE_RESPONSE, newName, UPDATE_EVENT_TYPE_FLOATING);
 					}
 				} else {
@@ -583,12 +594,15 @@ public class CommandExecutor {
 					if (!cmd.hasEnd() || !ToDoEvent.isValidDate(end)) {
 						response = MESSAGE_INVALID_TODO_DEADLINE;
 					} else {
-						eventList.set(adjustedIdx, new ToDoEvent(taskIdx, newName, end));
+						ToDoEvent replacement = new ToDoEvent(taskIdx, newName, end);
+						if (task.isDone()){
+							replacement.markComplete();
+						}
+						eventList.set(adjustedIdx, replacement);
 						response = String.format(MESSAGE_UPDATE_TODO_RESPONSE, newName);
 					}
 				} else {
 					newName = task.getEventName();
-					// int taskIdx = task.getEventIndex();
 					if (!cmd.hasEnd() || !ToDoEvent.isValidDate(end)) {
 						response = MESSAGE_INVALID_TODO_DEADLINE;
 					} else {
@@ -616,7 +630,14 @@ public class CommandExecutor {
 					} else {
 						newName = task.getEventName();
 						int taskIdx = task.getEventIndex();
-						eventList.set(adjustedIdx, new CalendarEvent(taskIdx, newName, start, end));
+						DateTime stopDate = task.getStopDate();
+						String frequency = task.getFrequency();
+						boolean repeating = ((ToDoEvent) task).isRepeating();
+						CalendarEvent replacement = new CalendarEvent(taskIdx, newName, start, end);
+						replacement.setStopDate(stopDate);
+						replacement.setFrequency(frequency);
+						replacement.setRepeating(repeating);
+						eventList.set(adjustedIdx, replacement);
 						response = String.format(MESSAGE_UPDATE_CAL_RESPONSE, newName);
 					}
 				} else if (taskType.equalsIgnoreCase(UPDATE_EVENT_TYPE_CALENDAR)) {
@@ -631,7 +652,13 @@ public class CommandExecutor {
 			}
 		} else if (cmd.hasStart() && cmd.hasEnd()) {
 			if (CalendarEvent.areValidDates(cmd.getStart(), cmd.getEnd())) {
+				DateTime stopDate = task.getStopDate();
+				String frequency = task.getFrequency();
+				boolean repeating = ((ToDoEvent) task).isRepeating();
 				newEvent = new CalendarEvent(intIdx, newName, cmd.getStart(), cmd.getEnd());
+				newEvent.setStopDate(stopDate);
+				newEvent.setFrequency(frequency);
+				newEvent.setRepeating(repeating);
 				eventList.set(adjustedIdx, newEvent);
 				response = String.format(MESSAGE_UPDATE_CAL_RESPONSE, newName);
 			} else {
