@@ -17,6 +17,7 @@ import easycheck.commandParser.CommandTypes.Add;
 import easycheck.commandParser.CommandTypes.Delete;
 import easycheck.commandParser.CommandTypes.Display;
 import easycheck.commandParser.CommandTypes.Exit;
+import easycheck.commandParser.CommandTypes.Help;
 import easycheck.commandParser.CommandTypes.Invalid;
 import easycheck.commandParser.CommandTypes.Markdone;
 import easycheck.commandParser.CommandTypes.ReadFrom;
@@ -68,6 +69,7 @@ public class CommandParser {
     private static final String COMMAND_TYPE_EXIT = "exit";
     private static final String COMMAND_TYPE_SAVE_AT = "save_at";
     private static final String COMMAND_TYPE_READ_FROM = "read_from";
+    private static final String COMMAND_TYPE_HELP = "help";
     // @@author
     // display messages for invalid commands
     private static final String MESSAGE_INVALID_COMMAND = "Invalid Command\n";
@@ -114,6 +116,7 @@ public class CommandParser {
     private static final int NUM_ARGUMENTS_SEARCH = 1;
     private static final int NUM_ARGUMENTS_SAVE_AT = 1;
     private static final int NUM_ARGUMENTS_READ_FROM = 1;
+    private static final int NUM_ARGUMENTS_HELP = 1;
     // @@author A0124206W
     // Date Time Formats accepted for parsing and validation
     private static final String DATE_SPLITTER_SLASH = "/";
@@ -210,6 +213,8 @@ public class CommandParser {
                 command = new Undo();
             } else if (commandType.equalsIgnoreCase(COMMAND_TYPE_REDO)) {
                 command = new Redo();
+            } else if (commandType.equalsIgnoreCase(COMMAND_TYPE_HELP)) {
+                command = new Help();
             } else {
                 command = new Invalid(MESSAGE_INVALID_COMMAND);
             }
@@ -260,7 +265,11 @@ public class CommandParser {
                 arguments = getArguments(commandArguments,
                         NUM_ARGUMENTS_READ_FROM);
                 command = createReadFromCommand(arguments);
-            } else {
+            } else if (commandType.equalsIgnoreCase(COMMAND_TYPE_HELP)) {
+                arguments = getArguments(commandArguments,
+                        NUM_ARGUMENTS_HELP);
+                command = createHelpCommand(arguments);
+            }else {
                 // if command type not recognized
                 return new Invalid(MESSAGE_INVALID_COMMAND);
             }
@@ -732,13 +741,17 @@ public class CommandParser {
     }
 
     // @@author A0121560W
-    // only one argument expected, handled by getArguments
+    // only one argument expected for save_at, read_from, and help, handled by getArguments
     private Command createSaveAtCommand(String[] target) {
         return new SaveAt(target[0]);
     }
 
     private Command createReadFromCommand(String[] target) {
         return new ReadFrom(target[0]);
+    }
+    
+    private Command createHelpCommand(String[] topic) {
+        return new Help(topic[0]);
     }
 
 }

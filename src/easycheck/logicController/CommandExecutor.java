@@ -17,6 +17,7 @@ import easycheck.commandParser.CommandTypes.Add;
 import easycheck.commandParser.CommandTypes.Delete;
 import easycheck.commandParser.CommandTypes.Display;
 import easycheck.commandParser.CommandTypes.Exit;
+import easycheck.commandParser.CommandTypes.Help;
 import easycheck.commandParser.CommandTypes.Invalid;
 import easycheck.commandParser.CommandTypes.Markdone;
 import easycheck.commandParser.CommandTypes.ReadFrom;
@@ -101,6 +102,174 @@ public class CommandExecutor {
 	private static final String MESSAGE_UPDATE_INVALID_START = "@|red A task cannot just have a start date/time! |@ \n";
 	private static final String MESSAGE_UPDATE_INVALID_END = "@|red The end date must be after the start date! |@ \n";
 	private static final String MESSAGE_UPDATE_NAME_RESPONSE = "@|green Task %s has been renamed to %s |@ \n";
+	// various help topics, based off command types
+	private static final String HELP_TOPIC_ADD = "add";
+	private static final String HELP_TOPIC_DELETE = "delete";
+	private static final String HELP_TOPIC_DISPLAY = "display";
+	private static final String HELP_TOPIC_EXIT = "exit";
+	private static final String HELP_TOPIC_HELP = "help";
+	private static final String HELP_TOPIC_DONE = "done";
+	private static final String HELP_TOPIC_READ_FROM = "read_from";
+	private static final String HELP_TOPIC_REDO = "redo";
+	private static final String HELP_TOPIC_REPEAT = "repeat";
+	private static final String HELP_TOPIC_SAVE_AT = "save_at";
+	private static final String HELP_TOPIC_SEARCH = "search";
+	private static final String HELP_TOPIC_UNDO = "undo";
+	private static final String HELP_TOPIC_UPDATE = "update";
+	// various help messages
+	private static final String MESSAGE_HELP_DEFAULT = "For more information on a specific command, type HELP command-name\n"
+			+ "@|cyan Example: help update |@\n\n"
+			+ "@|red Note: Dates in this program follow a mm/dd/yyyy format |@\n\n"
+			+ "@|green Available command types: |@\n"
+			+ "@|yellow "+HELP_TOPIC_ADD+"\t\t "+HELP_TOPIC_DELETE+"\t\t "+HELP_TOPIC_DISPLAY+"\t\t "+HELP_TOPIC_DONE+"\t\t\n"
+			+HELP_TOPIC_EXIT+"\t\t "+HELP_TOPIC_HELP+"\t\t "+HELP_TOPIC_READ_FROM+"\t\t "+HELP_TOPIC_REDO+"\t\t\n"
+			+HELP_TOPIC_REPEAT+"\t\t "+HELP_TOPIC_SAVE_AT+"\t "+HELP_TOPIC_SEARCH+"\t\t\t "+HELP_TOPIC_UNDO+"\t\t\n"
+			+HELP_TOPIC_UPDATE+"\t\t |@\n";
+	
+	private static final String MESSAGE_HELP_ADD = "@|green ADD: Adds tasks/events to the record:\n|@"
+			+ "@|yellow To add tasks to the record: |@\n"
+			+ "@|green add <task_name> |@ \n"
+			+ "@|cyan Example: add CS2103 Homework |@\n\n"
+			
+			+ "@|yellow To add ToDo tasks to the record: |@\n"
+			+ "@|green add <ToDo_task_name>, <due_date w/o time> |@\n"
+			+ "@|green add <ToDo_task_name> at <due_date w/o time> |@\n"
+			+ "@|green add <ToDo_task_name> due <due_date w/o time> |@\n"
+			+ "@|cyan Example: add project v0.5 due at noon tomorrow |@\n\n"
+			
+			+ "@|yellow To add Events to the record: |@\n"
+			+ "@|green add <event_name> from <start_date w/o time> to <end_date w/o time> |@\n"
+			+ "@|cyan Example: add Meeting with HR from 12/9/2015 18:00 to 19:00|@\n\n"
+			
+			+ "@|yellow To add repeating ToDo or Event to the record:|@\n"
+			+ "@|green add <task_name> (at,due,for,by) <due_date> repeat (daily, weekly, biweekly, monthly, yearly)|@\n"
+			+ "@|green add <task_name> (at,due,for,by) <start_date> to <end_date> repeat (daily, weekly, biweekly, monthly, yearly)|@\n"
+			+ "@|cyan Example ToDo: add Laundry by Monday 11:59 repeat weekly |@\n"
+			+ "@|cyan Example Event: add My birthday at midnight november 27th to 11:59pm november 27th repeat yearly |@\n"
+			+ "@|yellow The repeating period can be specified as well by appending \"stop <date>\" at the end|@\n"
+			+ "@|cyan add Software Engineering Quiz by Tuesday 11:59 repeat weekly stop 11/10/2015 11:59 |@\n"
+			+ "@|cyan add Software Egineering Lecture at Friday 2 pm to Friday 4 pm repeat weekly stop 11/6/2015 4 pm|@\n";
+
+	private static final String MESSAGE_HELP_DELETE = "@|green DELETE: Deletes tasks/events from the record:\n"
+			+ "@|yellow To delete the first task:|@\n"
+			+ "@|cyan Example: delete |@\n\n"
+			
+			+ "@|yellow To delete a task by index:|@\n"
+			+ "@|green delete <index> |@\n"
+			+ "@|cyan Example: delete 3 |@\n\n"
+			
+			+ "@|yellow To delete a task by name (whole or part of): |@\n"
+			+ "@|green delete <name> |@\n"
+			+ "@|cyan Example: delete presentation |@\n\n"
+			
+			+ "@|yellow To delete all tasks:|@\n"
+			+ "@|green delete all |@\n\n"
+			
+			+ "@|yellow To delete all related tasks containing a phrase:|@\n"
+			+ "@|green delete all <phrase>|@\n"
+			+ "@|cyan Example: delete all cs2103 |@\n";
+	
+	private static final String MESSAGE_HELP_DISPLAY = "@|green DISPLAY: Displays tasks/events from the record: |@\n"
+			+ "@|yellow To display all uncompleted tasks: |@\n"
+			+ "@|cyan Example: display |@\n\n"
+			
+			+ "@|yellow To display all done tasks: |@\n"
+			+ "@|cyan Example: display done |@\n\n"
+
+			+ "@|yellow To display all floating tasks: |@\n"
+			+ "@|cyan Example: display f |@\n\n"
+
+			+ "@|yellow To display all events: |@\n"
+			+ "@|cyan Example: display all |@\n\n"
+
+			+ "@|yellow To display all events on a day: |@\n"
+			+ "@|green display d, <date>|@\n"
+			+ "@|cyan Example: display d, November 6th|@\n\n"
+
+			+ "@|yellow To display a single event: |@\n"
+			+ "@|green display i, <index>|@\n"
+			+ "@|cyan Example: display i, 13|@\n";
+	
+	private static final String MESSAGE_HELP_EXIT = "@|green EXIT: Exits the program: |@\n"
+			+ "@|cyan Example: exit |@\n";
+	
+	private static final String MESSAGE_HELP_HELP = "@|green . . . _ _ _ . . . |@\n";
+	
+	private static final String MESSAGE_HELP_DONE = "@|green DONE: Marks tasks/events in the record as done: |@\n"
+			+ "@|yellow To mark the first task as done:|@\n"
+			+ "@|cyan Example: done|@\n\n"
+			
+			+ "@|yellow To mark tasks as Done by index: |@\n"
+			+ "@|green done <index> |@\n"
+			+ "@|cyan Example: done 5 |@\n\n"
+			
+			+ "@|yellow To mark all tasks as Done: |@\n"
+			+ "@|cyan Example: done all |@\n\n"
+			
+			+ "@|yellow To mark all related tasks containing a phrase as Done: |@\n"
+			+ "@|green done all <phrase> |@\n"
+			+ "@|cyan Example: done all submit |@\n\n"
+			
+			+ "@|yellow To mark a single task by name/phrase as Done: |@\n"
+			+ "@|green done <phrase> |@\n"
+			+ "@|cyan Example: done presentation |@\n";
+	
+	private static final String MESSAGE_HELP_READ_FROM = "@|green READ_FROM: Read and Write to a record file: |@\n"
+			+ "@|red this command handles absolute and relative file paths |@\n"
+			+ "@|green read_from <file> |@\n"
+			+ "@|cyan Example: read_from benjamin_schedule.txt |@\n";
+	
+	private static final String MESSAGE_HELP_REDO = "@|green REDO: Re-does last action that altered the record: |@\n"
+			+ "@|cyan Example: redo |@\n";
+	
+	private static final String MESSAGE_HELP_REPEAT = "@|green REPEAT: Changes an existing task's repeating status: |@\n"
+			+ "@|yellow To make and existing task repeating: |@\n"
+			+ "@|green repeat <index/name>, <frequency> |@\n"
+			+ "@|cyan Example: repeat 5, weekly |@\n"
+			+ "@|cyan Example: repeat lunch, daily |@\n\n"
+			
+			+ "@|yellow To make an existing task repeating with a stop date: |@\n"
+			+ "@|green repeat <index/name>, <frequency>, <date/time>|@\n"
+			+ "@|cyan Example: repeat 4, weekly, 12/1/2016 |@\n"
+			+ "@|cyan Example: repeat order pizza, daily, 3/1/2016 |@\n\n"
+			
+			+ "@|yellow To make an existing repeating task stop repeating: |@\n"
+			+ "@|green repeat <index/name>, none |@\n"
+			+ "@|cyan Example: repeat 5, none |@\n"
+			+ "@|cyan Example: repeat pizza, none |@\n";
+	
+	private static final String MESSAGE_HELP_SAVE_AT = "@|green SAVE_AT: Saves a copy of the current record at the specified location: |@\n"
+			+ "@|red this command handles absolute and relative file paths |@\n"
+			+ "@|green save_at <file> |@\n"
+			+ "@|cyan Example: save_at benjamin_schedule.txt |@\n";
+	
+	private static final String MESSAGE_HELP_SEARCH = "@|green SEARCH: Searches the record of occurences of a phrase |@\n"
+			+ "@|green search <phrase> |@\n"
+			+ "@|cyan Example: search homework |@\n";
+	
+	private static final String MESSAGE_HELP_UNDO = "@|green UNDO: Un-does the last action that altered the record |@\n"
+			+ "@|cyan Example: undo |@\n";
+	
+	private static final String MESSAGE_HELP_UPDATE = "@|green UPDATE: Updates the record |@\n"
+			+ "@|yellow Update a specific part of a record: |@\n"
+			+ "@|green update <index>, <type>, <arguments> |@\n"
+			+ "@|cyan Updating name: update 1, name, prepare presentation and slides |@\n"
+			+ "@|cyan Updating start time: update 2, start, 11/11/2015 |@\n"
+			+ "@|cyan Updating end time: update 3, end, 12/12/2015 |@\n"
+			+ "@|cyan Updating type: update 6, type, (floating/todo/calendar) |@\n\n"
+			
+			+ "@|yellow Update multiple parts concurrently: |@\n"
+			+ "@|red tasks will change to different types with this command if parameters are not provided. Use with caution! |@\n"
+			+ "@|red No change in task types|@ \n@|green update <index>, <name> |@\n"
+			+ "@|red Changes floating tasks to ToDo tasks|@ \n@|green update <index>, <name>, <end> |@\n"
+			+ "@|red Changes floating and ToDo tasks to Calendar Events|@ \n@|green update <index>, <name>, <start>, <end> |@\n"
+			+ "@|cyan update 4, do assignment six too |@\n"
+			+ "@|cyan update 5, do assignment six too, 11/11/2015 |@\n"
+			+ "@|cyan update 6, do assignment six too, 11/11/2015, 11/13/2015 |@\n";
+
+	private static final String MESSAGE_HELP_INVALID = "@|red %s is not a valid command! |@\n";
+	
+	
 	private static final String SECURITY_EXCEPTION = "@|red Permission denied |@ \n";
 	private static final String IO_EXCEPTION = "@|red Invalid Input name|@ \n";
 	
@@ -168,6 +337,8 @@ public class CommandExecutor {
 			return Invalid((Invalid) command);
 		} else if (command instanceof ReadFrom) {
 			return readFrom((ReadFrom) command);
+		} else if (command instanceof Help) {
+			return help((Help) command);
 		} else {
 			return command.toString();
 		}
@@ -1176,6 +1347,46 @@ public class CommandExecutor {
 
 	private String readFrom(ReadFrom cmd) {
 		return cmd.getReadTarget();
+	}
+	
+	private String help(Help cmd) {
+		String response = null;
+		String topic = cmd.getTopic();
+		if (!cmd.hasTopic()){
+			response = MESSAGE_HELP_DEFAULT;
+		} else if (topic.equalsIgnoreCase(HELP_TOPIC_ADD)){
+			response = MESSAGE_HELP_ADD;
+		} else if (topic.equalsIgnoreCase(HELP_TOPIC_DELETE)){
+			response = MESSAGE_HELP_DELETE;
+		} else if (topic.equalsIgnoreCase(HELP_TOPIC_DISPLAY)){
+			response = MESSAGE_HELP_DISPLAY;
+		} else if (topic.equalsIgnoreCase(HELP_TOPIC_EXIT)){
+			response = MESSAGE_HELP_EXIT;
+		} else if (topic.equalsIgnoreCase(HELP_TOPIC_HELP)){
+			response = MESSAGE_HELP_HELP;
+		} else if (topic.equalsIgnoreCase(HELP_TOPIC_DONE)){
+			response = MESSAGE_HELP_DONE;
+		} else if (topic.equalsIgnoreCase(HELP_TOPIC_READ_FROM)){
+			response = MESSAGE_HELP_READ_FROM;
+		} else if (topic.equalsIgnoreCase(HELP_TOPIC_REDO)){
+			response = MESSAGE_HELP_REDO;
+		} else if (topic.equalsIgnoreCase(HELP_TOPIC_REPEAT)){
+			response = MESSAGE_HELP_REPEAT;
+		} else if (topic.equalsIgnoreCase(HELP_TOPIC_SAVE_AT)){
+			response = MESSAGE_HELP_SAVE_AT;
+		} else if (topic.equalsIgnoreCase(HELP_TOPIC_SEARCH)){
+			response = MESSAGE_HELP_SEARCH;
+		} else if (topic.equalsIgnoreCase(HELP_TOPIC_UNDO)){
+			response = MESSAGE_HELP_UNDO;
+		} else if (topic.equalsIgnoreCase(HELP_TOPIC_UPDATE)){
+			response = MESSAGE_HELP_UPDATE;
+		} else {
+			response = MESSAGE_HELP_INVALID;
+		}
+		
+		
+		assert(response != null);
+		return response;
 	}
 
 }
