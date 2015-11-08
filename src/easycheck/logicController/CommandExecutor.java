@@ -99,12 +99,13 @@ public class CommandExecutor {
 	private static final String MESSAGE_UPDATE_INVALID_CAST = "@|red %s task type cannot be changed to %s task type!|@ \n";
 	private static final String MESSAGE_UPDATE_INVALID_TYPE = "@|red %s is not a valid type! |@ \n";
 	private static final String MESSAGE_UPDATE_INVALID_START = "@|red A task cannot just have a start date/time! |@ \n";
+	private static final String MESSAGE_UPDATE_INVALID_END = "@|red The end date must be after the start date! |@ \n";
 	private static final String MESSAGE_UPDATE_NAME_RESPONSE = "@|green Task %s has been renamed to %s |@ \n";
 	private static final String SECURITY_EXCEPTION = "@|red Permission denied |@ \n";
 	private static final String IO_EXCEPTION = "@|red Invalid Input name|@ \n";
 	
 	private static final String LOG_ADDING = "Adding %s to List";
-	private static final String LOG_ADD_FAILED = "Add command faile: %s";
+	private static final String LOG_ADD_FAILED = "Add command failed: %s";
 
 	private ArrayList<Event> eventList;
 	private Stack<ArrayList<Event>> undoStack;
@@ -532,7 +533,7 @@ public class CommandExecutor {
 			response = String.format(MESSAGE_UPDATE_INVALID_IDX, idx);
 		}
 
-		task = eventList.get(intIdx - 1);
+		task = eventList.get(adjustedIdx);
 		if (task instanceof ToDoEvent) {
 			taskType = UPDATE_EVENT_TYPE_TODO;
 		} else if (task instanceof CalendarEvent) {
@@ -641,7 +642,20 @@ public class CommandExecutor {
 				if (taskType.equalsIgnoreCase(UPDATE_EVENT_TYPE_FLOATING)){
 					newEvent = new ToDoEvent(intIdx, newName, cmd.getEnd());
 					eventList.set(adjustedIdx, newEvent);
+					response = String.format(MESSAGE_UPDATE_FLOAT_RESPONSE, newName);
+				} else if (taskType.equalsIgnoreCase(UPDATE_EVENT_TYPE_TODO))  {
+					((ToDoEvent) eventList.get(adjustedIdx)).setDueDateAndTime(end);
+					eventList.get(adjustedIdx).setEventName(newName);
 					response = String.format(MESSAGE_UPDATE_TODO_RESPONSE, newName);
+				} else if (taskType.equalsIgnoreCase(UPDATE_EVENT_TYPE_CALENDAR)){
+					start = ((CalendarEvent) task).getStartDateAndTime();
+					if (CalendarEvent.areValidDates(start, end)){
+						eventList.get(adjustedIdx).setEventName(newName);
+						((CalendarEvent) eventList.get(adjustedIdx)).setEndDateAndTime(end);
+						response = String.format(MESSAGE_UPDATE_CAL_RESPONSE, newName);
+					} else {
+						response = MESSAGE_UPDATE_INVALID_END;
+					}
 				}
 				
 			} else {

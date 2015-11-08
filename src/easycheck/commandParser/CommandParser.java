@@ -503,7 +503,7 @@ public class CommandParser {
             } else if (arguments.length == ADD_ARGS_NUM_FLOATING_EVENT_WITH_STOP) {
                 try {
                     start = parseDateText(arguments[2])[PARSED_DATE_TEXT_FIRST];
-                    end = parseDateText(arguments[3])[PARSED_DATE_TEXT_SECOND];
+                    end = parseDateText(arguments[3])[PARSED_DATE_TEXT_FIRST];
 
                     if (start != null && end != null) {
                         cmd = new Update(idx, newName, start, end);
