@@ -548,9 +548,7 @@ public class CommandExecutor {
 				eventList.get(adjustedIdx).setEventName(newName);
 				response = String.format(MESSAGE_UPDATE_NAME_RESPONSE, taskIdx, newName);
 			} else if (type.equalsIgnoreCase(UPDATE_COMMAND_TYPE_TYPE)) {
-				if (taskType.equalsIgnoreCase(UPDATE_EVENT_TYPE_FLOATING)
-						|| taskType.equalsIgnoreCase(UPDATE_EVENT_TYPE_TODO)
-						|| newName.equalsIgnoreCase(UPDATE_EVENT_TYPE_CALENDAR)) {
+				if (newName.equalsIgnoreCase(UPDATE_EVENT_TYPE_CALENDAR)) {
 					response = String.format(MESSAGE_UPDATE_INVALID_CAST, taskType, newName);
 				} else if (newName.equalsIgnoreCase(UPDATE_EVENT_TYPE_TODO)) {
 					if (taskType.equalsIgnoreCase(UPDATE_EVENT_TYPE_FLOATING)
