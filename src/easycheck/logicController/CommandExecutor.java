@@ -99,12 +99,13 @@ public class CommandExecutor {
 	private static final String MESSAGE_UPDATE_INVALID_CAST = "@|red %s task type cannot be changed to %s task type!|@ \n";
 	private static final String MESSAGE_UPDATE_INVALID_TYPE = "@|red %s is not a valid type! |@ \n";
 	private static final String MESSAGE_UPDATE_INVALID_START = "@|red A task cannot just have a start date/time! |@ \n";
+	private static final String MESSAGE_UPDATE_INVALID_END = "@|red The end date must be after the start date! |@ \n";
 	private static final String MESSAGE_UPDATE_NAME_RESPONSE = "@|green Task %s has been renamed to %s |@ \n";
 	private static final String SECURITY_EXCEPTION = "@|red Permission denied |@ \n";
 	private static final String IO_EXCEPTION = "@|red Invalid Input name|@ \n";
 	
 	private static final String LOG_ADDING = "Adding %s to List";
-	private static final String LOG_ADD_FAILED = "Add command faile: %s";
+	private static final String LOG_ADD_FAILED = "Add command failed: %s";
 
 	private ArrayList<Event> eventList;
 	private Stack<ArrayList<Event>> undoStack;
@@ -527,11 +528,12 @@ public class CommandExecutor {
 			response = String.format(MESSAGE_UPDATE_INVALID_IDX, idx);
 			return response;
 		}
+		int adjustedIdx = intIdx - 1;
 		if (intIdx > eventList.size() || intIdx <= 0) {
 			response = String.format(MESSAGE_UPDATE_INVALID_IDX, idx);
 		}
 
-		task = eventList.get(intIdx - 1);
+		task = eventList.get(adjustedIdx);
 		if (task instanceof ToDoEvent) {
 			taskType = UPDATE_EVENT_TYPE_TODO;
 		} else if (task instanceof CalendarEvent) {
@@ -543,12 +545,10 @@ public class CommandExecutor {
 		if (cmd.hasType()) {
 			if (type.equalsIgnoreCase(UPDATE_COMMAND_TYPE_NAME)) {
 				int taskIdx = task.getEventIndex();
-				eventList.get(intIdx - 1).setEventName(newName);
+				eventList.get(adjustedIdx).setEventName(newName);
 				response = String.format(MESSAGE_UPDATE_NAME_RESPONSE, taskIdx, newName);
 			} else if (type.equalsIgnoreCase(UPDATE_COMMAND_TYPE_TYPE)) {
-				if (taskType.equalsIgnoreCase(UPDATE_EVENT_TYPE_FLOATING)
-						|| taskType.equalsIgnoreCase(UPDATE_EVENT_TYPE_TODO)
-						|| newName.equalsIgnoreCase(UPDATE_EVENT_TYPE_CALENDAR)) {
+				if (newName.equalsIgnoreCase(UPDATE_EVENT_TYPE_CALENDAR)) {
 					response = String.format(MESSAGE_UPDATE_INVALID_CAST, taskType, newName);
 				} else if (newName.equalsIgnoreCase(UPDATE_EVENT_TYPE_TODO)) {
 					if (taskType.equalsIgnoreCase(UPDATE_EVENT_TYPE_FLOATING)
@@ -558,7 +558,14 @@ public class CommandExecutor {
 						end = ((CalendarEvent) task).getEndDateAndTime();
 						newName = task.getEventName();
 						int taskIdx = task.getEventIndex();
-						eventList.set(intIdx - 1, new ToDoEvent(taskIdx, newName, end));
+						DateTime stopDate = task.getStopDate();
+						String frequency = task.getFrequency();
+						boolean repeating = ((CalendarEvent) task).isRepeating();
+						ToDoEvent replacement = new ToDoEvent(taskIdx, newName, end);
+						replacement.setStopDate(stopDate);
+						replacement.setFrequency(frequency);
+						replacement.setRepeating(repeating);
+						eventList.set(adjustedIdx, replacement);
 						response = String.format(MESSAGE_UPDATE_TYPE_RESPONSE, newName, UPDATE_EVENT_TYPE_TODO);
 					}
 				} else if (newName.equalsIgnoreCase(UPDATE_EVENT_TYPE_FLOATING)) {
@@ -567,7 +574,11 @@ public class CommandExecutor {
 					} else {
 						newName = task.getEventName();
 						int taskIdx = task.getEventIndex();
-						eventList.set(intIdx - 1, new FloatingTask(taskIdx, newName));
+						FloatingTask replacement = new FloatingTask(taskIdx, newName);
+						if (task.isDone()){
+							replacement.markComplete();
+						}
+						eventList.set(adjustedIdx, replacement);
 						response = String.format(MESSAGE_UPDATE_TYPE_RESPONSE, newName, UPDATE_EVENT_TYPE_FLOATING);
 					}
 				} else {
@@ -581,12 +592,15 @@ public class CommandExecutor {
 					if (!cmd.hasEnd() || !ToDoEvent.isValidDate(end)) {
 						response = MESSAGE_INVALID_TODO_DEADLINE;
 					} else {
-						eventList.set(intIdx - 1, new ToDoEvent(taskIdx, newName, end));
+						ToDoEvent replacement = new ToDoEvent(taskIdx, newName, end);
+						if (task.isDone()){
+							replacement.markComplete();
+						}
+						eventList.set(adjustedIdx, replacement);
 						response = String.format(MESSAGE_UPDATE_TODO_RESPONSE, newName);
 					}
 				} else {
 					newName = task.getEventName();
-					// int taskIdx = task.getEventIndex();
 					if (!cmd.hasEnd() || !ToDoEvent.isValidDate(end)) {
 						response = MESSAGE_INVALID_TODO_DEADLINE;
 					} else {
@@ -595,11 +609,11 @@ public class CommandExecutor {
 							if (!CalendarEvent.areValidDates(start, end)) {
 								response = MESSAGE_INVALID_CALENDAR_DATES;
 							} else {
-								((CalendarEvent) eventList.get(intIdx - 1)).setEndDateAndTime(end);
+								((CalendarEvent) eventList.get(adjustedIdx)).setEndDateAndTime(end);
 								response = String.format(MESSAGE_UPDATE_CAL_RESPONSE, newName);
 							}
 						} else {
-							((ToDoEvent) eventList.get(intIdx - 1)).setDueDateAndTime(end);
+							((ToDoEvent) eventList.get(adjustedIdx)).setDueDateAndTime(end);
 							response = String.format(MESSAGE_UPDATE_TODO_RESPONSE, newName);
 						}
 					}
@@ -614,7 +628,14 @@ public class CommandExecutor {
 					} else {
 						newName = task.getEventName();
 						int taskIdx = task.getEventIndex();
-						eventList.set(intIdx - 1, new CalendarEvent(taskIdx, newName, start, end));
+						DateTime stopDate = task.getStopDate();
+						String frequency = task.getFrequency();
+						boolean repeating = ((ToDoEvent) task).isRepeating();
+						CalendarEvent replacement = new CalendarEvent(taskIdx, newName, start, end);
+						replacement.setStopDate(stopDate);
+						replacement.setFrequency(frequency);
+						replacement.setRepeating(repeating);
+						eventList.set(adjustedIdx, replacement);
 						response = String.format(MESSAGE_UPDATE_CAL_RESPONSE, newName);
 					}
 				} else if (taskType.equalsIgnoreCase(UPDATE_EVENT_TYPE_CALENDAR)) {
@@ -622,32 +643,52 @@ public class CommandExecutor {
 					if (!cmd.hasStart() || !CalendarEvent.areValidDates(start, end)) {
 						response = MESSAGE_INVALID_CALENDAR_DATES;
 					} else {
-						((CalendarEvent) eventList.get(intIdx - 1)).setStartDateAndTime(start);
+						((CalendarEvent) eventList.get(adjustedIdx)).setStartDateAndTime(start);
 						response = String.format(MESSAGE_UPDATE_CAL_RESPONSE, newName);
 					}
 				}
 			}
-		}
-
-		else if (cmd.hasStart() && cmd.hasEnd()) {
+		} else if (cmd.hasStart() && cmd.hasEnd()) {
 			if (CalendarEvent.areValidDates(cmd.getStart(), cmd.getEnd())) {
+				DateTime stopDate = task.getStopDate();
+				String frequency = task.getFrequency();
+				boolean repeating = ((ToDoEvent) task).isRepeating();
 				newEvent = new CalendarEvent(intIdx, newName, cmd.getStart(), cmd.getEnd());
-				eventList.set(intIdx - 1, newEvent);
+				newEvent.setStopDate(stopDate);
+				newEvent.setFrequency(frequency);
+				newEvent.setRepeating(repeating);
+				eventList.set(adjustedIdx, newEvent);
 				response = String.format(MESSAGE_UPDATE_CAL_RESPONSE, newName);
 			} else {
 				response = MESSAGE_INVALID_CALENDAR_DATES;
 			}
 		} else if (!cmd.hasStart() && cmd.hasEnd()) {
-			if (!ToDoEvent.isValidDate(cmd.getEnd())) {
-				newEvent = new ToDoEvent(intIdx, newName, cmd.getEnd());
-				eventList.set(intIdx - 1, newEvent);
-				response = String.format(MESSAGE_UPDATE_TODO_RESPONSE, newName);
+			if (ToDoEvent.isValidDate(cmd.getEnd())) {
+				if (taskType.equalsIgnoreCase(UPDATE_EVENT_TYPE_FLOATING)){
+					newEvent = new ToDoEvent(intIdx, newName, cmd.getEnd());
+					eventList.set(adjustedIdx, newEvent);
+					response = String.format(MESSAGE_UPDATE_FLOAT_RESPONSE, newName);
+				} else if (taskType.equalsIgnoreCase(UPDATE_EVENT_TYPE_TODO))  {
+					((ToDoEvent) eventList.get(adjustedIdx)).setDueDateAndTime(end);
+					eventList.get(adjustedIdx).setEventName(newName);
+					response = String.format(MESSAGE_UPDATE_TODO_RESPONSE, newName);
+				} else if (taskType.equalsIgnoreCase(UPDATE_EVENT_TYPE_CALENDAR)){
+					start = ((CalendarEvent) task).getStartDateAndTime();
+					if (CalendarEvent.areValidDates(start, end)){
+						eventList.get(adjustedIdx).setEventName(newName);
+						((CalendarEvent) eventList.get(adjustedIdx)).setEndDateAndTime(end);
+						response = String.format(MESSAGE_UPDATE_CAL_RESPONSE, newName);
+					} else {
+						response = MESSAGE_UPDATE_INVALID_END;
+					}
+				}
+				
 			} else {
 				response = MESSAGE_INVALID_TODO_DEADLINE;
 			}
 		} else if (!cmd.hasStart() && !cmd.hasEnd()) {
-			String originalName = eventList.get(intIdx - 1).getEventName();
-			eventList.get(intIdx - 1).setEventName(newName);
+			String originalName = eventList.get(adjustedIdx).getEventName();
+			eventList.get(adjustedIdx).setEventName(newName);
 			response = String.format(MESSAGE_UPDATE_FLOAT_RESPONSE, originalName, newName);
 		}
 		assert(!response.equals(""));

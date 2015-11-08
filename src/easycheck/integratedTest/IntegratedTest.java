@@ -79,7 +79,7 @@ public class IntegratedTest {
                 "@|green Added|@ @|yellow 1. Christmas Party from Fri 25 Dec 2015 at 12:00 to Sat 26 Dec 2015 at 13:00 (Repeats yearly)|@\n\n",
                 commandResponse);
     }
-    //@@author
+    //@@author A0124206W
 
     // test display when there are no tasks
     @Test
@@ -144,7 +144,7 @@ public class IntegratedTest {
                 "@|cyan To Do:\n|@\n@|cyan Fri 25 Dec 2015:\n|@\t@|green 1. plan party due at 12:00 is complete|@\n\t@|yellow 2. lunch from 13:00 to 14:00|@\n\n",
                 commandResponse);
     }
-    // @@author
+    // @@author A0124206W
 
     // test deletion when task to delete not specified
     @Test
