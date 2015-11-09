@@ -705,18 +705,12 @@ public class CommandExecutor {
 		}
 
 		task = eventList.get(adjustedIdx);
-		if (task instanceof ToDoEvent) {
-			taskType = UPDATE_EVENT_TYPE_TODO;
-		} else if (task instanceof CalendarEvent) {
-			taskType = UPDATE_EVENT_TYPE_CALENDAR;
-		} else if (task instanceof FloatingTask) {
-			taskType = UPDATE_EVENT_TYPE_FLOATING;
-		}
+		taskType = getInstance(task);
 
 		if (cmd.hasType()) {
 			if (type.equalsIgnoreCase(UPDATE_COMMAND_TYPE_NAME)) {
 				int taskIdx = task.getEventIndex();
-				eventList.get(adjustedIdx).setEventName(newName);
+				setEventListName(adjustedIdx, newName);
 				response = String.format(MESSAGE_UPDATE_NAME_RESPONSE, taskIdx, newName);
 			} else if (type.equalsIgnoreCase(UPDATE_COMMAND_TYPE_TYPE)) {
 				if (newName.equalsIgnoreCase(UPDATE_EVENT_TYPE_CALENDAR)) {
@@ -726,30 +720,14 @@ public class CommandExecutor {
 							|| taskType.equalsIgnoreCase(UPDATE_EVENT_TYPE_TODO)) {
 						response = String.format(MESSAGE_UPDATE_INVALID_CAST, taskType, newName);
 					} else {
-						end = ((CalendarEvent) task).getEndDateAndTime();
-						newName = task.getEventName();
-						int taskIdx = task.getEventIndex();
-						DateTime stopDate = task.getStopDate();
-						String frequency = task.getFrequency();
-						boolean repeating = ((CalendarEvent) task).isRepeating();
-						ToDoEvent replacement = new ToDoEvent(taskIdx, newName, end);
-						replacement.setStopDate(stopDate);
-						replacement.setFrequency(frequency);
-						replacement.setRepeating(repeating);
-						eventList.set(adjustedIdx, replacement);
+						eventList.set(adjustedIdx, castToDo((CalendarEvent) task));
 						response = String.format(MESSAGE_UPDATE_TYPE_RESPONSE, newName, UPDATE_EVENT_TYPE_TODO);
 					}
 				} else if (newName.equalsIgnoreCase(UPDATE_EVENT_TYPE_FLOATING)) {
 					if (taskType.equalsIgnoreCase(UPDATE_EVENT_TYPE_FLOATING)) {
 						response = String.format(MESSAGE_UPDATE_INVALID_CAST, taskType, newName);
 					} else {
-						newName = task.getEventName();
-						int taskIdx = task.getEventIndex();
-						FloatingTask replacement = new FloatingTask(taskIdx, newName);
-						if (task.isDone()){
-							replacement.markComplete();
-						}
-						eventList.set(adjustedIdx, replacement);
+						eventList.set(adjustedIdx, castFloating(task));
 						response = String.format(MESSAGE_UPDATE_TYPE_RESPONSE, newName, UPDATE_EVENT_TYPE_FLOATING);
 					}
 				} else {
@@ -758,16 +736,10 @@ public class CommandExecutor {
 
 			} else if (type.equalsIgnoreCase(UPDATE_COMMAND_TYPE_END)) {
 				if (taskType.equalsIgnoreCase(UPDATE_EVENT_TYPE_FLOATING)) {
-					newName = task.getEventName();
-					int taskIdx = task.getEventIndex();
 					if (!cmd.hasEnd() || !ToDoEvent.isValidDate(end)) {
 						response = MESSAGE_INVALID_TODO_DEADLINE;
-					} else {
-						ToDoEvent replacement = new ToDoEvent(taskIdx, newName, end);
-						if (task.isDone()){
-							replacement.markComplete();
-						}
-						eventList.set(adjustedIdx, replacement);
+					} else {	
+						eventList.set(adjustedIdx, castToDoUp((FloatingTask) task, end));
 						response = String.format(MESSAGE_UPDATE_TODO_RESPONSE, newName);
 					}
 				} else {
@@ -797,16 +769,7 @@ public class CommandExecutor {
 					if (!cmd.hasStart() || !CalendarEvent.areValidDates(start, end)) {
 						response = MESSAGE_INVALID_CALENDAR_DATES;
 					} else {
-						newName = task.getEventName();
-						int taskIdx = task.getEventIndex();
-						DateTime stopDate = task.getStopDate();
-						String frequency = task.getFrequency();
-						boolean repeating = ((ToDoEvent) task).isRepeating();
-						CalendarEvent replacement = new CalendarEvent(taskIdx, newName, start, end);
-						replacement.setStopDate(stopDate);
-						replacement.setFrequency(frequency);
-						replacement.setRepeating(repeating);
-						eventList.set(adjustedIdx, replacement);
+						eventList.set(adjustedIdx, castCalendarUp((ToDoEvent) task, start));
 						response = String.format(MESSAGE_UPDATE_CAL_RESPONSE, newName);
 					}
 				} else if (taskType.equalsIgnoreCase(UPDATE_EVENT_TYPE_CALENDAR)) {
@@ -821,15 +784,33 @@ public class CommandExecutor {
 			}
 		} else if (cmd.hasStart() && cmd.hasEnd()) {
 			if (CalendarEvent.areValidDates(cmd.getStart(), cmd.getEnd())) {
-				DateTime stopDate = task.getStopDate();
-				String frequency = task.getFrequency();
-				boolean repeating = ((ToDoEvent) task).isRepeating();
-				newEvent = new CalendarEvent(intIdx, newName, cmd.getStart(), cmd.getEnd());
-				newEvent.setStopDate(stopDate);
-				newEvent.setFrequency(frequency);
-				newEvent.setRepeating(repeating);
-				eventList.set(adjustedIdx, newEvent);
-				response = String.format(MESSAGE_UPDATE_CAL_RESPONSE, newName);
+				if (taskType.equalsIgnoreCase(UPDATE_EVENT_TYPE_TODO)){
+					DateTime stopDate = task.getStopDate();
+					String frequency = task.getFrequency();
+					boolean repeating = ((ToDoEvent) task).isRepeating();
+					newEvent = new CalendarEvent(intIdx, newName, start, end);
+					newEvent.setStopDate(stopDate);
+					newEvent.setFrequency(frequency);
+					newEvent.setRepeating(repeating);
+					if (task.isDone()){
+						newEvent.setDone();
+					}
+					eventList.set(adjustedIdx, newEvent);
+					response = String.format(MESSAGE_UPDATE_CAL_RESPONSE, newName);
+				} else if (taskType.equalsIgnoreCase(UPDATE_EVENT_TYPE_FLOATING)){
+					newEvent = new CalendarEvent(intIdx, newName, start, end);
+					if (task.isDone()){
+						newEvent.setDone();
+					}
+					eventList.set(adjustedIdx, newEvent);
+					response = String.format(MESSAGE_UPDATE_CAL_RESPONSE, newName);
+				} else {
+					task.setStopDate(end);
+					task.setEventName(newName);
+					((CalendarEvent) task).setStartDateAndTime(start);
+					response = String.format(MESSAGE_UPDATE_CAL_RESPONSE, newName);
+				}
+				
 			} else {
 				response = MESSAGE_INVALID_CALENDAR_DATES;
 			}
@@ -837,6 +818,9 @@ public class CommandExecutor {
 			if (ToDoEvent.isValidDate(cmd.getEnd())) {
 				if (taskType.equalsIgnoreCase(UPDATE_EVENT_TYPE_FLOATING)){
 					newEvent = new ToDoEvent(intIdx, newName, cmd.getEnd());
+					if (task.isDone()){
+						newEvent.setDone();
+					}
 					eventList.set(adjustedIdx, newEvent);
 					response = String.format(MESSAGE_UPDATE_FLOAT_RESPONSE, newName);
 				} else if (taskType.equalsIgnoreCase(UPDATE_EVENT_TYPE_TODO))  {
@@ -866,6 +850,71 @@ public class CommandExecutor {
 		sort();
 		return response;
 
+	}
+	
+	private String getInstance(Event task){
+		String taskType = null;
+		if (task instanceof ToDoEvent) {
+			taskType = UPDATE_EVENT_TYPE_TODO;
+		} else if (task instanceof CalendarEvent) {
+			taskType = UPDATE_EVENT_TYPE_CALENDAR;
+		} else if (task instanceof FloatingTask) {
+			taskType = UPDATE_EVENT_TYPE_FLOATING;
+		}
+		return taskType;
+	}
+	
+	private void setEventListName(int idx, String newName){
+		eventList.get(idx).setEventName(newName);
+	}
+	
+	// casting helpers only cast down the hierarchy, unless specified in method name CalendarEvent>ToDoEvent>FloatingTask
+	private ToDoEvent castToDo(CalendarEvent task){
+		DateTime end = ((CalendarEvent) task).getEndDateAndTime();
+		String newName = task.getEventName();
+		int taskIdx = task.getEventIndex();
+		DateTime stopDate = task.getStopDate();
+		String frequency = task.getFrequency();
+		boolean repeating = ((CalendarEvent) task).isRepeating();
+		ToDoEvent castedEvent = new ToDoEvent(taskIdx, newName, end);
+		castedEvent.setStopDate(stopDate);
+		castedEvent.setFrequency(frequency);
+		castedEvent.setRepeating(repeating);
+		return castedEvent;
+	}
+	
+	private FloatingTask castFloating(Event task){
+		String newName = task.getEventName();
+		int taskIdx = task.getEventIndex();
+		FloatingTask castedEvent = new FloatingTask(taskIdx, newName);
+		if (task.isDone()){
+			castedEvent.markComplete();
+		}
+		return castedEvent;
+	}
+	
+	private ToDoEvent castToDoUp(FloatingTask task, DateTime end){
+		String newName = task.getEventName();
+		int taskIdx = task.getEventIndex();
+		ToDoEvent castedEvent = new ToDoEvent(taskIdx, newName, end);
+		if (task.isDone()){
+			castedEvent.markComplete();
+		}
+		return castedEvent;
+	}
+	
+	private CalendarEvent castCalendarUp(ToDoEvent task, DateTime start){
+		String newName = task.getEventName();
+		int taskIdx = task.getEventIndex();
+		DateTime end = task.getDeadline();
+		DateTime stopDate = task.getStopDate();
+		String frequency = task.getFrequency();
+		boolean repeating = ((ToDoEvent) task).isRepeating();
+		CalendarEvent castedEvent = new CalendarEvent(taskIdx, newName, start, end);
+		castedEvent.setStopDate(stopDate);
+		castedEvent.setFrequency(frequency);
+		castedEvent.setRepeating(repeating);
+		return castedEvent;
 	}
 
 	// @@author A0126989H
