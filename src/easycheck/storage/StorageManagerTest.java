@@ -1,3 +1,4 @@
+//@@author A0121560W
 package easycheck.storage;
 
 import static org.junit.Assert.*;
@@ -60,8 +61,7 @@ public class StorageManagerTest {
 
 	@Test
 	public void testWriteDataToEasyCheckFile() {
-		// TODO this is currently tested by testReadData, using testLogic.executeCommand, of add type. change to manually add to file and read/write
-		
+		//this is currently tested by testReadData, using testLogic.executeCommand, of add type. change to manually add to file and read/write	
 	}
 
 }

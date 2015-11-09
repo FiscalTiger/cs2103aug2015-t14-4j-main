@@ -1445,7 +1445,7 @@ public class CommandExecutor {
 		} else if (topic.equalsIgnoreCase(HELP_TOPIC_UPDATE)){
 			response = MESSAGE_HELP_UPDATE;
 		} else {
-			response = MESSAGE_HELP_INVALID;
+			response = String.format(MESSAGE_HELP_INVALID, topic);
 		}
 		
 		

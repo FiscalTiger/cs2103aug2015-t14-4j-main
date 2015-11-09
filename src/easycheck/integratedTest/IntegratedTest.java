@@ -17,7 +17,23 @@ public class IntegratedTest {
     String fileName = "integratedtestingfile.txt";
     UserInterface ui = new UserInterface(fileName);
     String commandResponse;
-
+    
+    //@@author A0121560W
+    // static variables from commandExecutor to test help command
+    private static final String HELP_TOPIC_ADD = "add";
+	private static final String HELP_TOPIC_DELETE = "delete";
+	private static final String HELP_TOPIC_DISPLAY = "display";
+	private static final String HELP_TOPIC_EXIT = "exit";
+	private static final String HELP_TOPIC_HELP = "help";
+	private static final String HELP_TOPIC_DONE = "done";
+	private static final String HELP_TOPIC_READ_FROM = "read_from";
+	private static final String HELP_TOPIC_REDO = "redo";
+	private static final String HELP_TOPIC_REPEAT = "repeat";
+	private static final String HELP_TOPIC_SAVE_AT = "save_at";
+	private static final String HELP_TOPIC_SEARCH = "search";
+	private static final String HELP_TOPIC_UNDO = "undo";
+	private static final String HELP_TOPIC_UPDATE = "update";
+	// @@author A0124206W
     // debugging code to print display message from application.
     public void printResponse() {
         System.out.println(commandResponse);
@@ -308,5 +324,28 @@ public class IntegratedTest {
     	commandResponse = ui.executeCommand("repeat 2, weekly");
     	assertEquals("@|red Repeat: invalid event index 2.|@\n", commandResponse);
     }
-    //@@author
+    //@@author A0121560W
+    @Test
+    public void testHelpDefault() {
+    	commandResponse = ui.executeCommand("help");
+    	assertEquals("For more information on a specific command, type HELP command-name\n"
+    			+ "@|cyan Example: help update |@\n\n"
+    			+ "@|red Note: Dates in this program follow a mm/dd/yyyy format |@\n\n"
+    			+ "@|green Available command types: |@\n"
+    			+ "@|yellow "+HELP_TOPIC_ADD+"\t\t "+HELP_TOPIC_DELETE+"\t\t "+HELP_TOPIC_DISPLAY+"\t\t "+HELP_TOPIC_DONE+"\t\t\n"
+    			+HELP_TOPIC_EXIT+"\t\t "+HELP_TOPIC_HELP+"\t\t "+HELP_TOPIC_READ_FROM+"\t\t "+HELP_TOPIC_REDO+"\t\t\n"
+    			+HELP_TOPIC_REPEAT+"\t\t "+HELP_TOPIC_SAVE_AT+"\t "+HELP_TOPIC_SEARCH+"\t\t\t "+HELP_TOPIC_UNDO+"\t\t\n"
+    			+HELP_TOPIC_UPDATE+"\t\t |@\n", commandResponse);
+    }
+    
+    @Test 
+    public void testHelpValid(){
+    	commandResponse = ui.executeCommand("help help");
+    	assertEquals("@|green . . . _ _ _ . . . |@\n", commandResponse);
+    }
+    
+    @Test public void testHelpInvalid(){
+    	commandResponse = ui.executeCommand("help asdfag");
+    	assertEquals("@|red asdfag is not a valid command! |@\n", commandResponse);
+    }
 }

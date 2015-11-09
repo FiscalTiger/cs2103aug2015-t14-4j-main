@@ -1,3 +1,4 @@
+//@@author A0121560W
 package easycheck.logicController;
 
 import static org.junit.Assert.*;
@@ -27,8 +28,7 @@ public class LogicControllerTest {
 		assertEquals("Added 1. testTask\n\n", testLogic.executeCommand("add testTask"));
 		assertEquals("Deleted testTask Successfully\n", testLogic.executeCommand("delete testTask"));
 		testFile.delete();
-		// TODO add more test cases more more command types
-		
+
 	}
 
 }
