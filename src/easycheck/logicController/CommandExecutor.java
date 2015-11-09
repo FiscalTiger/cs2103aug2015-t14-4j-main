@@ -710,6 +710,7 @@ public class CommandExecutor {
 		if (cmd.hasType()) {
 			if (type.equalsIgnoreCase(UPDATE_COMMAND_TYPE_NAME)) {
 				int taskIdx = task.getEventIndex();
+				undoStack.push(cloneEventList());
 				setEventListName(adjustedIdx, newName);
 				response = String.format(MESSAGE_UPDATE_NAME_RESPONSE, taskIdx, newName);
 			} else if (type.equalsIgnoreCase(UPDATE_COMMAND_TYPE_TYPE)) {
@@ -720,6 +721,7 @@ public class CommandExecutor {
 							|| taskType.equalsIgnoreCase(UPDATE_EVENT_TYPE_TODO)) {
 						response = String.format(MESSAGE_UPDATE_INVALID_CAST, taskType, newName);
 					} else {
+						undoStack.push(cloneEventList());
 						eventList.set(adjustedIdx, castToDo((CalendarEvent) task));
 						response = String.format(MESSAGE_UPDATE_TYPE_RESPONSE, newName, UPDATE_EVENT_TYPE_TODO);
 					}
@@ -727,6 +729,7 @@ public class CommandExecutor {
 					if (taskType.equalsIgnoreCase(UPDATE_EVENT_TYPE_FLOATING)) {
 						response = String.format(MESSAGE_UPDATE_INVALID_CAST, taskType, newName);
 					} else {
+						undoStack.push(cloneEventList());
 						eventList.set(adjustedIdx, castFloating(task));
 						response = String.format(MESSAGE_UPDATE_TYPE_RESPONSE, newName, UPDATE_EVENT_TYPE_FLOATING);
 					}
@@ -739,6 +742,7 @@ public class CommandExecutor {
 					if (!cmd.hasEnd() || !ToDoEvent.isValidDate(end)) {
 						response = MESSAGE_INVALID_TODO_DEADLINE;
 					} else {	
+						undoStack.push(cloneEventList());
 						eventList.set(adjustedIdx, castToDoUp((FloatingTask) task, end));
 						response = String.format(MESSAGE_UPDATE_TODO_RESPONSE, newName);
 					}
@@ -752,10 +756,12 @@ public class CommandExecutor {
 							if (!CalendarEvent.areValidDates(start, end)) {
 								response = MESSAGE_INVALID_CALENDAR_DATES;
 							} else {
+								undoStack.push(cloneEventList());
 								((CalendarEvent) eventList.get(adjustedIdx)).setEndDateAndTime(end);
 								response = String.format(MESSAGE_UPDATE_CAL_RESPONSE, newName);
 							}
 						} else {
+							undoStack.push(cloneEventList());
 							((ToDoEvent) eventList.get(adjustedIdx)).setDueDateAndTime(end);
 							response = String.format(MESSAGE_UPDATE_TODO_RESPONSE, newName);
 						}
@@ -769,6 +775,7 @@ public class CommandExecutor {
 					if (!cmd.hasStart() || !CalendarEvent.areValidDates(start, end)) {
 						response = MESSAGE_INVALID_CALENDAR_DATES;
 					} else {
+						undoStack.push(cloneEventList());
 						eventList.set(adjustedIdx, castCalendarUp((ToDoEvent) task, start));
 						response = String.format(MESSAGE_UPDATE_CAL_RESPONSE, newName);
 					}
@@ -777,6 +784,7 @@ public class CommandExecutor {
 					if (!cmd.hasStart() || !CalendarEvent.areValidDates(start, end)) {
 						response = MESSAGE_INVALID_CALENDAR_DATES;
 					} else {
+						undoStack.push(cloneEventList());
 						((CalendarEvent) eventList.get(adjustedIdx)).setStartDateAndTime(start);
 						response = String.format(MESSAGE_UPDATE_CAL_RESPONSE, newName);
 					}
@@ -795,6 +803,7 @@ public class CommandExecutor {
 					if (task.isDone()){
 						newEvent.setDone();
 					}
+					undoStack.push(cloneEventList());
 					eventList.set(adjustedIdx, newEvent);
 					response = String.format(MESSAGE_UPDATE_CAL_RESPONSE, newName);
 				} else if (taskType.equalsIgnoreCase(UPDATE_EVENT_TYPE_FLOATING)){
@@ -802,11 +811,13 @@ public class CommandExecutor {
 					if (task.isDone()){
 						newEvent.setDone();
 					}
+					undoStack.push(cloneEventList());
 					eventList.set(adjustedIdx, newEvent);
 					response = String.format(MESSAGE_UPDATE_CAL_RESPONSE, newName);
 				} else {
 					task.setStopDate(end);
 					task.setEventName(newName);
+					undoStack.push(cloneEventList());
 					((CalendarEvent) task).setStartDateAndTime(start);
 					response = String.format(MESSAGE_UPDATE_CAL_RESPONSE, newName);
 				}
@@ -821,15 +832,18 @@ public class CommandExecutor {
 					if (task.isDone()){
 						newEvent.setDone();
 					}
+					undoStack.push(cloneEventList());
 					eventList.set(adjustedIdx, newEvent);
 					response = String.format(MESSAGE_UPDATE_FLOAT_RESPONSE, newName);
 				} else if (taskType.equalsIgnoreCase(UPDATE_EVENT_TYPE_TODO))  {
 					((ToDoEvent) eventList.get(adjustedIdx)).setDueDateAndTime(end);
+					undoStack.push(cloneEventList());
 					eventList.get(adjustedIdx).setEventName(newName);
 					response = String.format(MESSAGE_UPDATE_TODO_RESPONSE, newName);
 				} else if (taskType.equalsIgnoreCase(UPDATE_EVENT_TYPE_CALENDAR)){
 					start = ((CalendarEvent) task).getStartDateAndTime();
 					if (CalendarEvent.areValidDates(start, end)){
+						undoStack.push(cloneEventList());
 						eventList.get(adjustedIdx).setEventName(newName);
 						((CalendarEvent) eventList.get(adjustedIdx)).setEndDateAndTime(end);
 						response = String.format(MESSAGE_UPDATE_CAL_RESPONSE, newName);
@@ -843,6 +857,7 @@ public class CommandExecutor {
 			}
 		} else if (!cmd.hasStart() && !cmd.hasEnd()) {
 			String originalName = eventList.get(adjustedIdx).getEventName();
+			undoStack.push(cloneEventList());
 			eventList.get(adjustedIdx).setEventName(newName);
 			response = String.format(MESSAGE_UPDATE_FLOAT_RESPONSE, originalName, newName);
 		}
