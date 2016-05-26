@@ -1,7 +1,4 @@
-# This references a standard debian container from the
-# Docker Hub https://registry.hub.docker.com/_/debian/
-# Read more about containers on our dev center
-# http://devcenter.wercker.com/docs/containers/index.html
+# This is the defualt container for Java
 box: java
 
 # defining the dev pipeline
