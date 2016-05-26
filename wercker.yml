@@ -14,7 +14,7 @@ dev:
 
 build:
   steps:
-    - valery1707/gradle@0.1.9
+    - valery1707/gradle@0.1.9:
       tasks: clean build
 #    - script:
 #      name: run gradle
