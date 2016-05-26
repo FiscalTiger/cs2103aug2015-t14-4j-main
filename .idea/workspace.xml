@@ -50,7 +50,7 @@
         <entry file="file://$PROJECT_DIR$/wercker.yml">
           <provider selected="true" editor-type-id="text-editor">
             <state relative-caret-position="352">
-              <caret line="16" column="29" selection-start-line="16" selection-start-column="29" selection-end-line="16" selection-end-column="29" />
+              <caret line="16" column="6" selection-start-line="16" selection-start-column="6" selection-end-line="16" selection-end-column="29" />
               <folding />
             </state>
           </provider>
@@ -764,12 +764,12 @@
       <option name="number" value="Default" />
       <option name="presentableId" value="Default" />
       <updated>1464273534401</updated>
-      <workItem from="1464273536167" duration="3599000" />
+      <workItem from="1464273536167" duration="3747000" />
     </task>
     <servers />
   </component>
   <component name="TimeTrackingManager">
-    <option name="totallyTimeSpent" value="3599000" />
+    <option name="totallyTimeSpent" value="3747000" />
   </component>
   <component name="TodoView">
     <todo-panel id="selected-file">
@@ -835,7 +835,7 @@
     <entry file="file://$PROJECT_DIR$/wercker.yml">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="352">
-          <caret line="16" column="29" selection-start-line="16" selection-start-column="29" selection-end-line="16" selection-end-column="29" />
+          <caret line="16" column="6" selection-start-line="16" selection-start-column="6" selection-end-line="16" selection-end-column="29" />
           <folding />
         </state>
       </provider>
