@@ -17,4 +17,4 @@ build:
     - script:
       name: run gradle
       code: |
-        ./gradlew
+        ./gradlew --stacktrace
