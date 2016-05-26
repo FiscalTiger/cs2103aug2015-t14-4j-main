@@ -14,8 +14,13 @@ dev:
 
 build:
   steps:
-#    - valery1707/gradle@0.1.9:
-#      tasks: clean build
+    - script:
+      name: run gradle
+      code: |
+        ./gradlew --full-stacktrace -q --project-cache-dir=$WERCKER_CACHE_DIR build
+
+develop:
+  steps:
     - script:
       name: run gradle
       code: |
