@@ -8,6 +8,13 @@ box: java
 dev:
   steps:
     - script:
-      name: gradle bootRun
+      name: run gradle
       code: |
         ./gradlew bootRun
+
+build:
+  steps:
+    - script:
+      name: run gradle
+      code: |
+        ./gradlew

@@ -1,5 +1,5 @@
 # A0121560Wreused
-###### src\easycheck\commandParser\CommandTypes\Update.java
+###### src\easycheck\easycheck.commandParser\CommandTypes\Update.java
 ``` java
     private static final String REPEATING_DAILY = "daily";
 	private static final String REPEATING_WEEKLY = "weekly";
@@ -12,7 +12,7 @@
 	private DateTime stopDate = null;
 	private String frequency = null;
 ```
-###### src\easycheck\commandParser\CommandTypes\Update.java
+###### src\easycheck\easycheck.commandParser\CommandTypes\Update.java
 ``` java
 	public boolean isRepeating() {
 		return isRepeating;

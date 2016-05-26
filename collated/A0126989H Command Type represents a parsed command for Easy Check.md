@@ -1,5 +1,5 @@
 # A0126989H Command Type represents a parsed command for Easy Check
-###### src\easycheck\commandParser\Command.java
+###### src\easycheck\easycheck.commandParser\Command.java
 ``` java
  *          application. To be called: Command.excecuteCommand(commandType,
  *          arguments) which return string In order to pass data into Storage,
