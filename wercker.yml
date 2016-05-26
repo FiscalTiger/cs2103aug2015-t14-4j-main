@@ -2,7 +2,7 @@
 # Docker Hub https://registry.hub.docker.com/_/debian/
 # Read more about containers on our dev center
 # http://devcenter.wercker.com/docs/containers/index.html
-box: qlik/gradle
+box: java
 
 # defining the dev pipeline
 dev:
@@ -14,6 +14,7 @@ dev:
 
 build:
   steps:
+    - valery1707/gradle@0.1.9
     - script:
       name: run gradle
       code: |
