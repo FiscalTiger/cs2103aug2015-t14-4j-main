@@ -13,7 +13,7 @@ dev:
         ./gradlew bootRun
 
 build:
-#  steps:
+  steps:
 #    - valery1707/gradle@0.1.9:
 #      tasks: clean build
     - script:
