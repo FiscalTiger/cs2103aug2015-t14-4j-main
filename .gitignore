@@ -22,3 +22,4 @@ integratedtestingfile.txt.rej
 *.log
 
 !easycheck.jar
+!gradle-wrapper.jar
