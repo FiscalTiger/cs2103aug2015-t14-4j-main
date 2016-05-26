@@ -24,3 +24,4 @@ integratedtestingfile.txt.rej
 !easycheck.jar
 !gradle-wrapper.jar
 .idea/workspace.xml
+.idea/vcs.xml
